@@ -1,0 +1,48 @@
+﻿@{
+    ViewData["Title"] = "Contact Us";
+}
+
+<!-- Breadcrumb -->
+<div class="bread-crumb">
+    <div class="container">
+        <h2>Contact Us</h2>
+    </div>
+</div>
+
+<!-- Contact Section -->
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+
+        <div class="col-md-8">
+
+            <h4 class="text-center mb-4">Get in Touch</h4>
+
+            <form asp-action="ContactUs" method="post">
+
+                <div class="form-group mb-3">
+                    <label>Your Name</label>
+                    <input type="text" class="form-control" placeholder="Enter your name" />
+                </div>
+
+                <div class="form-group mb-3">
+                    <label>Email Address</label>
+                    <input type="email" class="form-control" placeholder="Enter your email" />
+                </div>
+
+                <div class="form-group mb-3">
+                    <label>Message</label>
+                    <textarea class="form-control" rows="4" placeholder="Enter your message"></textarea>
+                </div>
+
+                <div class="text-center">
+                    <button type="submit" class="btn btn-theme btn-md">
+                        Send Message
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+</div>

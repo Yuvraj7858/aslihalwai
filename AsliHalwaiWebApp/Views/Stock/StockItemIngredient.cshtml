@@ -1,0 +1,145 @@
+﻿@model AsliHalwaiWebApp.ViewModel.StockItemIngredientVM
+
+@{
+    ViewData["Title"] = "Stock Item Ingredients";
+}
+
+<!-- ================= Breadcrumb ================= -->
+<div class="bread-crumb">
+    <div class="container">
+        <div class="matter">
+            <h2>Stock Item</h2>
+            <ul class="list-inline">
+                <li class="list-inline-item">
+                    <a asp-controller="Home" asp-action="Index">HOME</a>
+                </li>
+                <li class="list-inline-item">
+                    <a asp-controller="Stock" asp-action="StockItem">Stock Items</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- ================= Breadcrumb End ================= -->
+
+<div class="contactus">
+    <div class="container">
+        <div class="row">
+
+            <!-- ================= TITLE ================= -->
+            <div class="col-sm-12 commontop text-center">
+                <h4>Stock Item Ingredients</h4>
+                <div class="divider style-1 center">
+                    <span class="hr-simple left"></span>
+                    <i class="icofont icofont-ui-press hr-icon"></i>
+                    <span class="hr-simple right"></span>
+                </div>
+            </div>
+
+            <!-- ================= FORM ================= -->
+            <div class="col-md-12">
+
+
+<form asp-action="StockItemIngredient"
+      asp-controller="Stock"
+      asp-route-stockItemId="@Model.StockItemId"
+      method="post"
+      enctype="multipart/form-data">
+
+    @Html.AntiForgeryToken()
+
+    <input asp-for="StockItemIngredientTitle"
+           class="form-control"
+           placeholder="Enter Ingredient Title" />
+
+    <input asp-for="IngredientPhoto"
+           type="file"
+           class="form-control-file mt-2" />
+
+    <button type="submit"
+            class="btn btn-theme btn-md mt-3">
+        Create
+    </button>
+</form>
+
+
+            </div>
+
+            <!-- ================= LIST ================= -->
+            <div class="col-md-12 mt-4">
+                <div class="table-responsive-md">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th class="text-center">Image</th>
+                                <th class="text-center">Item</th>
+                                <th class="text-center">Ingredient</th>
+                                <th class="text-center">Created By</th>
+                                <th class="text-center" style="width:150px">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.IngredientList != null && Model.IngredientList.Any())
+                            {
+                                foreach (var item in Model.IngredientList)
+                                {
+                                    <tr>
+                                        <td class="text-center">
+                                            <a href="@Url.Content(item.IngredientPhotoPath ?? "~/images/no-image.png")"
+                                               target="_blank">
+                                                <img src="@Url.Content(item.IngredientPhotoPath ?? "~/images/no-image.png")"
+                                                     style="width:90px;height:120px;
+                                                                    object-fit:cover;border:1px solid #ddd;" />
+                                            </a>
+                                        </td>
+                                        <td class="text-center">@item.StockItemTitle</td>
+                                        <td class="text-center">@item.StockItemIngredientTitle</td>
+                                        <td class="text-center">@item.CreatedBy</td>
+                                        <td class="text-center">
+                                            <a asp-action="StockItemIngredient"
+                                               asp-route-stockItemId="@Model.StockItemId"
+                                               asp-route-id="@item.StockItemIngredientId"
+                                               class="btn btn-warning btn-sm">
+                                                Edit
+                                            </a>
+
+                                            <form asp-action="DeleteStockItemIngredient"
+                                                  method="post"
+                                                  style="display:inline">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id"
+                                                       value="@item.StockItemIngredientId" />
+                                                <input type="hidden" name="stockItemId"
+                                                       value="@Model.StockItemId" />
+
+                                                <button type="submit"
+                                                        class="btn btn-danger btn-sm"
+                                                        onclick="return confirm('Delete this ingredient?')">
+                                                    Delete
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="5"
+                                        class="text-center text-danger">
+                                        No Ingredient Found
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

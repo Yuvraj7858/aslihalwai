@@ -1,0 +1,157 @@
+﻿@model AsliHalwaiWebApp.ViewModel.StockDealItemVM
+<div class="bread-crumb">
+    <div class="container">
+        <div class="matter">
+            <h2>Deal Items</h2>
+            <ul class="list-inline">
+                <li class="list-inline-item">
+                    <a asp-controller="Home" asp-action="Index">HOME</a>
+                </li>
+                <li class="list-inline-item">
+                    <a asp-controller="Stock"
+                       asp-action="StockDealItem"
+                       asp-route-dealId="@Model.StockDealId"
+                       asp-route-stockDealDetailId="@Model.StockDealDetailId">
+                        Stock Deal Items
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="contactus">
+    <div class="container">
+
+        <div class="col-sm-12 commontop text-center">
+            <h4>Deal Items</h4>
+            <div class="divider style-1 center">
+                <span class="hr-simple left"></span>
+                <i class="icofont icofont-ui-press hr-icon"></i>
+                <span class="hr-simple right"></span>
+            </div>
+        </div>
+
+        <form asp-action="StockDealItem"
+              asp-controller="Stock"
+              asp-route-dealId="@Model.StockDealId"
+              method="post"
+              class="form-horizontal">
+
+            @Html.AntiForgeryToken()
+
+            <input type="hidden" asp-for="StockDealId" />
+            <input type="hidden" asp-for="StockDealDetailId" />
+
+            <div class="row">
+
+                <!-- LEFT -->
+                <div class="col-md-6">
+                    <div class="form-group">
+                        Select Item :
+                        <select asp-for="StockItemId"
+                                asp-items="Model.StockItemList"
+                                class="form-control">
+                            <option value="">-- Choose Item --</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        Enter Quantity :
+                        <input asp-for="Quantity"
+                               class="form-control"
+                               placeholder="Enter Quantity" />
+                    </div>
+
+                    <div class="form-group">
+                        Discount :
+                        <input asp-for="Discount"
+                               class="form-control"
+                               placeholder="Enter Discount" />
+                    </div>
+                </div>
+
+                <!-- RIGHT -->
+                <div class="col-md-6">
+                    <div class="form-group">
+                        Select Status :
+                        <select asp-for="VisibleStatusId"
+                                asp-items="Model.VisibleStatusList"
+                                class="form-control">
+                            <option value="">-- Choose Status --</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="buttons">
+                            <button type="submit"
+                                    class="btn btn-theme btn-md btn-wide">
+                                @(Model.StockDealDetailId == 0 ? "Create" : "Update")
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
+<div class="menu">
+    <div class="menu-inner">
+        <div class="container">
+
+            <div class="col-sm-12 commontop text-center">
+                <h4>Deal Items</h4>
+                <div class="divider style-1 center">
+                    <span class="hr-simple left"></span>
+                    <i class="icofont icofont-ui-press hr-icon"></i>
+                    <span class="hr-simple right"></span>
+                </div>
+            </div>
+
+            <div class="row">
+                @foreach (var item in Model.DealItems)
+                {
+                    <div class="col-md-6 col-sm-6 col-12">
+                        <div class="box">
+
+                            <div class="image">
+                                <img src="@(string.IsNullOrEmpty(item.ItemPhotoPath)
+                                                                                 ? Url.Content("~/images/no-image.png")
+                                                                                 : item.ItemPhotoPath)"
+                                 class="img-fluid"
+                                 style="width:130px;height:200px;object-fit:cover;" />
+                        </div>
+
+                            <div class="caption">
+                                <h4>
+                                    @item.StockItemTitle |
+                                    Discount: @item.Discount |
+                                    (@item.VisibleStatus)
+                                </h4>
+
+                                <p class="des">
+                                    Quantity : @item.Quantity |
+                                    Order Type : @item.OrderType
+                                </p>
+
+                                <span>
+                                    <a asp-action="StockDealItem"
+                                       asp-controller="Stock"
+                                       asp-route-dealId="@item.StockDealId"
+                                       asp-route-stockDealDetailId="@item.StockDealDetailId"
+                                       class="btn btn-theme btn-md btn-wide">
+                                        Edit
+                                    </a>
+                                </span>
+
+                                <div class="price">@item.ItemSize</div>
+                            </div>
+
+                        </div>
+                    </div>
+                                }
+            </div>
+
+        </div>
+    </div>
+</div>

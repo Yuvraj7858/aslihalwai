@@ -1,0 +1,124 @@
+﻿@model AsliHalwaiWebApp.ViewModel.StockMenuVM
+
+@{
+    ViewData["Title"] = "Menu";
+}
+
+<!-- ================= Breadcrumb ================= -->
+<div class="bread-crumb">
+    <div class="container">
+        <div class="matter">
+            <h2>Menu</h2>
+            <ul class="list-inline">
+                <li class="list-inline-item">
+                    <a asp-controller="Home" asp-action="Index">HOME</a>
+                </li>
+                <li class="list-inline-item">
+                    <a href="#">Menu</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- ================= Breadcrumb End ================= -->
+
+<div class="menu">
+    <div class="menu-inner">
+        <div class="container">
+
+            <!-- ================= TITLE ================= -->
+            <div class="row">
+                <div class="col-sm-12 commontop text-center">
+                    <h4>Our Menu</h4>
+                    <div class="divider style-1 center">
+                        <span class="hr-simple left"></span>
+                        <i class="icofont icofont-ui-press hr-icon"></i>
+                        <span class="hr-simple right"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= CATEGORY TABS ================= -->
+            <ul class="nav nav-tabs list-inline justify-content-center">
+                @{
+                    bool first = true;
+                    foreach (var cat in Model.Categories)
+                    {
+                        var tabId = cat.StockCategory.Replace(" ", "_").ToLower();
+                        <li class="nav-item">
+                            <a class="nav-link @(first ? "active" : "")"
+                               data-toggle="tab"
+                               href="#@tabId">
+                                @cat.StockCategory
+                            </a>
+                        </li>
+                        ;
+                        first = false;
+                    }
+                }
+            </ul>
+
+            <!-- ================= TAB CONTENT ================= -->
+            <div class="tab-content mt-4">
+                @{
+                    bool firstTab = true;
+                    foreach (var cat in Model.Categories)
+                    {
+                        var tabId = cat.StockCategory.Replace(" ", "_").ToLower();
+                        <div class="tab-pane fade @(firstTab ? "show active" : "")"
+                             id="@tabId">
+
+                            <div class="row">
+                                @foreach (var item in cat.Items)
+                                {
+                                    <div class="col-md-6 col-sm-12 mb-4">
+                                        <div class="box d-flex">
+
+                                            <!-- IMAGE -->
+                                            <div class="image mr-3">
+                                                <img src="@Url.Content(item.ItemPhotoPath ?? "~/images/no-image.png")"
+                                                     class="img-fluid"
+                                                     style="width:120px;height:160px;object-fit:cover;border-radius:10px;" />
+                                            </div>
+
+                                            <!-- DETAILS -->
+                                            <div class="caption">
+                                                <h5>
+                                                    @item.StockItemTitle
+                                                    <small> (@item.ItemSize)</small>
+                                                </h5>
+
+                                                <p class="des">
+                                                    Order Type : @item.OrderType <br />
+                                                    Status : @item.VisibleStatus
+                                                </p>
+
+                                                <div class="price">
+                                                    ₹ @item.UnitPrice
+                                                </div>
+
+                                                <a asp-controller="Stock"
+                                                   asp-action="StockItemIngredient"
+                                                   asp-route-stockItemId="@item.StockItemId"
+                                                   class="btn btn-theme btn-sm mt-2">
+                                                    Ingredients
+
+
+                                                </a>
+                                                
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+
+                        </div>
+                        firstTab = false;
+                    }
+                }
+            </div>
+
+        </div>
+    </div>
+</div>

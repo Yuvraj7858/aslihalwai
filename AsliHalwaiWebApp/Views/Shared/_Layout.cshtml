@@ -1,0 +1,753 @@
+﻿@{
+    int userId = Context.Session.GetInt32("UserId") ?? 0;
+    int userTypeId = Context.Session.GetInt32("UserTypeId") ?? 0;
+
+    bool isLoggedIn = userId > 0;
+}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="theme-color" content="#e54c2a">
+    <link rel="manifest" href="/manifest.json">
+
+    <meta name="theme-color" content="#e54c2a">
+
+    <link rel="apple-touch-icon" href="/icons/icon-192.png">
+
+    <!-- Favicon -->
+    <link type="image/x-icon" rel="shortcut icon" href="favicon.png" />
+    <title>ASLIHALWAI- Sweets & Snacks Online Resturant</title>
+    <meta name="description" content="STEAM - AsliHalwai, sweets, Snacks and Drinks , Bakery,">
+    @* <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+          rel="stylesheet"> *@
+
+    <!-- Bootstrap stylesheet -->
+    <link href="~/Template/assets/lib/bootstrap-4.5.0/css/bootstrap.css" rel="stylesheet">
+
+    <link href="~/css/site.css" rel="stylesheet" asp-append-version="true" />
+    <!-- icofont -->
+    <link href="~/Template/assets/lib/icofont/css/icofont.css" rel="stylesheet" type="text/css" />
+    <!-- crousel css -->
+    <link href="~/Template/assets/lib/owlcarousel2/assets/owl.carousel.css" rel="stylesheet" type="text/css" />
+    <!-- mb.YTPlayer css -->
+    <link href="~/Template/assets/lib/mb.YTPlayer/css/jquery.mb.YTPlayer.min.css" rel="stylesheet" type="text/css" />
+    <!-- Theme Stylesheet -->
+    <link href="~/Template/assets/css/style.css" rel="stylesheet" type="text/css" />
+    <!-- Switch Color Style css -->
+    <link href="~/Template/assets/css/color/skin-default.css" data-style="styles" rel="stylesheet">
+
+    <!-- Product Star stylesheet -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+</head>
+<div id="toastContainer"
+     style="position: fixed; top: 80px; right: 20px; z-index: 9999;">
+</div>
+
+<body class="">
+    <div class="wrapper">
+        <!-- Loader Start   -->
+        <div class="loader">
+            <div class="loader-inner">
+                <h4>Cooking in progress..</h4>
+                <div id="cooking">
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div class="bubble"></div>
+                    <div id="area">
+                        <div id="sides">
+                            <div id="pan"></div>
+                            <div id="handle"></div>
+                        </div>
+                        <div id="pancake">
+                            <div id="pastry"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loader End -->
+        <!--  Header Start  -->
+        <header>
+            <!--Top Header Start -->
+            <div class="top">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-12 col-12">
+                            <ul class="list-inline float-left icon">
+                                <li class="list-inline-item"><a href="#"><i class="icofont icofont-phone"></i> Phone : +91 7557785890</a></li>
+                            </ul>
+                            <!-- Header Social Start -->
+                            <ul class="list-inline float-right icon">
+                                <li class="list-inline-item dropdown">
+                                    <a class="dropdown-toggle d-none d-md-inline-block"
+                                       href="#"
+                                       id="dropdownMenuLink"
+                                       data-toggle="dropdown"
+                                       aria-haspopup="true"
+                                       aria-expanded="false">
+                                        <i class="icofont icofont-ui-user"></i> My Account
+                                    </a>
+
+
+                                    <ul class="dropdown-menu dropdown-menu-right drophover">
+
+                                        @if (!isLoggedIn)
+                                        {
+                                            <li class="dropdown-item">
+                                                <a asp-controller="User" asp-action="Login">Login</a>
+                                            </li>
+                                            <li class="dropdown-item">
+                                                <a asp-controller="User" asp-action="Register">Register</a>
+                                            </li>
+                                        }
+                                        else
+                                        {
+                                            <li class="dropdown-item">
+                                                <a asp-controller="User" asp-action="Dashboard">Dashboard</a>
+                                            </li>
+                                            <li class="dropdown-item">
+                                                <a asp-controller="User" asp-action="Logout">Logout</a>
+                                            </li>
+                                        }
+
+                                    </ul>
+                                </li>
+
+
+                                <li class="list-inline-item">
+                                    <ul class="list-inline social">
+                                        <li class="list-inline-item"><a href="https://www.youtube.com/" target="_blank"><i class="icofont icofont-social-facebook"></i></a></li>
+                                        <li class="list-inline-item"><a href="#" target="_blank"><i class="icofont icofont-social-twitter"></i></a></li>
+                                        <li class="list-inline-item"><a href="#" target="_blank"><i class="icofont icofont-social-google-plus"></i></a></li>
+                                        <li class="list-inline-item"><a href="#" target="_blank"><i class="icofont icofont-social-instagram"></i></a></li>
+                                        <li class="list-inline-item"><a href="#" target="_blank"><i class="icofont icofont-social-pinterest"></i></a></li>
+                                        <li class="list-inline-item"><a href="#" target="_blank"><i class="icofont icofont-social-youtube-play"></i></a></li>
+                                        <li class="nav-item cart-icon-wrapper">
+                                          
+                                        </li>
+
+                                    </ul>
+                                </li>
+                            </ul>
+                            <!-- Header Social End -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+           
+            <!--Top Header End -->
+
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-3 col-sm-6 col-12">
+                        <!-- Logo Start  -->
+                        <div id="logo">
+                            <a asp-controller="Home" asp-action="Index"><img id="logo_img" class="img-fluid" src="~/Template/assets/images/logo/logo.png" alt="logo" title="logo" /></a>
+                        </div>
+                        <!-- Logo End  -->
+                    </div>
+
+                    <div class="col-md-7 col-sm-6 col-12 paddleft">
+                        <!-- Main Menu Start  -->
+                        <div id="menu">
+                            <nav class="navbar navbar-expand-md">
+                                <div class="collapse navbar-collapse navbar-ex1-collapse padd0">
+                                    <ul class="nav navbar-nav">
+                                      
+
+                                    </ul>
+
+                                   
+                                </div>
+
+                                <div class="navbar-header">
+                                    <span class="menutext d-block d-md-none">Menu</span>
+                                    <button data-target=".navbar-ex1-collapse" data-toggle="collapse" class="btn btn-navbar navbar-toggler" type="button"><i class="icofont icofont-navigation-menu"></i></button>
+                                </div>
+                                <div class="collapse navbar-collapse navbar-ex1-collapse padd0">
+                                    <ul class="nav navbar-nav">
+                                        <li class="nav-item"><a asp-controller="Home" asp-action="Index">HOME</a></li>
+                                        <li class="nav-item"><a asp-controller="Home" asp-action="AboutUs">about us</a></li>
+                                        @if (Context.Session.GetInt32("UserTypeId") == 1)
+                                        {
+                                            <li class="nav-item">
+                                                <a class="nav-link"
+                                                   asp-controller="AdminOrder"
+                                                   asp-action="InvoiceDashboard">
+                                                    🧾 Invoices
+                                                </a>
+                                            </li>
+                                        }
+
+                                        @* ===== USER ADDRESS (ALL USERS) ===== *@
+                                        <li class="nav-item"><a asp-controller="Setting" asp-action="List_UserAddress">Address</a></li>
+
+                                        @* ===== SETTINGS (ADMIN / STAFF ONLY) ===== *@
+
+                                        @if (userTypeId == 1)
+                                        {
+                                            <li class="nav-item dropdown">
+                                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                                    Settings
+                                                </a>
+                                                   
+
+                                                <div class="dropdown-menu">
+
+                                                    <a class="dropdown-item"
+                                                       asp-controller="AdminOrder"
+                                                       asp-action="Index">
+                                                        Manage Order
+                                                    </a>
+
+                                                    <a class="dropdown-item"
+                                                       asp-controller="Setting"
+                                                       asp-action="List_UserTypes">
+                                                        User Types
+                                                    </a>
+
+                                                    <a class="dropdown-item"
+                                                       asp-controller="Setting"
+                                                       asp-action="List_Genders">
+                                                        Genders
+                                                    </a>
+
+                                                    <a class="dropdown-item"
+                                                       asp-controller="Setting"
+                                                       asp-action="List_UserStatus">
+                                                        Account Status
+                                                    </a>
+
+                                                    <a class="dropdown-item"
+                                                       asp-controller="Stock"
+                                                       asp-action="StockItem">
+                                                        Add Items
+                                                    </a>
+
+                                                    <a class="dropdown-item"
+                                                       asp-controller="Setting"
+                                                       asp-action="List_VisibleStatus">
+                                                        Record Visible Status
+                                                    </a>
+
+                                                    <a class="dropdown-item"
+                                                       asp-controller="Stock"
+                                                       asp-action="StockMenuCategory">
+                                                        Stock Menu Category
+                                                    </a>
+
+                                                    <a class="dropdown-item"
+                                                       asp-controller="Stock"
+                                                       asp-action="StockItemCategory">
+                                                        Stock Item Category
+                                                    </a>
+                                                </div>
+                                            </li>
+                                        }
+
+
+                                     <!--add here -->
+                                        @if (userTypeId == 1)
+                                        {
+                                            <li class="nav-item">
+                                                <a asp-controller="Stock"
+                                                   asp-action="OrderType">
+                                                    Order Type 
+                                                </a>
+                                            </li>
+           
+                                        }
+
+                                        <li class="nav-item"><a asp-controller="Home" asp-action="ContactUs">contact us</a></li>
+                                        <li class="nav-item"><a asp-controller="Home" asp-action="AllItems">Shop</a></li>
+                                    </ul>
+                                </div>
+                            </nav>
+                        </div>
+                        <!-- Main Menu End -->
+                    </div>
+                    <div class="col-md-2 col-sm-12 col-12 button-top paddleft">
+                        <a class="btn-primary btn" asp-controller="TableReservation" asp-action="BookingTables">Reservation</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- Header End   -->
+        <div class="container">
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
+        </div>
+        <!-- Footer Start -->
+        <footer>
+            <div class="container">
+                <div class="row inner">
+                    <div class="col-sm-6 col-md-6 col-lg-3">
+                        <!-- Footer Widget Start -->
+                        <h5>Contact Us</h5>
+                        <ul class="list-unstyled contact">
+                            <li><i class="icofont icofont-social-google-map"></i> Office 08, first floor, Pizza Restaurant & Drinks, Bank More, Dhanbad,Jharkhand, IN</li>
+                            <li><i class="icofont icofont-phone"></i> 8987820546,<br>+91 7858908966</li>
+                            <li><a href="#"><i class="icofont icofont-ui-message"></i>info@aslihalwai.com</a></li>
+                        </ul>
+                        <!-- Footer Widget End -->
+                    </div>
+                    <div class="col-sm-6 col-md-6 col-lg-3">
+                        <!-- Footer Widget Start -->
+                        <h5>Information</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#">About us</a></li>
+                            <li><a href="#">Delivery Information</a></li>
+                            <li><a href="#">Contact us</a></li>
+                            <li><a href="#">Terms & Conditions</a></li>
+                            <li><a href="#">Sitemap</a></li>
+                        </ul>
+                        <!-- Footer Widget End -->
+                    </div>
+                    <div class="w-100 d-none d-xs-block"></div>
+                    <div class="col-sm-6 col-md-6 col-lg-3">
+                        <!-- Footer Widget Start -->
+                        <h5>Open Hours</h5>
+                        <ul class="list-unstyled">
+                            <li>Monday - Friday : 9 am to 12 am.</li>
+                            <li>Saturday - Sunday : 24 Hour Open</li>
+                            <li>Breakfast : 7 am to 12 pm</li>
+                            <li>Lunch : 12 pm to 7 pm</li>
+                            <li>Dinner : 7 am to 12 am</li>
+                        </ul>
+                        <!-- Footer Widget End -->
+                    </div>
+                    <div class="col-sm-6 col-md-6 col-lg-3">
+                        <!-- Footer Widget Start -->
+                        <h5>Instagram</h5>
+                        <ul class="list-unstyled insta">
+                            <li><a href="#"><img src="~/Template/assets/images/instagram/1.jpg" alt="image" /></a></li>
+                            <li><a href="#"><img src="~/Template/assets/images/instagram/2.jpg" alt="image" /></a></li>
+                            <li><a href="#"><img src="~/Template/assets/images/instagram/3.jpg" alt="image" /></a></li>
+                            <li><a href="#"><img src="~/Template/assets/images/instagram/4.jpg" alt="image" /></a></li>
+                            <li><a href="#"><img src="~/Template/assets/images/instagram/5.jpg" alt="image" /></a></li>
+                            <li><a href="#"><img src="~/Template/assets/images/instagram/6.jpg" alt="image" /></a></li>
+                        </ul>
+                        <!-- Footer Widget End -->
+                    </div>
+                </div>
+
+            </div>
+            <div class="footer-bottom">
+                <div class="container">
+                    <div class="row powered">
+                        <!--  Copyright Start -->
+                        <div class="col-md-3 col-sm-6 order-md-1">
+                            <img src="~/Template/assets/images/logo/logo2.png" class="img-fluid" title="logo" alt="logo">
+                        </div>
+                        <div class="col-md-3 col-sm-6 text-right order-md-3">
+                            <!--  Footer Social Start -->
+                            <ul class="list-inline social">
+                                <li class="list-inline-item"><a href="https://www.facebook.com/Ilyasoftcompany/" target="_blank"><i class="icofont icofont-social-facebook"></i></a></li>
+                                <li class="list-inline-item"><a href="https://www.facebook.com/Ilyasoftcompany/" target="_blank"><i class="icofont icofont-social-twitter"></i></a></li>
+                                <li class="list-inline-item"><a href="https://www.facebook.com/Ilyasoftcompany/" target="_blank"><i class="icofont icofont-social-google-plus"></i></a></li>
+                                <li class="list-inline-item"><a href="https://www.facebook.com/Ilyasoftcompany/" target="_blank"><i class="icofont icofont-social-pinterest"></i></a></li>
+                                <li class="list-inline-item"><a href="https://www.facebook.com/Ilyasoftcompany/" target="_blank"><i class="icofont icofont-social-instagram"></i></a></li>
+                                <li class="list-inline-item"><a href="https://www.facebook.com/Ilyasoftcompany/" target="_blank"><i class="icofont icofont-social-youtube-play"></i></a></li>
+                            </ul>
+                            <!--  Footer Social End -->
+
+                        </div>
+                        <div class="col-md-6 col-sm-12 text-center order-md-2">
+                            <p>Copyright © <span>AsliHalwai- Sweets & Snacks</span> 2026. All Rights Reserved.</p>
+                        </div>
+                        <!--  Copyright End -->
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+    <!-- Footer End  -->
+    @{
+        var loggedUserId = Context.Session.GetInt32("UserId");
+    }
+
+    @if (loggedUserId != null)
+    {
+        <a href="@Url.Action("ViewCart", "Order")" class="floating-cart">
+            <i class="fa fa-shopping-cart"></i>
+            <span class="floating-cart-count" style="display:none"></span>
+        </a>
+    }
+    <!-- Footer End  -->
+    <!-- ================= FIXED BOTTOM NAVBAR (Flipkart Style) ================= -->
+    <div class="fixed-bottom-navbar d-block d-md-none" style="
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: white;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    z-index: 1000;
+    padding: 10px 0;
+    border-top: 1px solid #eee;
+">
+        <div class="container-fluid">
+            <div class="row text-center">
+                <!-- Home -->
+                <div class="col">
+                    <a asp-controller="Home" asp-action="Index" class="text-dark d-block">
+                        <i class="icofont icofont-home" style="font-size: 20px;"></i>
+                        <div style="font-size: 12px; margin-top: 3px;">Home</div>
+                    </a>
+                </div>
+
+                <!-- Shop -->
+                <div class="col">
+                    <a asp-controller="Home" asp-action="AllItems" class="text-dark d-block">
+                        <i class="icofont icofont-shopping-cart" style="font-size: 20px;"></i>
+                        <div style="font-size: 12px; margin-top: 3px;">Shop</div>
+                    </a>
+                </div>
+
+                <!-- Cart (Only if logged in) -->
+                @if (isLoggedIn)
+                {
+                    <div class="col">
+                        <a href="@Url.Action("ViewCart", "Order")" class="text-dark d-block position-relative">
+                            <i class="icofont icofont-cart-alt" style="font-size: 20px;"></i>
+                            <span class="badge badge-danger position-absolute" style="
+                                top: -5px;
+                                right: 10px;
+                                font-size: 10px;
+                                display: none;
+                            " id="mobileCartCount"></span>
+                            <div style="font-size: 12px; margin-top: 3px;">Cart</div>
+                        </a>
+                    </div>
+                }
+
+                <!-- My Account Dropdown -->
+                <div class="col">
+                    <div class="dropdown">
+                        <a href="#" class="text-dark d-block" id="mobileAccountDropdown" data-toggle="dropdown">
+                            <i class="icofont icofont-ui-user" style="font-size: 20px;"></i>
+                            <div style="font-size: 12px; margin-top: 3px;">Account</div>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-up" style="
+                        bottom: 100%;
+                        top: auto;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        margin-bottom: 10px;
+                    ">
+                            @if (!isLoggedIn)
+                            {
+                                <a class="dropdown-item" asp-controller="User" asp-action="Login">
+                                    <i class="icofont icofont-login"></i> Login
+                                </a>
+                                <a class="dropdown-item" asp-controller="User" asp-action="Register">
+                                    <i class="icofont icofont-ui-add"></i> Register
+                                </a>
+                            }
+                            else
+                            {
+                                <a class="dropdown-item" asp-controller="User" asp-action="Dashboard">
+                                    <i class="icofont icofont-dashboard"></i> Dashboard
+                                </a>
+                                <!-- Admin Menu Items -->
+                                @if (userTypeId == 1)
+                                {
+                                    <div class="dropdown-divider"></div>
+                                    <h6 class="dropdown-header">Admin</h6>
+                                    <a class="dropdown-item" asp-controller="User" asp-action="Dashboard">
+                                        <i class="icofont icofont-dashboard"></i> Dashboard
+                                    </a>
+                                    <a class="dropdown-item" asp-controller="AdminOrder" asp-action="InvoiceDashboard">
+                                        <i class="icofont icofont-file-alt"></i> Invoices
+                                    </a>
+                                    <a class="dropdown-item" asp-controller="AdminOrder" asp-action="Index">
+                                        <i class="icofont icofont-tasks"></i> Manage Orders
+                                    </a>
+                                    <a class="dropdown-item" asp-controller="Stock" asp-action="StockItem">
+                                        <i class="icofont icofont-ui-add"></i> Add Items
+                                    </a>
+                                }
+                                <!-- Common for all logged in users -->
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" asp-controller="Setting" asp-action="List_UserAddress">
+                                    <i class="icofont icofont-location-pin"></i> Address
+                                </a>
+                                <a class="dropdown-item" asp-controller="TableReservation" asp-action="BookingTables">
+                                    <i class="icofont icofont-table"></i> Reservation
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item text-danger" asp-controller="User" asp-action="Logout">
+                                    <i class="icofont icofont-logout"></i> Logout
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Menu -->
+                <div class="col">
+                    <a href="#" class="text-dark d-block" data-toggle="modal" data-target="#mobileMenuModal">
+                        <i class="icofont icofont-navigation-menu" style="font-size: 20px;"></i>
+                        <div style="font-size: 12px; margin-top: 3px;">Menu</div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ================= END FIXED BOTTOM NAVBAR ================= -->
+    <!-- Mobile Menu Modal -->
+    <div class="modal fade" id="mobileMenuModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-bottom" role="document" style="
+        margin: 0;
+        max-width: 100%;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+    ">
+            <div class="modal-content" style="border-radius: 20px 20px 0 0;">
+                <div class="modal-header">
+                    <h5 class="modal-title">Menu</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body p-0">
+                    <div class="list-group list-group-flush">
+                        <a asp-controller="Home" asp-action="Index" class="list-group-item list-group-item-action">
+                            <i class="icofont icofont-home mr-2"></i> HOME
+                        </a>
+                        <a asp-controller="Home" asp-action="AboutUs" class="list-group-item list-group-item-action">
+                            <i class="icofont icofont-info-circle mr-2"></i> About Us
+                        </a>
+                        <a asp-controller="Home" asp-action="ContactUs" class="list-group-item list-group-item-action">
+                            <i class="icofont icofont-contacts mr-2"></i> Contact Us
+                        </a>
+                        <a asp-controller="Home" asp-action="AllItems" class="list-group-item list-group-item-action">
+                            <i class="icofont icofont-shopping-cart mr-2"></i> Shop
+                        </a>
+
+                        @if (userTypeId == 1)
+                        {
+                            <div class="list-group-item bg-light">
+                                <small class="text-muted">ADMIN MENU</small>
+                            </div>
+                            <a asp-controller="AdminOrder" asp-action="InvoiceDashboard"
+                               class="list-group-item list-group-item-action">
+                                <i class="icofont icofont-file-alt mr-2"></i> Invoices
+                            </a>
+                            <a asp-controller="Stock" asp-action="OrderType"
+                               class="list-group-item list-group-item-action">
+                                <i class="icofont icofont-list mr-2"></i> Order Type
+                            </a>
+                        }
+
+                        <a asp-controller="Setting" asp-action="List_UserAddress"
+                           class="list-group-item list-group-item-action">
+                            <i class="icofont icofont-location-pin mr-2"></i> Address
+                        </a>
+
+                        <a asp-controller="TableReservation" asp-action="BookingTables"
+                           class="list-group-item list-group-item-action">
+                            <i class="icofont icofont-table mr-2"></i> Reservation
+                        </a>
+
+                        <!-- Settings Dropdown for Admin -->
+                        @if (userTypeId == 1)
+                        {
+                            <a href="#settingsCollapse" class="list-group-item list-group-item-action"
+                               data-toggle="collapse">
+                                <i class="icofont icofont-settings mr-2"></i> Settings
+                                <i class="icofont icofont-curved-down float-right"></i>
+                            </a>
+                            <div class="collapse" id="settingsCollapse">
+                                <div class="list-group list-group-flush pl-4">
+                                    <a asp-controller="Setting" asp-action="List_UserTypes"
+                                       class="list-group-item list-group-item-action border-0">
+                                        <small>User Types</small>
+                                    </a>
+                                    <a asp-controller="Setting" asp-action="List_Genders"
+                                       class="list-group-item list-group-item-action border-0">
+                                        <small>Genders</small>
+                                    </a>
+                                    <a asp-controller="Setting" asp-action="List_UserStatus"
+                                       class="list-group-item list-group-item-action border-0">
+                                        <small>Account Status</small>
+                                    </a>
+                                    <a asp-controller="Stock" asp-action="StockItem"
+                                       class="list-group-item list-group-item-action border-0">
+                                        <small>Add Items</small>
+                                    </a>
+                                    <a asp-controller="Setting" asp-action="List_VisibleStatus"
+                                       class="list-group-item list-group-item-action border-0">
+                                        <small>Visible Status</small>
+                                    </a>
+                                    <a asp-controller="Stock" asp-action="StockMenuCategory"
+                                       class="list-group-item list-group-item-action border-0">
+                                        <small>Menu Category</small>
+                                    </a>
+                                    <a asp-controller="Stock" asp-action="StockItemCategory"
+                                       class="list-group-item list-group-item-action border-0">
+                                        <small>Item Category</small>
+                                    </a>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+    <!-- ================= jQuery FIRST ================= -->
+    <script src="~/Template/assets/lib/jquery/jquery.min.js"></script>
+
+  
+   
+    <!-- ================= CART HIDE SCRIPT ================= -->
+    <script>
+        $(document).ready(function () {
+            if (parseInt($('.floating-cart-count').text()) === 0) {
+                $('.floating-cart').hide();
+            }
+        });
+    </script>
+    <!-- ================= PAGE TRANSPORT FIX ================= -->
+    <script>
+        window.PageTransport = {
+            start: function () { },
+            stop: function () { }
+        };
+    </script>
+    <!-- ================= jQuery Validation ================= -->
+    <script src="~/Template/assets/lib/jquery-validation/jquery.validate.min.js"></script>
+
+    <!-- ================= Popper ================= -->
+    <script src="~/Template/assets/lib/popper/popper.min.js"></script>
+
+    <!-- ================= Bootstrap 4 ================= -->
+    <script src="~/Template/assets/lib/bootstrap-4.5.0/js/bootstrap.js"></script>
+
+    <!-- ================= Owl Carousel ================= -->
+    <script src="~/Template/assets/lib/owlcarousel2/owl.carousel.min.js"></script>
+
+    <!-- ================= InView ================= -->
+    <script src="~/Template/assets/lib/jquery.inview/jquery.inview.min.js"></script>
+
+    <!-- ================= CountTo ================= -->
+    <script src="~/Template/assets/lib/jquery.countTo/jquery.countTo.js"></script>
+
+    <!-- ================= YT Player ================= -->
+    <script src="~/Template/assets/lib/mb.YTPlayer/jquery.mb.YTPlayer.min.js"></script>
+
+    <!-- ================= THEME INTERNAL JS (LAST) ================= -->
+    <script src="~/Template/assets/js/internal.js"></script>
+
+    <!-- ================= MVC PAGE SCRIPTS ================= -->
+    @await RenderSectionAsync("Scripts", required: false)
+
+
+    <script>
+       function refreshCartCount() {
+        fetch('/Order/GetCartCount')
+            .then(res => res.json())
+            .then(count => {
+                // Desktop floating cart
+                const desktopBadge = document.querySelector('.floating-cart-count');
+                if (desktopBadge) {
+                    if (count > 0) {
+                        desktopBadge.innerText = count;
+                        desktopBadge.style.display = 'inline-block';
+                        document.querySelector('.floating-cart').style.display = 'block';
+                    } else {
+                        desktopBadge.style.display = 'none';
+                        document.querySelector('.floating-cart').style.display = 'none';
+                    }
+                }
+
+                  // Mobile bottom navbar cart
+                 const mobileBadge = document.getElementById('mobileCartCount');
+                 if (mobileBadge) {
+                     if (count > 0) {
+                         mobileBadge.innerText = count;
+                         mobileBadge.style.display = 'block';
+                     } else {
+                         mobileBadge.style.display = 'none';
+                     }
+                 }
+             });
+
+
+
+                  // Page load pe refresh
+        document.addEventListener("DOMContentLoaded", function() {
+            refreshCartCount();
+
+             // Bottom navbar cart click
+         const mobileCartLink = document.querySelector('.fixed-bottom-navbar .col:nth-child(3) a');
+         if (mobileCartLink) {
+             mobileCartLink.addEventListener('click', function(e) {
+                 if (parseInt(document.getElementById('mobileCartCount').innerText) === 0) {
+                     e.preventDefault();
+                     alert('Your cart is empty!');
+                 }
+             });
+      
+
+
+ 
+
+    @* <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js')
+                .then(() => console.log('PWA Service Worker Registered'));
+        }
+    </script> *@
+  
+        let deferredPrompt;
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+
+            // OPTIONAL: custom install button
+            const btn = document.createElement('button');
+            btn.innerText = "📲 Install App";
+            btn.className = "btn btn-primary";
+            btn.style.position = "fixed";
+            btn.style.bottom = "20px";
+            btn.style.left = "20px";
+            btn.style.zIndex = "9999";
+
+            btn.onclick = () => {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then(() => {
+                    deferredPrompt = null;
+                    btn.remove();
+                });
+            };
+
+            document.body.appendChild(btn);
+        });
+    </script>
+
+
+</body>
+</html>
+

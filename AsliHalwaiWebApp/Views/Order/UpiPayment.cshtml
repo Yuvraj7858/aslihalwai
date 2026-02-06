@@ -1,0 +1,43 @@
+﻿@model AsliHalwaiWebApp.ViewModel.UpiPaymentVM
+@{
+    ViewData["Title"] = "Pay via UPI";
+}
+
+<h3>Pay ₹@Model.Amount via UPI</h3>
+
+<!-- 🔹 UPI BUTTON -->
+<a class="btn btn-success btn-lg mb-3"
+   href="upi://pay?
+pa=@Model.UpiId
+&pn=@Model.MerchantName
+&am=@Model.Amount
+&cu=INR
+&tn=Order_@Model.OrderId">
+    📲 Pay Now using UPI
+</a>
+
+<hr />
+
+<!-- 🔹 UTR SUBMIT -->
+<form asp-action="SubmitUpiPayment" method="post">
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" asp-for="OrderId" />
+    <input type="hidden" asp-for="Amount" />
+
+    <div class="form-group">
+        <label>Enter UPI Transaction ID (UTR)</label>
+        <input asp-for="PaymentUTR"
+               class="form-control"
+               required
+               placeholder="Example: 324567890123" />
+    </div>
+
+    <button class="btn btn-primary mt-2">
+        Submit Payment
+    </button>
+</form>
+
+<p class="text-muted mt-3">
+    ⚠️ Payment verification may take some time.
+</p>

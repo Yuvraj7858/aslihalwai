@@ -1,0 +1,145 @@
+﻿@model AsliHalwaiWebApp.ViewModel.StockItemCategoryVM
+
+@{
+    ViewData["Title"] = "Stock Item Category";
+}
+
+<!-- ================= Breadcrumb ================= -->
+<div class="bread-crumb">
+    <div class="container">
+        <div class="matter">
+            <h2>Stock Item Category</h2>
+            <ul class="list-inline">
+                <li class="list-inline-item">
+                    <a asp-controller="Home" asp-action="Index">HOME</a>
+                </li>
+                <li class="list-inline-item">
+                    <a href="#">Stock Item Category</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- ================= Content ================= -->
+<div class="login">
+    <div class="container">
+        <div class="row">
+
+            <!-- ===== LEFT : ADD / EDIT FORM ===== -->
+            <div class="col-md-4">
+                <div class="loginnow">
+                    <h5>
+                        @(Model.StockItemCategoryId == 0
+                                                ? "Add Stock Item Category"
+                                                : "Edit Stock Item Category")
+                    </h5>
+
+                    <form asp-action="StockItemCategory"
+                          asp-controller="Stock"
+                          method="post">
+
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="StockItemCategoryId" />
+
+                        <div class="form-group">
+                            <label>Category Name</label>
+                            <input asp-for="StockItemCategory"
+                                   class="form-control"
+                                   placeholder="Enter category name" />
+                            <span asp-validation-for="StockItemCategory"
+                                  class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mt-3">
+                            <label>Visible Status</label>
+                            <select asp-for="VisibleStatusId"
+                                    asp-items="Model.VisibleStatusList"
+                                    class="form-control">
+                                <option value="">-- Select Status --</option>
+                            </select>
+                            <span asp-validation-for="VisibleStatusId"
+                                  class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mt-3">
+                            <input type="submit"
+                                   value="@(Model.StockItemCategoryId == 0 ? "Save" : "Update")"
+                                   class="btn btn-theme btn-md btn-wide" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- ===== RIGHT : CATEGORY LIST ===== -->
+            <div class="col-md-8">
+                <div class="loginnow">
+                    <h5>Stock Item Category List</h5>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Category Name</th>
+                                    <th>Status</th>
+                                    <th style="width:180px">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.CategoryList != null && Model.CategoryList.Any())
+                                {
+                                    foreach (var item in Model.CategoryList)
+                                    {
+                                        <tr>
+                                            <td>@item.StockItemCategory</td>
+                                            <td>@item.VisibleStatusId</td>
+                                            <td>
+                                                <a asp-controller="Stock"
+                                                   asp-action="StockItemCategory"
+                                                   asp-route-id="@item.StockItemCategoryId"
+                                                   class="btn btn-sm btn-warning">
+                                                    Edit
+                                                </a>
+
+                                                <form asp-controller="Stock"
+                                                      asp-action="DeleteStockItemCategory"
+                                                      method="post"
+                                                      style="display:inline">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden"
+                                                           name="id"
+                                                           value="@item.StockItemCategoryId" />
+
+                                                    <button type="submit"
+                                                            class="btn btn-sm btn-danger"
+                                                            onclick="return confirm('Are you sure?')">
+                                                        Delete
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="3"
+                                            class="text-center text-danger">
+                                            No Category Found
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

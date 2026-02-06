@@ -1,0 +1,118 @@
+﻿@model AsliHalwaiWebApp.ViewModel.OrderTypeVM
+@{
+    ViewData["Title"] = "Order Type";
+}
+
+<!-- Breadcrumb -->
+<div class="bread-crumb">
+    <div class="container">
+        <div class="matter">
+            <h2>Order Type</h2>
+            <ul class="list-inline">
+                <li class="list-inline-item">
+                    <a asp-controller="Home" asp-action="Index">HOME</a>
+                </li>
+                <li class="list-inline-item">
+                    <a href="#">Order Type</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="login">
+    <div class="container">
+        <div class="row">
+
+            <!-- LEFT FORM -->
+            <div class="col-md-4">
+                <div class="loginnow">
+                    <h5>@(Model.OrderTypeId == 0 ? "Add Order Type" : "Edit Order Type")</h5>
+
+                    <form asp-action="OrderType" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="OrderTypeId" />
+
+                        <div class="form-group">
+                            <label>Order Type</label>
+                            <input asp-for="OrderTypeName"
+                                   class="form-control"
+                                   placeholder="Enter order type" />
+                            <span asp-validation-for="OrderTypeName"
+                                  class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mt-3">
+                            <button type="submit"
+                                    class="btn btn-theme btn-md btn-wide">
+                                @(Model.OrderTypeId == 0 ? "Save" : "Update")
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- RIGHT LIST -->
+            <div class="col-md-8">
+                <div class="loginnow">
+                    <h5>Order Type List</h5>
+
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Order Type</th>
+                                <th style="width:180px">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.OrderTypeList.Any())
+                            {
+                                foreach (var item in Model.OrderTypeList)
+                                {
+                                    <tr>
+                                        <td>@item.OrderTypeName</td>
+                                        <td>
+                                            <a asp-action="OrderType"
+                                               asp-route-id="@item.OrderTypeId"
+                                               class="btn btn-sm btn-warning">
+                                                Edit
+                                            </a>
+
+                                            <form asp-action="DeleteOrderType"
+                                                  method="post"
+                                                  style="display:inline">
+                                                <input type="hidden"
+                                                       name="id"
+                                                       value="@item.OrderTypeId" />
+
+                                                <button type="submit"
+                                                        class="btn btn-sm btn-danger"
+                                                        onclick="return confirm('Delete this order type?')">
+                                                    Delete
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="2"
+                                        class="text-center text-danger">
+                                        No Order Type Found
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

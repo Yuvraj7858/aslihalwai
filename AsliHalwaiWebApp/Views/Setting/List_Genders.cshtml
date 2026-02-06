@@ -1,0 +1,148 @@
+﻿@model AsliHalwaiWebApp.ViewModels.GenderVM
+
+@{
+    ViewData["Title"] = "Genders";
+}
+
+<!-- Breadcrumb Start -->
+<div class="bread-crumb">
+    <div class="container">
+        <div class="matter">
+            <h2>Genders</h2>
+            <ul class="list-inline">
+                <li class="list-inline-item">
+                    <a asp-controller="Home" asp-action="Index">HOME</a>
+                </li>
+                <li class="list-inline-item">
+                    <a asp-controller="Setting" asp-action="List_Genders">Genders</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- Breadcrumb End -->
+
+<div class="contactus">
+    <div class="container">
+        <div class="row">
+
+            <!-- Title -->
+            <div class="col-sm-12 commontop text-center">
+                <h4>Genders</h4>
+                <div class="divider style-1 center">
+                    <span class="hr-simple left"></span>
+                    <i class="icofont icofont-ui-press hr-icon"></i>
+                    <span class="hr-simple right"></span>
+                </div>
+            </div>
+
+            <!-- FORM -->
+            <div class="col-md-5 col-12">
+                <form asp-action="List_Genders"
+                      asp-controller="Setting"
+                      method="post"
+                      class="form-horizontal">
+
+                    @Html.AntiForgeryToken()
+
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <!-- Hidden GenderID -->
+                    <input type="hidden" asp-for="GenderID" />
+
+                    <div class="form-group row">
+                        <div class="col-md-12 col-sm-12 col-12">
+                            <i class="icofont icofont-ui-user"></i>
+
+                            <input asp-for="GenderTitle"
+                                   class="form-control"
+                                   placeholder="Enter Gender" />
+
+                            <span asp-validation-for="GenderTitle"
+                                  class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="buttons">
+                        @if (Model.GenderID == 0)
+                        {
+                            <button type="submit"
+                                    class="btn btn-theme btn-md btn-wide"
+                                    style="float:right;">
+                                Create
+                            </button>
+                        }
+                        else
+                        {
+                            <button type="submit"
+                                    class="btn btn-theme btn-md btn-wide"
+                                    style="float:right;">
+                                Update
+                            </button>
+                        }
+                    </div>
+                </form>
+            </div>
+
+            <!-- LIST -->
+            <div class="col-md-7 col-12">
+                <div class="table-responsive-md">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th class="text-center">
+                                    @Html.DisplayNameFor(m => m.GenderTitle)
+                                </th>
+                                <th style="width:200px;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.Genders != null && Model.Genders.Any())
+                            {
+                                foreach (var item in Model.Genders)
+                                {
+                                    <tr>
+                                        <td>@item.GenderTitle</td>
+                                        <td>
+                                            <a asp-controller="Setting"
+                                               asp-action="List_Genders"
+                                               asp-route-id="@item.GenderID"
+                                               class="btn btn-theme btn-md btn-wide">
+                                                Edit
+                                            </a>
+
+                                            <form asp-action="DeleteGender"
+                                                  asp-controller="Setting"
+                                                  asp-route-id="@item.GenderID"
+                                                  method="post"
+                                                  style="display:inline;">
+                                                <button type="submit"
+                                                        class="btn btn-danger btn-md"
+                                                        onclick="return confirm('Are you sure?');">
+                                                    Delete
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="2" class="text-center">
+                                        No records found
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

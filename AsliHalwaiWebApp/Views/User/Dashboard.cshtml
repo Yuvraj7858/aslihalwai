@@ -1,0 +1,265 @@
+﻿@using AsliHalwaiWebApp.ViewModel
+@model AsliHalwaiWebApp.ViewModels.DashboardVM
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<!-- ================= DASHBOARD ================= -->
+<div class="dashboard py-4">
+    <div class="container">
+
+        <!-- HEADING -->
+        <div class="text-center mb-4">
+            <h4>User Dashboard</h4>
+            <div class="divider style-1 center">
+                <span class="hr-simple left"></span>
+                <i class="icofont icofont-ui-press hr-icon"></i>
+                <span class="hr-simple right"></span>
+            </div>
+        </div>
+
+        <div class="row">
+
+            <!-- ================= LEFT TABS ================= -->
+            <div class="col-md-3 col-lg-2 mb-3">
+                <div class="user-profile-tabs">
+                    <ul class="nav nav-tabs flex-column">
+
+                        <li class="nav-item">
+                            <a class="nav-link active" data-toggle="tab" href="#overview">
+                                <i class="icofont icofont-dashboard-web"></i> Overview
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#profile">
+                                <i class="icofont icofont-ui-user"></i> Profile
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#history">
+                                <i class="icofont icofont-history"></i> History
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#history">
+                                <i>⁉️ Complaint</i>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#history">
+                                💳 My Card
+                            </a>
+                        </li>
+
+                    </ul>
+                </div>
+            </div>
+
+            <!-- ================= RIGHT CONTENT ================= -->
+            <div class="col-md-9 col-lg-10">
+                <div class="tab-content">
+
+                    <!-- ================= OVERVIEW ================= -->
+                    <div id="overview" class="tab-pane fade show active">
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <div class="media">
+                                    <img class="mr-3 rounded"
+                                         src="@(string.IsNullOrEmpty(Model.ProfileVM.PhotoPath)
+                                                                                      ? Url.Content("~/images/default-user.png")
+                                                                                      : Url.Content(Model.ProfileVM.PhotoPath))"
+                                         style="width:100px;height:130px;object-fit:cover;" />
+
+                                    <div class="media-body">
+                                        <h4>@Model.ProfileVM.FullName</h4>
+                                        <p><i class="icofont icofont-envelope"></i> @Model.ProfileVM.EmailAddress</p>
+                                        <p><i class="icofont icofont-phone"></i> @Model.ProfileVM.ContactNo</p>
+
+                                        @if (Model.ProfileVM.UserStatus == "Active")
+                                        {
+                                            <p class="text-success font-weight-bold">
+                                                <i class="icofont icofont-check"></i> Active
+                                            </p>
+                                        }
+                                        else
+                                        {
+                                            <p class="text-danger font-weight-bold">
+                                                <i class="icofont icofont-close"></i> @Model.ProfileVM.UserStatus
+                                            </p>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card-footer text-center text-white"
+                                 style="background:#e54c2a">
+                                @Model.ProfileVM.UserType
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ================= PROFILE ================= -->
+                    <div id="profile" class="tab-pane fade">
+                        <div class="row">
+
+                            <!-- PERSONAL INFO -->
+                            <div class="col-lg-6 mb-4">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5>Personal Information</h5>
+
+                                        <form asp-action="Dashboard"
+                                              asp-controller="User"
+                                              method="post"
+                                              enctype="multipart/form-data">
+
+                                            @Html.AntiForgeryToken()
+
+                                            <input asp-for="ProfileVM.FirstName" class="form-control mb-2" placeholder="First Name" />
+                                            <input asp-for="ProfileVM.LastName" class="form-control mb-2" placeholder="Last Name" />
+                                            <input asp-for="ProfileVM.EmailAddress" class="form-control mb-2" placeholder="Email" />
+                                            <input asp-for="ProfileVM.ContactNo" class="form-control mb-2" placeholder="Contact" />
+
+                                            <input asp-for="ProfileVM.UserPhoto" type="file" class="form-control-file mb-3" />
+
+                                            <button class="btn btn-theme btn-block">Save Changes</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- PASSWORD + EDUCATION -->
+                            <div class="col-lg-6">
+
+                                <!-- CHANGE PASSWORD -->
+                                <div class="card mb-4">
+                                    <div class="card-body">
+                                        <h5>Change Password</h5>
+
+                                        <form asp-action="ChangePassword"
+                                              asp-controller="User"
+                                              method="post">
+                                            @Html.AntiForgeryToken()
+
+                                            <input asp-for="OldPassword" class="form-control mb-2" placeholder="Old Password" />
+                                            <input asp-for="NewPassword" class="form-control mb-2" placeholder="New Password" />
+                                            <input asp-for="ConfirmPassword" class="form-control mb-2" placeholder="Confirm Password" />
+
+                                            <button class="btn btn-theme btn-block">Change Password</button>
+                                        </form>
+                                    </div>
+                                </div>
+
+                                <!-- EDUCATION & EXPERIENCE -->
+                                @if (Model.ProfileVM.UserTypeId == 1 || Model.ProfileVM.UserTypeId == 4 || Model.ProfileVM.UserTypeId == 5)
+                                {
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h5>Education & Experience</h5>
+
+                                            <input asp-for="ProfileVM.EducationLevel"
+                                                   class="form-control mb-2"
+                                                   placeholder="Education Level" />
+
+                                            <input asp-for="ProfileVM.ExperenceLevel"
+                                                   class="form-control mb-2"
+                                                   placeholder="Experience Level" />
+
+                                            <button class="btn btn-theme btn-block">Submit</button>
+                                        </div>
+                                    </div>
+                                }
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ================= HISTORY ================= -->
+                    <div id="history" class="tab-pane fade">
+                        <h4 class="mb-3">Recent Orders</h4>
+
+                        @if (Model.RecentOrders.Any())
+                        {
+                            foreach (var o in Model.RecentOrders)
+                            {
+                                <div class="card mb-3">
+                                    <div class="card-header d-flex justify-content-between">
+                                        <strong>Order #@o.OrderId</strong>
+                                        <span class="badge badge-info">@o.Status</span>
+                                    </div>
+
+                                    <div class="card-body">
+                                        <ul class="mb-2">
+                                            @foreach (var item in o.Items)
+                                            {
+                                                <li>
+                                                    <a asp-controller="Home"
+                                                       asp-action="ProductDetail"
+                                                       asp-route-id="@item.ProductId">
+                                                        @item.ProductName
+                                                    </a>
+                                                </li>
+                                            }
+                                        </ul>
+
+                                        <a class="btn btn-sm btn-outline-primary"
+                                           asp-controller="Order"
+                                           asp-action="Details"
+                                           asp-route-id="@o.OrderId">
+                                            View Order Details
+                                        </a>
+                                        @if (o.Status == "Pending")
+                                        {
+                                            <form asp-controller="Order"
+                                                  asp-action="CancelOrder"
+                                                  method="post"
+                                                  class="d-inline">
+
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="orderId" value="@o.OrderId" />
+
+                                                <button type="submit"
+                                                        class="btn btn-sm btn-danger"
+                                                        onclick="return confirm('Are you sure you want to cancel this order?');">
+                                                    Cancel Order
+                                                </button>
+                                            </form>
+                                        }
+
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <p>No recent orders</p>
+                        }
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts {
+
+        <script>
+            function previewProfile(input) {
+                if (input.files && input.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        document.querySelector(".mr-3").src = e.target.result;
+                    };
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+        </script>
+    <partial name="_ValidationScriptsPartial" />
+}
+

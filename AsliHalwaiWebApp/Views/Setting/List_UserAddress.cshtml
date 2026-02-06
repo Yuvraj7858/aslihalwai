@@ -1,0 +1,132 @@
+﻿@model AsliHalwaiWebApp.ViewModel.UserAddressVM
+@{
+    ViewBag.Title = "User Address";
+}
+
+<!-- Breadcrumb -->
+<div class="bread-crumb">
+    <div class="container">
+        <div class="matter">
+            <h2>User Address</h2>
+            <ul class="list-inline">
+                <li class="list-inline-item">
+                    <a asp-controller="Home" asp-action="Index">HOME</a>
+                </li>
+                <li class="list-inline-item">
+                    <a asp-controller="Setting" asp-action="List_UserAddress">User Address</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="contactus">
+    <div class="container">
+        <div class="row">
+
+            <!-- TITLE -->
+            <div class="col-sm-12 commontop text-center">
+                <h4>User Addresses</h4>
+                <div class="divider style-1 center">
+                    <span class="hr-simple left"></span>
+                    <i class="icofont icofont-ui-press hr-icon"></i>
+                    <span class="hr-simple right"></span>
+                </div>
+            </div>
+
+            <!-- ================= FORM ================= -->
+            <div class="col-md-5 col-12">
+                <form asp-action="List_UserAddress"
+                      asp-controller="Setting"
+                      method="post">
+
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="UserAddressID" />
+
+                    <!-- Address Type -->
+                    <div class="form-group mb-3">
+                        <select asp-for="AddressTypeID"
+                                asp-items="Model.AddressTypes"
+                                class="form-control">
+                            <option value="">--Choose Type--</option>
+                        </select>
+                        <span asp-validation-for="AddressTypeID" class="text-danger"></span>
+                    </div>
+
+                    <!-- Full Address -->
+                    <div class="form-group mb-3">
+                        <textarea asp-for="FullAddress"
+                                  class="form-control"
+                                  placeholder="Enter Full Address"></textarea>
+                        <span asp-validation-for="FullAddress" class="text-danger"></span>
+                    </div>
+
+                    <!-- Visible Status -->
+                    <div class="form-group mb-3">
+                        <select asp-for="VisibleStatusID"
+                                asp-items="Model.VisibleStatuses"
+                                class="form-control">
+                            <option value="">--Choose Status--</option>
+                        </select>
+                        <span asp-validation-for="VisibleStatusID" class="text-danger"></span>
+                    </div>
+
+                    <div class="text-end">
+                        <button type="submit" class="btn btn-theme btn-md btn-wide">
+                            @(Model.UserAddressID == 0 ? "Create" : "Update")
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- ================= LIST ================= -->
+            <div class="col-md-7 col-12">
+                <div class="table-responsive-md">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Address Type</th>
+                                <th>Full Address</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.AddressList != null && Model.AddressList.Any())
+                            {
+                                foreach (var item in Model.AddressList)
+                                {
+                                    <tr>
+                                        <td>@item.AddressType</td>
+                                        <td>@item.FullAddress</td>
+                                        <td>@item.VisibleStatus</td>
+                                        <td>
+                                            <a asp-action="List_UserAddress"
+                                               asp-route-id="@item.UserAddressID"
+                                               class="btn btn-theme btn-sm">
+                                                Edit
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="4" class="text-center text-danger">
+                                        No Address Found
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

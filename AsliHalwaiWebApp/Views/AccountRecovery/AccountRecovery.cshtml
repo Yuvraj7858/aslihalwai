@@ -1,0 +1,65 @@
+﻿@model AsliHalwaiWebApp.ViewModel.AccountRecoveryVM
+@{
+    ViewData["Title"] = "Account Recovery";
+}
+
+<div class="bread-crumb">
+    <div class="container">
+        <h2>Account Recovery</h2>
+        <ul class="list-inline">
+            <li class="list-inline-item">
+                <a asp-controller="Home" asp-action="Index">Home</a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div class="login">
+    <div class="container">
+        <div class="row justify-content-center">
+
+            <div class="col-md-6">
+                <div class="loginnow">
+                    <h5 class="text-center mb-4">Forgot Password</h5>
+
+                    <form asp-action="AccountRecovery"
+                          asp-controller="AccountRecovery"
+                          method="post">
+
+                        @Html.AntiForgeryToken()
+
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="form-group mb-3">
+                            <label>User Name / Email</label>
+                            <input asp-for="UserName"
+                                   class="form-control"
+                                   placeholder="Enter username or email" />
+                            <span asp-validation-for="UserName"
+                                  class="text-danger"></span>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a asp-controller="User"
+                               asp-action="Login">
+                                Back to Login
+                            </a>
+
+                            <button type="submit"
+                                    class="btn btn-theme">
+                                Send Recovery Link
+                            </button>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

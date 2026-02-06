@@ -1,0 +1,170 @@
+﻿@model IEnumerable<AsliHalwaiWebApp.ViewModel.AdminOrderVM>
+
+<h3 class="mb-3">Admin – Order Management</h3>
+
+<!-- ================= DESKTOP TABLE ================= -->
+<table class="table table-bordered table-striped d-none d-md-table">
+    <thead>
+        <tr>
+            <th>Order #</th>
+            <th>User</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th style="width:240px">Action</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var o in Model)
+        {
+            <tr>
+                <td>@o.OrderId</td>
+                <td>@o.UserName</td>
+                <td>@o.OrderDate.ToString("dd MMM yyyy")</td>
+                <td>
+                    <span class="badge badge-info">@o.Status</span>
+                </td>
+
+                <td>
+                    @if (o.Status == "Pending")
+                    {
+                        <form asp-action="Approve" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="orderId" value="@o.OrderId" />
+                            <button class="btn btn-sm btn-success">Accept</button>
+                        </form>
+
+                        <form asp-action="Cancel" method="post" class="d-inline"
+                              onsubmit="return confirm('Cancel this order?');">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="orderId" value="@o.OrderId" />
+                            <button class="btn btn-sm btn-danger">Cancel</button>
+                        </form>
+                    }
+                    else if (o.Status == "Accept")
+                    {
+                        <form asp-action="MarkOnTheWay" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="orderId" value="@o.OrderId" />
+                            <button class="btn btn-sm btn-warning">On the way</button>
+                        </form>
+
+                        <form asp-action="Cancel" method="post" class="d-inline"
+                              onsubmit="return confirm('Cancel this order?');">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="orderId" value="@o.OrderId" />
+                            <button class="btn btn-sm btn-danger">Cancel</button>
+                        </form>
+                    }
+                    else if (o.Status == "On the way")
+                    {
+                        <form asp-action="MarkDelivered" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="orderId" value="@o.OrderId" />
+                            <button class="btn btn-sm btn-primary">Delivered</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <span class="text-muted">No Action</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- ================= MOBILE CARD VIEW ================= -->
+<div class="d-block d-md-none">
+
+    @if (Model.Any())
+    {
+        @foreach (var o in Model)
+        {
+            <div class="card mb-3 shadow-sm">
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between mb-2">
+                        <strong>Order #@o.OrderId</strong>
+                        <span class="badge badge-info">@o.Status</span>
+                    </div>
+
+                    <p class="mb-1">
+                        <strong>User:</strong> @o.UserName
+                    </p>
+
+                    <p class="mb-2">
+                        <strong>Date:</strong> @o.OrderDate.ToString("dd MMM yyyy")
+                    </p>
+
+                    <!-- ACTIONS -->
+                    <div class="d-flex flex-column gap-2">
+
+                        @if (o.Status == "Pending")
+                        {
+                            <form asp-action="Approve" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="orderId" value="@o.OrderId" />
+                                <button class="btn btn-success btn-block">
+                                    Accept
+                                </button>
+                            </form>
+
+                            <form asp-action="Cancel" method="post"
+                                  onsubmit="return confirm('Cancel this order?');">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="orderId" value="@o.OrderId" />
+                                <button class="btn btn-danger btn-block">
+                                    Cancel
+                                </button>
+                            </form>
+                        }
+                        else if (o.Status == "Accept")
+                        {
+                            <form asp-action="MarkOnTheWay" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="orderId" value="@o.OrderId" />
+                                <button class="btn btn-warning btn-block">
+                                    On the way
+                                </button>
+                            </form>
+
+                            <form asp-action="Cancel" method="post"
+                                  onsubmit="return confirm('Cancel this order?');">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="orderId" value="@o.OrderId" />
+                                <button class="btn btn-danger btn-block">
+                                    Cancel
+                                </button>
+                            </form>
+                        }
+                        else if (o.Status == "On the way")
+                        {
+                            <form asp-action="MarkDelivered" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="orderId" value="@o.OrderId" />
+                                <button class="btn btn-primary btn-block">
+                                    Delivered
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <div class="text-muted text-center">
+                                No Action Available
+                            </div>
+                        }
+
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="alert alert-secondary text-center">
+            No orders found
+        </div>
+    }
+
+</div>

@@ -1,0 +1,223 @@
+﻿@model AsliHalwaiWebApp.ViewModel.AdminOrderFilterVM
+
+<h3 class="mb-4">🧾 Admin – Invoice Dashboard</h3>
+
+<!-- 🔍 FILTER FORM -->
+<form method="get" class="mb-4">
+    <div class="row">
+
+        <div class="col-md-2 col-6 mb-2">
+            <input type="number"
+                   name="orderId"
+                   value="@Model.OrderId"
+                   class="form-control"
+                   placeholder="Order #" />
+        </div>
+
+        <div class="col-md-3 col-6 mb-2">
+            <input type="text"
+                   name="customerName"
+                   value="@Model.CustomerName"
+                   class="form-control"
+                   placeholder="Customer Name" />
+        </div>
+
+        <div class="col-md-3 col-6 mb-2">
+            <select name="statusId" class="form-control">
+                <option value="">-- All Status --</option>
+                @foreach (var s in ViewBag.StatusList)
+                {
+                    <option value="@s.OrderStatusId"
+                            selected="@(Model.OrderStatusId == s.OrderStatusId)">
+                        @s.OrderStatus
+                    </option>
+                }
+            </select>
+        </div>
+
+        <div class="col-md-2 col-6 mb-2">
+            <button class="btn btn-primary btn-block">Search</button>
+        </div>
+
+        <div class="col-md-2 col-12">
+            <a asp-action="InvoiceDashboard"
+               class="btn btn-secondary btn-block">
+                Reset
+            </a>
+        </div>
+
+    </div>
+</form>
+
+<!-- ================= DESKTOP TABLE ================= -->
+<table class="table table-bordered table-striped d-none d-md-table">
+    <thead class="thead-dark">
+        <tr>
+            <th>Order #</th>
+            <th>Date</th>
+            <th>Customer</th>
+            <th>Contact</th>
+            <th>Status</th>
+            <th>Payment</th>
+            <th>Total</th>
+            <th width="220">Action</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @if (Model.Orders.Any())
+        {
+            foreach (var o in Model.Orders)
+            {
+                var origin = Uri.EscapeDataString("Asli Halwai Bank More Dhanbad");
+                var destination = Uri.EscapeDataString(o.Address ?? "");
+
+                <tr>
+                    <td>#@o.OrderId</td>
+                    <td>@o.OrderDate.ToString("dd MMM yyyy")</td>
+                    <td>@o.CustomerName</td>
+                    <td>@o.ContactNo</td>
+
+                    <td>
+                        <span class="badge badge-info">@o.OrderStatus</span>
+                    </td>
+
+                    <!-- 🔥 PAYMENT INFO -->
+                    <td>
+                        <strong>@o.PaymentMode</strong><br />
+                        <small>UTR: @o.PaymentUTR</small><br />
+                        <span class="badge
+                                    @(o.PaymentStatus == "Paid" ? "badge-success" :
+                                                            o.PaymentStatus == "Pending" ? "badge-warning" :
+                                                            "badge-secondary")">
+                    @o.PaymentStatus
+                </span>
+            </td>
+
+                    <td>₹ @o.TotalAmount</td>
+
+                    <td>
+                        <a class="btn btn-sm btn-primary mb-1"
+                           asp-controller="Order"
+                           asp-action="Invoice"
+                           asp-route-id="@o.OrderId"
+                           target="_blank">
+                            Invoice
+                        </a>
+
+                @if (!string.IsNullOrWhiteSpace(o.Address))
+                        {
+                            <a class="btn btn-sm btn-success mb-1"
+                               href="https://www.google.com/maps/dir/?api=1&origin=@origin&destination=@destination&travelmode=driving"
+                               target="_blank">
+                                🚚 Route
+                            </a>
+                        }
+
+                        <!-- 🔥 MARK PAID BUTTON -->
+                        @if (o.PaymentStatus == "Pending")
+                        {
+                            <form asp-controller="Order"
+                                  asp-action="MarkPaid"
+                                  method="post"
+                                  class="d-inline">
+
+                                @Html.AntiForgeryToken()
+
+                                <input type="hidden" name="orderId" value="@o.OrderId" />
+
+                                <button type="submit" class="btn btn-sm btn-success">
+                                    Mark Paid
+                                </button>
+                            </form>
+                        }
+
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="8" class="text-center text-muted">
+                    No records found
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- ================= MOBILE CARD VIEW ================= -->
+<div class="d-block d-md-none">
+
+    @if (Model.Orders.Any())
+    {
+        foreach (var o in Model.Orders)
+        {
+            <div class="card mb-3 shadow-sm">
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between mb-2">
+                        <strong>Order #@o.OrderId</strong>
+                        <span class="badge badge-info">@o.OrderStatus</span>
+                    </div>
+
+                    <p><strong>Date:</strong> @o.OrderDate.ToString("dd MMM yyyy")</p>
+                    <p><strong>Customer:</strong> @o.CustomerName</p>
+                    <p><strong>Contact:</strong> @o.ContactNo</p>
+
+                    <p>
+                        <strong>Payment:</strong><br />
+                        @o.PaymentMode <br />
+                        <small>UTR: @o.PaymentUTR</small><br />
+                        <span class="badge
+                                    @(o.PaymentStatus == "Paid" ? "badge-success" :
+                                                            o.PaymentStatus == "Pending" ? "badge-warning" :
+                                                            "badge-secondary")">
+                    @o.PaymentStatus
+                </span>
+            </p>
+
+                    <p class="font-weight-bold text-success">
+                        ₹ @o.TotalAmount
+                    </p>
+
+                    <a class="btn btn-outline-primary btn-sm btn-block mb-2"
+                       asp-controller="Order"
+                       asp-action="Invoice"
+                       asp-route-id="@o.OrderId"
+                       target="_blank">
+                        View Invoice
+                    </a>
+
+            @if (!string.IsNullOrWhiteSpace(o.Address))
+                    {
+                        <a class="btn btn-success btn-sm btn-block mb-2"
+                           href="https://www.google.com/maps/dir/?api=1&origin=Asli+Halwai+Bank+More+Dhanbad&destination=@o.Address&travelmode=driving"
+                           target="_blank">
+                            🚚 Navigate
+                        </a>
+                    }
+
+                    @if (o.PaymentMode == "UPI" && o.PaymentStatus == "Pending")
+                    {
+                        <form asp-action="MarkPaid" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="orderId" value="@o.OrderId" />
+                            <button class="btn btn-success btn-block">
+                                ✔ Mark Paid
+                            </button>
+                        </form>
+                    }
+
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="alert alert-secondary text-center">
+            No records found
+        </div>
+    }
+</div>

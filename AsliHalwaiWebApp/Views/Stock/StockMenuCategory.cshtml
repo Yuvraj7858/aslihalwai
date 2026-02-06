@@ -1,0 +1,130 @@
+﻿@model AsliHalwaiWebApp.ViewModel.StockMenuCategoryVM
+
+@{
+    ViewData["Title"] = "Stock Menu Category";
+}
+
+<!-- ================= Breadcrumb ================= -->
+<div class="bread-crumb">
+    <div class="container">
+        <div class="matter">
+            <h2>Stock Menu Category</h2>
+            <ul class="list-inline">
+                <li class="list-inline-item">
+                    <a asp-controller="Home" asp-action="Index">HOME</a>
+                </li>
+                <li class="list-inline-item">
+                    <a href="#">Stock Category</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- ================= Content ================= -->
+<div class="login">
+    <div class="container">
+        <div class="row">
+
+            <!-- ===== LEFT : ADD / EDIT FORM ===== -->
+            <div class="col-md-4">
+                <div class="loginnow">
+                    <h5>
+                        @(Model.StockMenuCategoryId == 0
+                                                ? "Add Stock Category"
+                                                : "Edit Stock Category")
+                    </h5>
+
+                    <form asp-action="StockMenuCategory" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="StockMenuCategoryId" />
+
+                        <div class="form-group">
+                            <label>Menu Category Name</label>
+                            <input asp-for="StockMenuCategory"
+                                   class="form-control"
+                                   placeholder="Enter Menu name" />
+                            <span asp-validation-for="StockMenuCategory"
+                                  class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mt-3">
+                            <input type="submit"
+                                   value="@(Model.StockMenuCategoryId == 0 ? "Save" : "Update")"
+                                   class="btn btn-theme btn-md btn-wide" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- ===== RIGHT : CATEGORY LIST ===== -->
+            <div class="col-md-8">
+                <div class="loginnow">
+                    <h5>Stock Menu List</h5>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Menu Name</th>
+                                    <th>Created By</th>  <!-- 🔥 NEW -->
+                                    <th style="width:180px">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.CategoryList != null && Model.CategoryList.Any())
+                                {
+                                    foreach (var item in Model.CategoryList)
+                                    {
+                                        <tr>
+                                            <td>@item.StockMenuCategory</td>
+                                            <td>@item.CreatedBy</td> <!-- 🔥 NEW -->
+
+                                            <td>
+                                                <a asp-action="StockMenuCategory"
+                                                   asp-route-id="@item.StockMenuCategoryId"
+                                                   class="btn btn-sm btn-warning">
+                                                    Edit
+                                                </a>
+
+                                                <form asp-action="DeleteStockMenuCategory"
+                                                      method="post"
+                                                      style="display:inline">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden"
+                                                           name="id"
+                                                           value="@item.StockMenuCategoryId" />
+
+                                                    <button type="submit"
+                                                            class="btn btn-sm btn-danger"
+                                                            onclick="return confirm('Are you sure?')">
+                                                        Delete
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="3"
+                                            class="text-center text-danger">
+                                            No Category Found
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

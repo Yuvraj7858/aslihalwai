@@ -1,0 +1,344 @@
+﻿@model AsliHalwaiWebApp.ViewModel.ItemDetailVM
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@using Microsoft.AspNetCore.Http
+
+@{
+    ViewData["Title"] = "Product Details";
+    int userid = Context.Session.GetInt32("UserId") ?? 0;
+}
+<input type="hidden" id="__RequestVerificationToken"
+       value="@Antiforgery.GetAndStoreTokens(Context).RequestToken" />
+
+<!-- FONT AWESOME -->
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+
+<!-- Breadcrumb -->
+<div class="bread-crumb">
+    <div class="container">
+        <div class="matter">
+            <h2>Product Details</h2>
+            <ul class="list-inline">
+                <li class="list-inline-item">
+                    <a asp-controller="Home" asp-action="Index">HOME</a>
+                </li>
+                <li class="list-inline-item">
+                    <a asp-controller="Home"
+                       asp-action="ProductDetail"
+                       asp-route-itemid="@Model.Item.StockItemID">
+                        Product Details
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Product Detail -->
+<div class="shop">
+    <div class="container">
+        <div class="row shopdetail">
+
+            <!-- IMAGE -->
+            <div class="col-sm-5 col-12">
+                <img src="@Model.Item.ItemPhotoPath"
+                     class="img-fluid"
+                     alt="@Model.Item.StockItemTitle" />
+            </div>
+
+            <!-- DETAILS -->
+            <div class="col-sm-7 col-12">
+                <h2>@Model.Item.StockItemTitle</h2>
+
+                <!-- PRODUCT RATING -->
+                <div class="rating">
+                    @for (int i = 1; i <= 5; i++)
+                    {
+                        if (i <= Model.Item.Rating)
+                        {
+                            <span class="fa fa-star" style="color:orange;"></span>
+                        }
+                        else
+                        {
+                            <span class="fa fa-star"></span>
+                        }
+                    }
+                </div>
+
+                <div class="price">₹ @Model.Item.UnitPrice</div>
+
+                <p class="des">
+                    Size : @Model.Item.ItemSize /
+                    Category : @Model.Item.StockItemCategory
+                </p>
+
+                <a href="javascript:void(0);"
+                   class="btn btn-theme-alt btn-md"
+                   onclick="orderNow(@Model.Item.StockItemID)">
+                    Order Now
+                </a>
+
+
+                    <a href="javascript:void(0);"
+                       class="btn btn-theme-alt btn-md"
+                       onclick="addItem(@Model.Item.StockItemID)">
+                        Add To Cart
+                    </a>
+
+                </div>
+
+            </div>
+
+            <!-- TABS -->
+            <div class="col-sm-12 col-12 mt-4">
+
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link active"
+                           data-toggle="tab"
+                           href="#tab-review">
+                            Reviews (@Model.Reviews.Count)
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           data-toggle="tab"
+                           href="#tab-add">
+                            Add Review
+                        </a>
+                    </li>
+                </ul>
+
+
+                <div class="tab-content">
+
+                    <!-- REVIEWS -->
+                    <div class="tab-pane fade show active" id="tab-review" role="tabpanel">
+                        @foreach (var review in Model.Reviews)
+                        {
+                            <div class="box mt-3">
+                                <img src="@review.UserPhotoPath"
+                                     class="img-fluid"
+                                     style="width:60px;" />
+
+                                <div class="detail">
+                                    <h2>@review.ReviewByUser</h2>
+                                    <span>@review.ReviewDays days ago</span>
+
+                                    <div class="rating">
+                                        @for (int i = 1; i <= 5; i++)
+                                        {
+                                            if (i <= review.Rating)
+                                            {
+                                                <span class="fa fa-star" style="color:orange;"></span>
+                                            }
+                                            else
+                                            {
+                                                <span class="fa fa-star"></span>
+                                            }
+                                        }
+                                    </div>
+
+                                    <p>@review.ReviewDetails</p>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- ADD REVIEW -->
+                    <div class="tab-pane fade" id="tab-add" role="tabpanel">
+
+                        @if (userid > 0)
+                        {
+                            <form asp-action="ProductDetail"
+                                  asp-controller="Home"
+                                  method="post"
+                                  class="form-horizontal mt-4">
+
+                                @Html.AntiForgeryToken()
+                                @Html.HiddenFor(m => m.StockItemID)
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        @Html.TextBoxFor(m => m.Name,
+                                        new { @class = "form-control", placeholder = "Name*" })
+                                </div>
+
+                                <div class="col-md-6">
+                                    @Html.TextBoxFor(m => m.Email,
+                                                                        new { @class = "form-control", placeholder = "Email*" })
+                                </div>
+                            </div>
+
+                            <div class="form-group mt-3">
+                                @Html.TextAreaFor(m => m.ReviewDetails,
+                                                                new { @class = "form-control", rows = 5, placeholder = "Your Review*" })
+                            </div>
+
+                            <div class="form-group mt-3">
+                                <p>Your Rating*</p>
+                                <ul class="list-inline">
+                                    @foreach (var rate in Model.RatingList)
+                                        {
+                                            <li class="list-inline-item">
+                                                <input type="radio"
+                                                       name="Rating"
+                                                       value="@rate.Id"
+                                                       @(Model.Rating == rate.Id ? "checked" : "") />
+                                                @rate.Type
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+
+
+                                <button type="submit"
+                                        class="btn btn-theme btn-wide mt-2">
+                                    Submit Review
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <a asp-controller="User" asp-action="Login">
+                                First Login here
+                            </a>
+                        }
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- RELATED ITEMS -->
+            <div class="col-sm-12 text-center mt-5">
+                <h4>Related Food</h4>
+            </div>
+
+            <div class="dish owl-carousel">
+                @foreach (var r in Model.RelatedItems)
+                {
+                    <div class="item">
+                        <div class="box">
+                            <a asp-controller="Home"
+                               asp-action="ProductDetail"
+                               asp-route-itemid="@r.StockItemID">
+                                <img src="@r.ItemPhotoPath" class="img-fluid" />
+                            </a>
+
+                            <div class="caption">
+                                <h4>@r.StockItemTitle</h4>
+                                <p>₹ @r.UnitPrice</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+        </div>
+    </div>
+
+<div id="toastMessage"
+     style="display:none;
+            position:fixed;
+            bottom:90px;
+            left:50%;
+            transform:translateX(-50%);
+            background:#323232;
+            color:#fff;
+            padding:12px 18px;
+            border-radius:6px;
+            font-size:14px;
+            z-index:99999;">
+</div>
+
+
+@section Scripts {
+  
+
+
+<script>
+
+    function orderNow(itemId) {
+        // pehle item cart me add
+        addItem(itemId, true);
+    }
+
+    function addItem(id, redirectToCart = false) {
+
+        $.ajax({
+            url: '/Order/Cart_AddItem',
+            type: 'POST',
+            data: {
+                itemid: id,
+                qty: 1,
+                itemtype: 'item'
+            },
+            success: function (result) {
+
+                console.log("Server Result:", result);
+
+                if (result === true || result === "success" || result === 1) {
+
+                    showToast("Added to cart", "success");
+                    if (typeof refreshCartCount === "function") {
+                        refreshCartCount();
+                    }
+
+                    // Order Now ke liye redirect
+                    if (redirectToCart) {
+                        setTimeout(function () {
+                            window.location.href = '@Url.Action("ViewCart","Order")';
+                        }, 600);
+                    }
+                }
+                else {
+                    showToast("Please login to continue", "error");
+
+                    setTimeout(function () {
+                        window.location.href = '@Url.Action("Login","User")';
+                    }, 1200);
+                }
+            },
+            error: function (err) {
+                console.log(err);
+                showToast("Something went wrong", "error");
+            }
+        });
+    }
+
+    function showToast(message, type = "info") {
+
+        const toast = document.getElementById("toastMessage");
+
+        toast.innerText = message;
+
+        if (type === "error") {
+            toast.style.background = "#d32f2f";
+        }
+        else if (type === "success") {
+            toast.style.background = "#388e3c";
+        }
+        else {
+            toast.style.background = "#323232";
+        }
+
+        toast.style.display = "block";
+
+        setTimeout(function () {
+            toast.style.display = "none";
+        }, 2500);
+    }
+
+</script>
+
+}
+
+
+
+
+
+
+
+
+

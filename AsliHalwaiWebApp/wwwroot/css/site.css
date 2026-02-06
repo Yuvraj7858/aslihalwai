@@ -1,0 +1,170 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
+  color: var(--bs-secondary-color);
+  text-align: end;
+}
+
+.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
+  text-align: start;
+}
+
+
+/* Bottom navbar styling */
+.fixed-bottom-navbar {
+    display: none;
+}
+
+@media (max-width: 767px) {
+    .fixed-bottom-navbar {
+        display: block;
+    }
+
+    /* Desktop menu hide on mobile */
+    #menu {
+        display: none;
+    }
+
+    /* Floating cart adjust for mobile */
+    .floating-cart {
+        bottom: 70px !important;
+        right: 15px !important;
+    }
+
+    /* Modal bottom animation */
+    .modal-dialog-bottom {
+        transform: translateY(100%);
+        transition: transform 0.3s ease-out;
+    }
+
+    .modal.show .modal-dialog-bottom {
+        transform: translateY(0);
+    }
+}
+
+
+@media (max-width: 768px) {
+
+    /* ?? FORCE SHOW ALL MENU ITEMS */
+    .menu,
+    .menu-category,
+    .menu-list,
+    .menu-items,
+    .food-menu,
+    .dish-list {
+        display: block !important;
+    }
+
+    /* Agar grid / flex use hota ho */
+    .menu-row,
+    .menu-grid {
+        display: flex !important;
+        flex-wrap: wrap;
+    }
+}
+
+
+/* Dropdown menu up */
+.dropdown-menu-up {
+    bottom: 100% !important;
+    top: auto !important;
+}
+
+/* ===== MOBILE HEADER SWEETS BACKGROUND ===== */
+/*@media (max-width: 768px) {*/
+
+    /* Force sweets image */
+    /*.top {
+        background-image: url('/images/sw.png') !important;
+        background-color: transparent !important;
+        background-size: cover !important;
+        background-position: center !important;
+        background-repeat: no-repeat !important;
+    }*/
+
+        /* REMOVE any black background on inner elements */
+        /*.top,
+        .top .container,
+        .top .row,
+        .top .col-12,
+        .top .icon,
+        .top ul {
+            background: transparent !important;
+        }
+}
+@media (max-width: 768px) {
+
+    .top::before,
+    .top::after {
+        display: none !important;
+        background: none !important;
+    }
+}*/
+
+
+
+        /* thoda overlay taaki text readable rahe */
+        /*header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.55);
+            z-index: 0;
+        }
+
+        header > * {
+            position: relative;
+            z-index: 1;
+        }*/
+
+/* ===== MOBILE HEADER SWEETS BACKGROUND (FINAL FIX) ===== */
+@media (max-width: 768px) {
+
+    header {
+        position: relative;
+        background-image: url('/images/sw4.png') !important;
+        background-size: cover !important;
+        background-position: center !important;
+        background-repeat: no-repeat !important;
+        background-color: transparent !important;
+    }
+
+        /* remove theme black overlays */
+        header::before,
+        header::after {
+            display: none !important;
+            background: none !important;
+        }
+
+        /* inner elements transparent so image dikhe */
+        header .container,
+        header .row,
+        header [class^="col-"] {
+            background: transparent !important;
+        }
+}
+

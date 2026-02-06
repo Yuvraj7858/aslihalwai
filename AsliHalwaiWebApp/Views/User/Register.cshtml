@@ -1,0 +1,116 @@
+﻿@model AsliHalwaiWebApp.ViewModels.Reg_UserVM
+
+@{
+    ViewData["Title"] = "Register";
+}
+
+<!-- Breadcrumb Start -->
+<div class="bread-crumb">
+    <div class="container">
+        <div class="matter">
+            <h2>Register</h2>
+            <ul class="list-inline">
+                <li class="list-inline-item">
+                    <a asp-controller="Home" asp-action="Index">HOME</a>
+                </li>
+                <li class="list-inline-item">
+                    <a asp-controller="User" asp-action="Register">Register</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- Breadcrumb End -->
+<!-- User Register Start -->
+<div class="login">
+    <div class="container">
+        <div class="row justify-content-center">
+
+            <div class="col-sm-12 commontop text-center">
+                <h4>Create an Account</h4>
+                <div class="divider style-1 center">
+                    <span class="hr-simple left"></span>
+                    <i class="icofont icofont-ui-press hr-icon"></i>
+                    <span class="hr-simple right"></span>
+                </div>
+            </div>
+
+            <div class="col-lg-10 col-md-12">
+                <div class="row">
+
+                    <!-- REGISTER FORM -->
+                    <div class="col-sm-12 col-md-6">
+                        <div class="loginnow">
+                            <p>
+                                Already have an account?
+                                <a asp-controller="User" asp-action="Login">Login</a>
+                                And starts less than a minute
+                            </p>
+                            <h5>Register</h5>
+
+                            <form asp-action="Register" asp-controller="User" method="post">
+                                @Html.AntiForgeryToken()
+
+                                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                                <div class="form-group">
+                                    <input asp-for="UserName" class="form-control" placeholder="Enter Your Email Or Phone Number" />
+                                    <span asp-validation-for="UserName" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <input asp-for="Password" type="password" class="form-control" placeholder="Enter Password" />
+                                    <span asp-validation-for="Password" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="Confirm Password" />
+                                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                                </div>
+
+                                @* <div class="form-group">
+                                    <label>
+                                        <input asp-for="AcceptTerms" />
+                                        I agree to the terms & conditions
+                                    </label>
+                                    <span asp-validation-for="AcceptTerms" class="text-danger"></span>
+                                </div> *@
+
+                                <button type="submit" class="btn btn-theme btn-md btn-wide">
+                                    SIGN UP
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- SOCIAL LOGIN -->
+                    <div class="col-sm-12 col-md-6">
+                        <div class="loginto loginnow">
+                            <h5>Login via social accounts</h5>
+                            <ul class="list-unstyled text-center">
+                                <li>
+                                    <a href="#">
+                                        <i class="icofont icofont-social-facebook"></i>
+                                        Login with Facebook
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <i class="icofont icofont-social-google-plus"></i>
+                                        Login with Google+
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- User Register End -->
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,130 @@
+﻿@model AsliHalwaiWebApp.Models.TableReservationVM
+@using Microsoft.AspNetCore.Http
+
+@{
+    ViewData["Title"] = "Table Reservation";
+
+    int userId = Context.Session.GetInt32("UserId") ?? 0;
+    int userTypeId = Context.Session.GetInt32("UserTypeId") ?? 0;
+}
+
+<!-- 🔒 NAVBAR OVERLAP FIX (DO NOT REMOVE) -->
+<div style="height:170px;"></div>
+
+<!-- ================= ADMIN PROCESS FORM ================= -->
+@if ((userTypeId == 1 || userTypeId == 5) && Model.TableReservationId > 0)
+{
+    <div class="container">
+        <form asp-action="BookingTables"
+              asp-controller="TableReservation"
+              method="post"
+              class="form-horizontal">
+
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="TableReservationId" />
+
+            <div class="row">
+                <!-- LEFT -->
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label>Full Name</label>
+                        <input asp-for="FullName" class="form-control" readonly />
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label>Mobile No</label>
+                        <input asp-for="MobileNo" class="form-control" readonly />
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label>Reservation Date</label>
+                        <input asp-for="ReservationDate" class="form-control" readonly />
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label>Reservation Time</label>
+                        <input asp-for="ReservationTime" class="form-control" readonly />
+                    </div>
+                </div>
+
+                <!-- RIGHT -->
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label>Description</label>
+                        <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label>Process To</label>
+                        <select asp-for="ReservationStatudId"
+                                asp-items="ViewBag.ReservationStatusId"
+                                class="form-control">
+                            <option value="">-- Choose Status --</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group text-right mt-4">
+                        <button type="submit" class="btn btn-theme btn-md">
+                            PROCESS
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+}
+
+<!-- ================= LIST ================= -->
+<div class="container mt-5">
+    <div class="table-responsive-md" style="margin-top:50px;">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Status</th>
+                    <th>Full Name</th>
+                    <th>Mobile</th>
+                    <th>Reservation Date Time</th>
+                    <th>No Of Persons</th>
+                    <th>Description</th>
+                    <th>Process By</th>
+                    <th style="width:120px;">Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var item in Model.ReservationList)
+                {
+                    <tr>
+                        <td>@item.ReservationStatus</td>
+                        <td>@item.FullName (@item.BookingUserName)</td>
+                        <td>@item.MobileNo</td>
+                        <td>@item.ReservationDateTime</td>
+                        <td>@item.NoOfPerson</td>
+                        <td>@item.Description</td>
+                        <td>@item.ProcessByUser</td>
+                        <td>
+                            @if (userTypeId == 1 || userTypeId == 5)
+                            {
+                                <a asp-action="BookingTables"
+                                   asp-controller="TableReservation"
+                                   asp-route-id="@item.TableReservationId"
+                                   class="btn btn-theme btn-sm">
+                                    Process
+                                </a>
+                            }
+                            else if (userTypeId == 3 && item.ReservationStatus == "Pending")
+                            {
+                                <a asp-action="CancelBooking"
+                                   asp-controller="TableReservation"
+                                   asp-route-bookingtableid="@item.TableReservationId"
+                                   class="btn btn-danger btn-sm">
+                                    Cancel
+                                </a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

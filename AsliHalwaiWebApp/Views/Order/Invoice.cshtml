@@ -1,0 +1,666 @@
+﻿@model AsliHalwaiWebApp.ViewModel.InvoiceVM
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Invoice #@Model.OrderId - Asli Halwai</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #d4a017; /* Gold color for halwai theme */
+            --secondary-color: #2c3e50;
+            --accent-color: #e74c3c;
+            --light-bg: #fdf6e3;
+            --border-color: #eaeaea;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 40px;
+            color: #333;
+            background-color: #f9f9f9;
+            line-height: 1.6;
+        }
+
+        .invoice-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .invoice-header {
+            background: linear-gradient(135deg, var(--secondary-color) 0%, #1a2530 100%);
+            color: white;
+            padding: 30px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+
+            .invoice-header::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                right: 0;
+                width: 120px;
+                height: 120px;
+                background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path fill="%23d4a017" opacity="0.2" d="M50,10 C60,10 70,15 77,22 C84,29 89,39 89,50 C89,61 84,71 77,78 C70,85 60,90 50,90 C40,90 30,85 23,78 C16,71 11,61 11,50 C11,39 16,29 23,22 C30,15 40,10 50,10 Z"/></svg>');
+                background-size: contain;
+                opacity: 0.1;
+            }
+
+        .company-brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .company-logo {
+            width: 60px;
+            height: 60px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+        }
+
+        .company-name {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .company-tagline {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-top: 5px;
+            font-weight: 300;
+        }
+
+        .invoice-title-section {
+            text-align: right;
+        }
+
+        .invoice-title {
+            font-size: 42px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .invoice-id {
+            font-size: 18px;
+            font-weight: 500;
+            opacity: 0.9;
+        }
+
+        .invoice-details {
+            padding: 40px;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .detail-box {
+            background: var(--light-bg);
+            border-radius: 8px;
+            padding: 25px;
+            border-left: 5px solid var(--primary-color);
+        }
+
+            .detail-box h3 {
+                font-size: 16px;
+                text-transform: uppercase;
+                color: var(--secondary-color);
+                margin-bottom: 15px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+                .detail-box h3 i {
+                    color: var(--primary-color);
+                }
+
+        .customer-name {
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+        }
+
+        .info-row {
+            display: flex;
+            margin-bottom: 8px;
+        }
+
+        .info-label {
+            font-weight: 600;
+            min-width: 100px;
+            color: #555;
+        }
+
+        .info-value {
+            color: #333;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .status-completed {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+            .items-table thead {
+                background: linear-gradient(to right, var(--secondary-color), #3a506b);
+                color: white;
+            }
+
+            .items-table th {
+                padding: 18px 20px;
+                text-align: left;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+            .items-table tbody tr {
+                border-bottom: 1px solid var(--border-color);
+                transition: background-color 0.2s;
+            }
+
+                .items-table tbody tr:hover {
+                    background-color: #f8f9fa;
+                }
+
+            .items-table td {
+                padding: 18px 20px;
+            }
+
+            .items-table tbody tr:last-child {
+                border-bottom: none;
+            }
+
+        .qty-col, .amount-col {
+            text-align: center;
+        }
+
+        .product-name {
+            font-weight: 500;
+            color: var(--secondary-color);
+        }
+
+        .totals-section {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 30px;
+        }
+
+        .totals-table {
+            width: 350px;
+            border-collapse: collapse;
+        }
+
+            .totals-table tr {
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            .totals-table td {
+                padding: 15px 20px;
+                font-size: 16px;
+            }
+
+            .totals-table .total-row {
+                border-top: 2px solid var(--secondary-color);
+                border-bottom: none;
+                font-weight: 700;
+                font-size: 22px;
+                color: var(--secondary-color);
+            }
+
+        .total-label {
+            text-align: right;
+            font-weight: 600;
+        }
+
+        .total-value {
+            text-align: right;
+            font-weight: 700;
+        }
+
+        .total-row .total-value {
+            color: var(--accent-color);
+        }
+
+        .invoice-footer {
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 1px solid var(--border-color);
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 40px;
+        }
+
+        .thank-you-section {
+            background: linear-gradient(135deg, #fdf6e3 0%, #faf3e0 100%);
+            padding: 25px;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .thank-you-section::before {
+                content: "✦";
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                font-size: 60px;
+                color: var(--primary-color);
+                opacity: 0.1;
+            }
+
+        .thank-you-title {
+            font-size: 20px;
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .payment-info {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 8px;
+        }
+
+            .payment-info h3 {
+                color: var(--secondary-color);
+                margin-bottom: 15px;
+                font-size: 18px;
+            }
+
+        .print-section {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px dashed #ddd;
+        }
+
+        .print-btn {
+            background: linear-gradient(to right, var(--secondary-color), #3a506b);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(44, 62, 80, 0.2);
+        }
+
+            .print-btn:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 8px 20px rgba(44, 62, 80, 0.3);
+            }
+
+            .print-btn:active {
+                transform: translateY(-1px);
+            }
+
+        .company-address {
+            text-align: center;
+            margin-top: 30px;
+            color: #666;
+            font-size: 14px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        /* ... previous CSS remains the same ... */
+        /* NEW PRINT MEDIA QUERY TO FIX PAGE SPLIT */
+        @@media print {
+            body
+
+        {
+            background: white;
+            padding: 0 !important;
+            margin: 0 !important;
+            font-size: 12px;
+        }
+
+        .invoice-container {
+            box-shadow: none !important;
+            border-radius: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            max-width: 100% !important;
+            width: 100% !important;
+        }
+
+        /* Force single page */
+        .invoice-details {
+            page-break-inside: avoid !important;
+        }
+
+        .items-table {
+            page-break-inside: avoid !important;
+        }
+
+        .totals-section {
+            page-break-inside: avoid !important;
+        }
+
+        .invoice-footer {
+            page-break-inside: avoid !important;
+        }
+
+        /* Reduce padding for print */
+        .invoice-header {
+            padding: 15px 20px !important;
+        }
+
+        .invoice-details {
+            padding: 20px !important;
+        }
+
+        .details-grid {
+            gap: 20px !important;
+            margin-bottom: 20px !important;
+        }
+
+        .detail-box {
+            padding: 15px !important;
+        }
+
+        .items-table th,
+        .items-table td {
+            padding: 10px 12px !important;
+        }
+
+        /* Reduce font sizes for print */
+        .company-name {
+            font-size: 22px !important;
+        }
+
+        .invoice-title {
+            font-size: 32px !important;
+        }
+
+        .customer-name {
+            font-size: 18px !important;
+        }
+
+        .total-row {
+            font-size: 18px !important;
+        }
+
+        /* Hide print button */
+        .print-section {
+            display: none !important;
+        }
+
+        /* Ensure everything fits on one page */
+        html, body {
+            height: auto !important;
+            overflow: hidden !important;
+        }
+
+        /* Optional: If still not fitting, reduce these further */
+        .invoice-footer {
+            margin-top: 20px !important;
+            padding-top: 20px !important;
+        }
+
+        .thank-you-section,
+        .payment-info {
+            padding: 15px !important;
+        }
+
+        .company-address {
+            margin-top: 20px !important;
+            font-size: 12px !important;
+            padding-top: 15px !important;
+        }
+
+        }
+
+        /* ADD THESE STYLES TO MAIN CSS */
+        @@media screen {
+            /* Keep your original styles for screen */
+            body
+
+        {
+            padding: 40px;
+            background-color: #f9f9f9;
+        }
+
+        .invoice-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            border-radius: 12px;
+        }
+
+        }
+
+        /* ADDITIONAL FIXES FOR CONTENT OVERFLOW */
+        .items-table tbody tr {
+            page-break-inside: avoid;
+        }
+
+        /* Ensure table doesn't overflow */
+        .items-table {
+            width: 100%;
+            table-layout: fixed;
+        }
+
+            .items-table td:first-child {
+                word-wrap: break-word;
+            }
+    </style>
+</head>
+
+<body>
+    <div class="invoice-container">
+        <div class="invoice-header">
+            <div class="company-brand">
+                <div class="company-logo">
+                    <i class="fas fa-utensils"></i>
+                </div>
+                <div>
+                    <div class="company-name">ASLI HALWAI</div>
+                    <div class="company-tagline">Traditional Sweets & Savories Since 2002</div>
+                </div>
+            </div>
+
+            <div class="invoice-title-section">
+                <div class="invoice-title">INVOICE</div>
+                <div class="invoice-id">#@Model.OrderId</div>
+            </div>
+        </div>
+
+        <div class="invoice-details">
+            <div class="details-grid">
+                <div class="detail-box">
+                    <h3><i class="fas fa-user"></i> Bill To</h3>
+                    <div class="customer-name">@Model.CustomerName</div>
+                    <div class="info-row">
+                        <div class="info-label">Address:</div>
+                        <div class="info-value">@Model.Address</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Contact:</div>
+                        <div class="info-value">@Model.ContactNo</div>
+                    </div>
+                </div>
+
+                <div class="detail-box">
+                    <h3><i class="fas fa-info-circle"></i> Invoice Details</h3>
+                    <div class="info-row">
+                        <div class="info-label">Invoice Date:</div>
+                        <div class="info-value">@Model.OrderDate.ToString("dd MMMM yyyy")</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Order ID:</div>
+                        <div class="info-value">#@Model.OrderId</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Status:</div>
+                        <div class="info-value">
+                            <span class="status-badge @(Model.OrderStatus.ToLower() == "completed" ? "status-completed" : "status-pending")">
+                                @Model.OrderStatus
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <table class="items-table">
+                <thead>
+                    <tr>
+                        <th style="width: 60%;">Description</th>
+                        <th class="qty-col" style="width: 20%;">Quantity</th>
+                        <th class="amount-col" style="width: 20%;">Amount (₹)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td class="product-name">@item.ProductName</td>
+                            <td class="qty-col">@item.Qty</td>
+                            <td class="amount-col">₹ @item.Total.ToString("N2")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <div class="totals-section">
+                <table class="totals-table">
+                    <tr>
+                        <td class="total-label">Subtotal:</td>
+                        <td class="total-value">₹ @Model.SubTotal.ToString("N2")</td>
+                    </tr>
+                    <tr>
+                        <td class="total-label">Tax (GST):</td>
+                        <td class="total-value">₹ 0.00</td>
+                    </tr>
+                    <tr>
+                        <td class="total-label">Shipping:</td>
+                        <td class="total-value">₹ 0.00</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td class="total-label">Total Amount:</td>
+                        <td class="total-value">₹ @Model.SubTotal.ToString("N2")</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="invoice-footer">
+                <div class="thank-you-section">
+                    <div class="thank-you-title">
+                        <i class="fas fa-heart"></i> Thank You For Your Order!
+                    </div>
+                    <p>We appreciate your business and hope you enjoy our traditional sweets made with authentic recipes and the finest ingredients. For any inquiries, please contact our customer service.</p>
+                    <p style="margin-top: 15px; font-weight: 500;">Payment is due within 30 days of invoice date.</p>
+                </div>
+
+                <div class="payment-info">
+                    <h3>Payment Information</h3>
+                    <div class="info-row">
+                        <div class="info-label">Bank:</div>
+                        <div class="info-value">Bank Of Baroda</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Account:</div>
+                        <div class="info-value">789200012241</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">IFSC:</div>
+                        <div class="info-value">BARB0VJMJHA</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">GSTIN:</div>
+                        <div class="info-value">27ABCDE1234F1Z5</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="company-address">
+            <strong>ASLI HALWAI</strong> • 828106, Dhanbad, Jharkhand 400001 • Phone: +91 7858908966 • Email: orders@aslihalwai.com
+        </div>
+
+        <div class="print-section">
+            <button class="print-btn" onclick="window.print()">
+                <i class="fas fa-print"></i> Print / Save as PDF
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Add a subtle animation when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            const invoiceContainer = document.querySelector('.invoice-container');
+            invoiceContainer.style.opacity = '0';
+            invoiceContainer.style.transform = 'translateY(20px)';
+
+            setTimeout(() => {
+                invoiceContainer.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                invoiceContainer.style.opacity = '1';
+                invoiceContainer.style.transform = 'translateY(0)';
+            }, 100);
+        });
+    </script>
+</body>
+</html>

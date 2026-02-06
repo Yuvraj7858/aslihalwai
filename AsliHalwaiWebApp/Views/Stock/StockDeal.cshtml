@@ -1,0 +1,167 @@
+﻿@model AsliHalwaiWebApp.ViewModel.StockDealVM
+@{
+    ViewData["Title"] = "Stock Deals";
+}
+
+<!-- Breadcrumb -->
+<div class="bread-crumb">
+    <div class="container">
+        <div class="matter">
+            <h2>Stock Deals</h2>
+            <ul class="list-inline">
+                <li class="list-inline-item">
+                    <a asp-controller="Home" asp-action="Index">HOME</a>
+                </li>
+                <li class="list-inline-item">Stock Deals</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Page -->
+<div class="container my-5">
+
+    <!-- Title -->
+    <div class="text-center mb-4">
+        <h4 class="fw-bold">Stock Deals</h4>
+        <div class="divider style-1 center"></div>
+    </div>
+
+    <!-- FORM CARD -->
+    <div class="card shadow-sm mb-5">
+        <div class="card-header bg-light fw-bold">
+            @(Model.StockDealId == 0 ? "Create Deal" : "Update Deal")
+        </div>
+
+        <div class="card-body">
+            <form asp-action="StockDeal"
+                  asp-controller="Stock"
+                  method="post"
+                  enctype="multipart/form-data">
+
+                @Html.AntiForgeryToken()
+                <input asp-for="StockDealId" type="hidden" />
+
+                <div class="row g-3">
+
+                    <!-- LEFT -->
+                    <div class="col-md-6">
+                        <div>
+                            <label class="form-label">Deal Title</label>
+                            <input asp-for="StockDealTitle" class="form-control" placeholder="Enter deal title" />
+                            <span asp-validation-for="StockDealTitle" class="text-danger"></span>
+                        </div>
+
+                        <div>
+                            <label class="form-label mt-3">Deal Price</label>
+                            <input asp-for="DealPrice" class="form-control" placeholder="Enter deal price" />
+                            <span asp-validation-for="DealPrice" class="text-danger"></span>
+                        </div>
+
+                        <div>
+                            <label class="form-label mt-3">Discount</label>
+                            <input asp-for="Discount" class="form-control" placeholder="Enter discount" />
+                        </div>
+                    </div>
+
+                    <!-- RIGHT -->
+                    <div class="col-md-6">
+                        <div>
+                            <label class="form-label">Visible Status</label>
+                            <select asp-for="VisibleStatusId"
+                                    asp-items="ViewBag.VisibleStatusList"
+                                    class="form-select">
+                                <option value="">-- Choose Status --</option>
+                            </select>
+                            <span asp-validation-for="VisibleStatusId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mt-3">
+                            <label class="form-label">Deal Photo</label>
+                            <input asp-for="DealPhoto" type="file" class="form-control" />
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(Model.DealPhotoPath))
+                        {
+                            <div class="mt-3">
+                                <img src="@Model.DealPhotoPath"
+                                     class="img-thumbnail"
+                                     style="max-width:150px;" />
+                            </div>
+                        }
+                    </div>
+
+                </div>
+
+                <!-- BUTTON -->
+                <div class="text-end mt-4">
+                    <button type="submit" class="btn btn-theme px-4">
+                        @(Model.StockDealId == 0 ? "Create Deal" : "Update Deal")
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- DEAL LIST -->
+    <div class="row g-4">
+        @foreach (var deal in Model.Deals)
+        {
+            <div class="col-md-6">
+                <div class="card h-100 shadow-sm">
+
+                    <div class="row g-0">
+                        <div class="col-4 text-center p-3">
+                            <img src="@deal.DealPhoto"
+                                 class="img-fluid rounded"
+                                 style="max-height:140px;object-fit:cover;" />
+                        </div>
+
+                        <div class="col-8">
+                            <div class="card-body">
+                                <h5 class="card-title">@deal.StockDealTitle</h5>
+
+                                <p class="mb-1">
+                                    <strong>Deal Price:</strong> ₹ @deal.DealPrice
+                                </p>
+
+                                <p class="mb-1">
+                                    <strong>Discount:</strong> ₹ @deal.Discount
+                                </p>
+
+                                <p class="text-muted small">
+                                    @deal.VisibleStatus
+                                </p>
+
+                                <p class="small">
+                                    <strong>Items:</strong> @deal.DealItems
+                                </p>
+
+                                <div class="mt-2">
+                                    <a asp-action="StockDeal"
+                                       asp-route-id="@deal.StockDealId"
+                                       class="btn btn-sm btn-outline-primary">
+                                        Edit
+                                    </a>
+
+                                    <a asp-action="StockDealItem"
+                                       asp-route-dealid="@deal.StockDealId"
+                                       asp-route-stockdealdetailid="0"
+                                       class="btn btn-sm btn-outline-success">
+                                        Add Items
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        }
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

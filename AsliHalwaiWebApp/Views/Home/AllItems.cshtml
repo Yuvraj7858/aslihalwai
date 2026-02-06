@@ -1,0 +1,361 @@
+﻿@model AsliHalwaiWebApp.ViewModel.StockMenuVM
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+
+
+@{
+    ViewData["Title"] = "Our Shop";
+}
+
+<input type="hidden" id="__RequestVerificationToken"
+       value="@Antiforgery.GetAndStoreTokens(Context).RequestToken" />
+<style>
+    /* ================= ADD TO CART HOVER FIX ================= */
+
+    /* ================= ADD TO CART HOVER FIX ================= */
+
+    .product-thumb {
+        padding: 8px; /* pehle zyada tha */
+    }
+
+    .product-thumb .image {
+        position: relative;
+        overflow: hidden;
+    }
+
+        .product-thumb .image img {
+            transition: all 0.3s ease;
+        }
+
+    .product-thumb .add-cart-btn {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        opacity: 0;
+        visibility: hidden;
+        z-index: 5;
+        transition: all 0.3s ease;
+        pointer-events: auto;
+    }
+
+    /* DARK OVERLAY */
+    .product-thumb .image::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.4);
+        opacity: 0;
+        transition: all 0.3s ease;
+        pointer-events: none; /* 🔥 CLICK FIX */
+    }
+
+    /* HOVER EFFECT */
+    .product-thumb:hover .add-cart-btn {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .product-thumb:hover .image::after {
+        opacity: 1;
+    }
+
+    .product-thumb:hover img {
+        transform: scale(1.05);
+    }
+
+
+    /* 📱 MOBILE FIX */
+    media (max-width: 768px) {
+        .product-thumb .add-cart-btn
+
+    {
+        opacity: 1;
+        visibility: visible;
+        position: static;
+        transform: none;
+        margin-top: 10px;
+    }
+
+    .product-thumb .image::after {
+        display: none;
+    }
+
+    }
+
+
+    /* ================= EQUAL PRODUCT CARD HEIGHT ================= */
+
+    .equal-card {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+        .equal-card .image {
+            height: 160px; /* 🔥 FIXED IMAGE HEIGHT */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+            .equal-card .image img {
+                max-height: 100%;
+                width: auto;
+                object-fit: contain;
+            }
+
+        .equal-card .caption {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+            .equal-card .caption h4 {
+                font-size: 14px;
+                min-height: 38px;
+            }
+
+        .equal-card .price,
+        .equal-card .des,
+        .equal-card .rating {
+            margin-top: auto;
+        }
+
+</style>
+
+
+<!-- Breadcrumb Start -->
+<div class="bread-crumb">
+    <div class="container">
+        <div class="matter">
+            <h2>Our Shop</h2>
+            <ul class="list-inline">
+                <li class="list-inline-item">
+                    <a asp-controller="Home" asp-action="Index">HOME</a>
+                </li>
+                <li class="list-inline-item">
+                    <a asp-controller="Home" asp-action="AllItems">Our Shop</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- Breadcrumb End -->
+<!-- Shop Start -->
+<div class="shop">
+    <div class="container">
+        <div class="row">
+
+            <!-- ================= LEFT FILTER ================= -->
+            <div class="col-md-3">
+                <div class="left-side">
+                    <h4>SEARCH FILTERS</h4>
+
+                    @using (Html.BeginForm("AllItems", "Home", FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <!-- Search -->
+                        <div class="search">
+                            <div class="form-group">
+                                @Html.TextBoxFor(m => m.SearchKey,
+                                new { @class = "form-control", placeholder = "Search Food" })
+
+                            <button type="submit" class="btn">
+                                <i class="icofont icofont-search"></i>
+                            </button>
+                        </div>
+
+                        <!-- Categories -->
+                        <ul class="list-unstyled">
+                            @for (int i = 0; i < Model.CategoryList.Count; i++)
+                                {
+                                    <li>
+                                        <label class="check">
+                                            @Html.CheckBoxFor(m => Model.CategoryList[i].CategoryStatus,
+                                            new { @class = "checkclass" })
+                                    @Model.CategoryList[i].StockMenuCategory
+
+                                    @Html.HiddenFor(m => Model.CategoryList[i].StockMenuCategoryID)
+                                    @Html.HiddenFor(m => Model.CategoryList[i].StockMenuCategory)
+                                </label>
+                            </li>
+                                                        }
+                        </ul>
+                    </div>
+
+                    <!-- Order Type -->
+                    <div class="food">
+                        <h3>Food For</h3>
+                        <ul class="list-inline">
+                            @for (int i = 0; i < Model.OrderTypeList.Count; i++)
+                            {
+                                <li class="list-inline-item">
+                                    <label class="check">
+                                        @Html.CheckBoxFor(m => Model.OrderTypeList[i].OrderTypeStatus,
+                                        new { @class = "checkclass" })
+                                    @Model.OrderTypeList[i].OrderTypeName
+
+                                    @Html.HiddenFor(m => Model.OrderTypeList[i].OrderTypeID)
+                                    @Html.HiddenFor(m => Model.OrderTypeList[i].OrderTypeName)
+                                </label>
+                            </li>
+                                                        }
+                        </ul>
+                    </div>
+                                        }
+                </div>
+            </div>
+
+            <!-- ================= PRODUCT LIST ================= -->
+            <div class="col-md-9 mainpage">
+                <div class="form-row">
+
+                    @foreach (var item in Model.AllItems)
+                    {
+                        <div class="product-layout product-grid col-lg-4 col-md-4 col-sm-6 col-12">
+                            <div class="product-thumb equal-card">
+
+                                <div class="image">
+                                    <a asp-controller="Home"
+                                       asp-action="ProductDetail"
+                                       asp-route-itemid="@item.StockItemID"
+                                       class="product-link">
+
+                                        <img src="@item.ItemPhotoPath"
+                                             class="img-fluid"
+                                             alt="@item.StockItemTitle" />
+                                    </a>
+
+                                    <!-- ADD TO CART -->
+                                    <button type="button"
+                                            class="btn btn-primary btn-sm"
+                                            onclick="addItem(@item.StockItemID)">
+                                        <i class="fa fa-shopping-cart"></i> Add To Cart
+                                    </button>
+
+                                </div>
+
+
+                                <div class="caption">
+                                    <h4>@item.StockItemTitle (@item.ItemSize)</h4>
+
+                                    <div class="rating">
+                                        <i class="icofont icofont-star"></i>
+                                        <i class="icofont icofont-star"></i>
+                                        <i class="icofont icofont-star"></i>
+                                        <i class="icofont icofont-star"></i>
+                                        <i class="icofont icofont-star"></i>
+                                    </div>
+
+                                    <div class="price">
+                                        Price : ₹ @item.UnitPrice
+                                    </div>
+
+                                    <p class="des">
+                                        Order Type : @item.OrderTypeName
+                                    </p>
+
+                                    <!-- OPTIONAL SECOND BUTTON -->
+                                    <p class="d-md-none">
+                                        <a href="javascript:void(0);"
+                                           class="btn btn-theme btn-md"
+                                           onclick="additem(@item.StockItemID)">
+                                            Add To Cart
+                                        </a>
+                                    </p>
+                                </div>
+
+                            </div>
+                        </div>
+                    }
+
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Shop End -->
+@section Scripts {
+    <script>
+
+
+                $.ajax({
+            url: '/Order/Cart_AddItem',
+            type: 'POST',
+            data: { itemid, qty, itemtype },
+            success: function (res) {
+                if (res === true) {
+                    // 🔥 YAHI STEP-3
+                    refreshCartCount();
+                }
+            }
+        });
+
+                function updateQty(cartItemId, itemType, change) {
+            $.ajax({
+                url: '/Order/UpdateQty',
+                type: 'POST',
+                data: { cartItemId, itemType, change },
+                success: function (res) {
+                    if (res === true) {
+                        // 🔥 STEP-3
+                        refreshCartCount();
+                    }
+                }
+            });
+        }
+
+                function removeItem(cartItemId, itemType) {
+            $.ajax({
+                url: '/Order/RemoveItem',
+                type: 'POST',
+                data: { cartItemId, itemType },
+                success: function (res) {
+                    if (res === true) {
+                        // 🔥 STEP-3
+                        refreshCartCount();
+                    }
+                }
+            });
+        }
+
+        function addItem(itemId) {
+            $.ajax({
+                url: '/Order/Cart_AddItem',
+                type: 'POST',
+                data: {
+                    itemid: itemId,
+                    qty: 1,
+                    itemtype: 'item'
+                },
+                success: function (result) {
+                    if (result === true) {
+                        showToast("Item added to cart", "success");
+                    } else {
+                        showToast("Please login first", "danger");
+                    }
+                },
+                error: function () {
+                    showToast("Something went wrong", "warning");
+                }
+            });
+        }
+
+        function showToast(message, type) {
+            var toastHtml = `
+            <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                ${message}
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>`;
+
+            $("#toastContainer").html(toastHtml);
+        }
+    </script>
+
+
+    }
+
