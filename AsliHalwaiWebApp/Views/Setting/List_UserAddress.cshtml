@@ -1,128 +1,147 @@
-﻿@model AsliHalwaiWebApp.ViewModel.UserAddressVM
+@model AsliHalwaiWebApp.ViewModel.UserAddressVM
+
 @{
-    ViewBag.Title = "User Address";
+    ViewBag.Title = "Manage Delivery Addresses - AsliHalwai";
 }
 
-<!-- Breadcrumb -->
-<div class="bread-crumb">
-    <div class="container">
-        <div class="matter">
-            <h2>User Address</h2>
-            <ul class="list-inline">
-                <li class="list-inline-item">
-                    <a asp-controller="Home" asp-action="Index">HOME</a>
-                </li>
-                <li class="list-inline-item">
-                    <a asp-controller="Setting" asp-action="List_UserAddress">User Address</a>
-                </li>
-            </ul>
+<div class="container py-4">
+    <!-- Header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 pb-3 border-bottom">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent p-0 mb-1" style="font-size: 13px;">
+                    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li class="breadcrumb-item"><a asp-controller="User" asp-action="Dashboard">Account</a></li>
+                    <li class="breadcrumb-item active text-muted" aria-current="page">Delivery Addresses</li>
+                </ol>
+            </nav>
+            <h3 class="font-weight-bold mb-1" style="color: #0f172a;">Manage Delivery Addresses</h3>
+            <p class="text-muted mb-0" style="font-size: 14px;">
+                Save multiple addresses for fast checkout during food delivery.
+            </p>
+        </div>
+        <div class="mt-3 mt-md-0">
+            <a asp-controller="Order" asp-action="ViewCart" class="btn ah-btn-secondary">
+                <i class="icofont icofont-cart"></i> Back to Cart
+            </a>
         </div>
     </div>
-</div>
 
-<div class="contactus">
-    <div class="container">
-        <div class="row">
+    <div class="row">
+        <!-- ================= ADDRESS FORM ================= -->
+        <div class="col-lg-5 col-md-6 mb-4">
+            <div class="ah-cart-card">
+                <h5 class="font-weight-bold mb-3" style="color: #1e293b;">
+                    <i class="icofont icofont-plus-circle text-primary"></i>
+                    @(Model.UserAddressID == 0 ? "Add New Address" : "Update Address")
+                </h5>
 
-            <!-- TITLE -->
-            <div class="col-sm-12 commontop text-center">
-                <h4>User Addresses</h4>
-                <div class="divider style-1 center">
-                    <span class="hr-simple left"></span>
-                    <i class="icofont icofont-ui-press hr-icon"></i>
-                    <span class="hr-simple right"></span>
-                </div>
-            </div>
-
-            <!-- ================= FORM ================= -->
-            <div class="col-md-5 col-12">
                 <form asp-action="List_UserAddress"
                       asp-controller="Setting"
                       method="post">
-
                     @Html.AntiForgeryToken()
                     <input type="hidden" asp-for="UserAddressID" />
 
                     <!-- Address Type -->
                     <div class="form-group mb-3">
+                        <label class="font-weight-bold small text-muted">Address Type *</label>
                         <select asp-for="AddressTypeID"
                                 asp-items="Model.AddressTypes"
-                                class="form-control">
-                            <option value="">--Choose Type--</option>
+                                class="form-control"
+                                required
+                                style="height: 48px; border-radius: var(--ah-radius-md);">
+                            <option value="">-- Choose Type (Home, Office, Other) --</option>
                         </select>
-                        <span asp-validation-for="AddressTypeID" class="text-danger"></span>
+                        <span asp-validation-for="AddressTypeID" class="text-danger small"></span>
                     </div>
 
                     <!-- Full Address -->
                     <div class="form-group mb-3">
+                        <label class="font-weight-bold small text-muted">Complete Address *</label>
                         <textarea asp-for="FullAddress"
                                   class="form-control"
-                                  placeholder="Enter Full Address"></textarea>
-                        <span asp-validation-for="FullAddress" class="text-danger"></span>
+                                  rows="3"
+                                  placeholder="House/Flat No., Street, Landmark, Area, City, Pincode"
+                                  required
+                                  style="border-radius: var(--ah-radius-md);"></textarea>
+                        <span asp-validation-for="FullAddress" class="text-danger small"></span>
                     </div>
 
                     <!-- Visible Status -->
-                    <div class="form-group mb-3">
+                    <div class="form-group mb-4">
+                        <label class="font-weight-bold small text-muted">Status *</label>
                         <select asp-for="VisibleStatusID"
                                 asp-items="Model.VisibleStatuses"
-                                class="form-control">
-                            <option value="">--Choose Status--</option>
+                                class="form-control"
+                                required
+                                style="height: 48px; border-radius: var(--ah-radius-md);">
+                            <option value="">-- Choose Status --</option>
                         </select>
-                        <span asp-validation-for="VisibleStatusID" class="text-danger"></span>
+                        <span asp-validation-for="VisibleStatusID" class="text-danger small"></span>
                     </div>
 
-                    <div class="text-end">
-                        <button type="submit" class="btn btn-theme btn-md btn-wide">
-                            @(Model.UserAddressID == 0 ? "Create" : "Update")
+                    <div class="d-flex justify-content-between align-items-center">
+                        @if (Model.UserAddressID > 0)
+                        {
+                            <a asp-action="List_UserAddress" class="btn btn-outline-secondary" style="border-radius: var(--ah-radius-pill);">
+                                Cancel
+                            </a>
+                        }
+                        <button type="submit" class="btn ah-btn-primary" style="display: inline-flex; width: auto;">
+                            <i class="icofont icofont-check-circled"></i> @(Model.UserAddressID == 0 ? "Save Address" : "Update Address")
                         </button>
                     </div>
                 </form>
             </div>
+        </div>
 
-            <!-- ================= LIST ================= -->
-            <div class="col-md-7 col-12">
-                <div class="table-responsive-md">
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Address Type</th>
-                                <th>Full Address</th>
-                                <th>Status</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @if (Model.AddressList != null && Model.AddressList.Any())
-                            {
-                                foreach (var item in Model.AddressList)
-                                {
-                                    <tr>
-                                        <td>@item.AddressType</td>
-                                        <td>@item.FullAddress</td>
-                                        <td>@item.VisibleStatus</td>
-                                        <td>
-                                            <a asp-action="List_UserAddress"
-                                               asp-route-id="@item.UserAddressID"
-                                               class="btn btn-theme btn-sm">
-                                                Edit
-                                            </a>
-                                        </td>
-                                    </tr>
-                                }
-                            }
-                            else
-                            {
-                                <tr>
-                                    <td colspan="4" class="text-center text-danger">
-                                        No Address Found
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
+        <!-- ================= SAVED ADDRESSES LIST ================= -->
+        <div class="col-lg-7 col-md-6">
+            <div class="ah-cart-card">
+                <h5 class="font-weight-bold mb-3" style="color: #1e293b;">
+                    <i class="icofont icofont-location-pin text-primary"></i> Saved Addresses
+                </h5>
+
+                @if (Model.AddressList != null && Model.AddressList.Any())
+                {
+                    <div class="row">
+                        @foreach (var item in Model.AddressList)
+                        {
+                            <div class="col-12 mb-3">
+                                <div class="p-3 border rounded d-flex justify-content-between align-items-start" style="background: #f8fafc; border-color: #e2e8f0;">
+                                    <div>
+                                        <div class="d-flex align-items-center gap-2 mb-1">
+                                            <span class="badge badge-primary px-2 py-1 mr-2" style="border-radius: var(--ah-radius-pill);">
+                                                @item.AddressType
+                                            </span>
+                                            <span class="badge @(item.VisibleStatus == "Active" ? "badge-success" : "badge-secondary")">
+                                                @item.VisibleStatus
+                                            </span>
+                                        </div>
+                                        <p class="mb-0 text-dark" style="font-size: 14px; line-height: 1.5;">
+                                            @item.FullAddress
+                                        </p>
+                                    </div>
+
+                                    <a asp-action="List_UserAddress"
+                                       asp-route-id="@item.UserAddressID"
+                                       class="btn btn-sm btn-outline-primary ml-3"
+                                       style="border-radius: var(--ah-radius-pill); white-space: nowrap;">
+                                        <i class="icofont icofont-edit"></i> Edit
+                                    </a>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-5">
+                        <i class="icofont icofont-location-pin text-muted" style="font-size: 48px;"></i>
+                        <p class="text-muted mt-2">No addresses saved yet. Add your first delivery address!</p>
+                    </div>
+                }
             </div>
-
         </div>
     </div>
 </div>

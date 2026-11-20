@@ -1,4 +1,4 @@
-﻿using AsliHalwaiWebApp.Data;
+using AsliHalwaiWebApp.Data;
 using AsliHalwaiWebApp.ViewModel;
 using AsliHalwaiWebApp.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -236,7 +236,7 @@ public class AdminOrderController : Controller
                 // ✅ ADDRESS
                 Address = ua != null ? ua.FullAddress : "",
 
-                OrderStatus = o.OrderStatus.OrderStatus,
+                OrderStatus = o.OrderStatus != null ? o.OrderStatus.OrderStatus : "Pending",
 
                 // 🔥 PAYMENT FIELDS (THIS WAS MISSING)
                 PaymentMode = o.PaymentMode,
@@ -262,6 +262,24 @@ public class AdminOrderController : Controller
         ViewBag.StatusList = _context.OrderStatusTables.ToList();
 
         return View(model);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult MarkPaid(int orderId)
+    {
+        if (!IsAdmin())
+            return RedirectToAction("Index", "Home");
+
+        var order = _context.OrderTables.FirstOrDefault(o => o.OrderId == orderId);
+        if (order != null)
+        {
+            order.PaymentStatus = "Paid";
+            _context.SaveChanges();
+            TempData["Success"] = $"Order #{orderId} payment marked as Paid.";
+        }
+
+        return RedirectToAction(nameof(InvoiceDashboard));
     }
 
 }

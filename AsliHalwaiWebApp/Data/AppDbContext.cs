@@ -50,6 +50,17 @@ public partial class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        // SQL Server used a case-insensitive collation by default. SQLite is
+        // case-sensitive for equality, so apply NOCASE to every text column.
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+        {
+            foreach (var property in entityType.GetProperties())
+            {
+                if (property.ClrType == typeof(string))
+                    property.SetCollation("NOCASE");
+            }
+        }
+
         // ================= ORDER DEAL DETAIL =================
         modelBuilder.Entity<OrderDealDetailTable>(entity =>
         {

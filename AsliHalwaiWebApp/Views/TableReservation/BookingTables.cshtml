@@ -1,115 +1,212 @@
-﻿@model AsliHalwaiWebApp.Models.TableReservationVM
+@model AsliHalwaiWebApp.Models.TableReservationVM
 @using Microsoft.AspNetCore.Http
 
 @{
-    ViewData["Title"] = "Table Reservation";
-
+    ViewData["Title"] = "Table Reservations";
     int userId = Context.Session.GetInt32("UserId") ?? 0;
     int userTypeId = Context.Session.GetInt32("UserTypeId") ?? 0;
 }
 
-<!-- 🔒 NAVBAR OVERLAP FIX (DO NOT REMOVE) -->
-<div style="height:170px;"></div>
-
-<!-- ================= ADMIN PROCESS FORM ================= -->
-@if ((userTypeId == 1 || userTypeId == 5) && Model.TableReservationId > 0)
-{
-    <div class="container">
-        <form asp-action="BookingTables"
-              asp-controller="TableReservation"
-              method="post"
-              class="form-horizontal">
-
-            @Html.AntiForgeryToken()
-            <input type="hidden" asp-for="TableReservationId" />
-
-            <div class="row">
-                <!-- LEFT -->
-                <div class="col-md-6">
-                    <div class="form-group mb-3">
-                        <label>Full Name</label>
-                        <input asp-for="FullName" class="form-control" readonly />
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label>Mobile No</label>
-                        <input asp-for="MobileNo" class="form-control" readonly />
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label>Reservation Date</label>
-                        <input asp-for="ReservationDate" class="form-control" readonly />
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label>Reservation Time</label>
-                        <input asp-for="ReservationTime" class="form-control" readonly />
-                    </div>
-                </div>
-
-                <!-- RIGHT -->
-                <div class="col-md-6">
-                    <div class="form-group mb-3">
-                        <label>Description</label>
-                        <textarea asp-for="Description" class="form-control" rows="4"></textarea>
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label>Process To</label>
-                        <select asp-for="ReservationStatudId"
-                                asp-items="ViewBag.ReservationStatusId"
-                                class="form-control">
-                            <option value="">-- Choose Status --</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group text-right mt-4">
-                        <button type="submit" class="btn btn-theme btn-md">
-                            PROCESS
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </form>
+<div class="container py-4">
+    <!-- Breadcrumb / Header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 pb-3 border-bottom">
+        <div>
+            <h3 class="font-weight-bold mb-1" style="color: #0f172a;">Table Reservations</h3>
+            <p class="text-muted mb-0" style="font-size: 14px;">
+                View and manage restaurant table booking reservations.
+            </p>
+        </div>
+        <div class="mt-3 mt-md-0">
+            <a asp-controller="Home" asp-action="Index" class="btn ah-btn-secondary">
+                <i class="icofont icofont-arrow-left"></i> Back to Home
+            </a>
+        </div>
     </div>
-}
 
-<!-- ================= LIST ================= -->
-<div class="container mt-5">
-    <div class="table-responsive-md" style="margin-top:50px;">
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Status</th>
-                    <th>Full Name</th>
-                    <th>Mobile</th>
-                    <th>Reservation Date Time</th>
-                    <th>No Of Persons</th>
-                    <th>Description</th>
-                    <th>Process By</th>
-                    <th style="width:120px;">Action</th>
-                </tr>
-            </thead>
+    <!-- ================= ADMIN PROCESS FORM ================= -->
+    @if ((userTypeId == 1 || userTypeId == 5) && Model.TableReservationId > 0)
+    {
+        <div class="ah-cart-card mb-4">
+            <h5 class="font-weight-bold mb-3" style="color: var(--ah-primary);">
+                <i class="icofont icofont-edit"></i> Process Reservation #@Model.TableReservationId
+            </h5>
 
-            <tbody>
+            <form asp-action="BookingTables"
+                  asp-controller="TableReservation"
+                  method="post">
+
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="TableReservationId" />
+
+                <div class="row">
+                    <!-- LEFT COLUMN -->
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label class="font-weight-bold small text-muted">Customer Name</label>
+                            <input asp-for="FullName" class="form-control" readonly style="background: #f8fafc;" />
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label class="font-weight-bold small text-muted">Contact Number</label>
+                            <input asp-for="MobileNo" class="form-control" readonly style="background: #f8fafc;" />
+                        </div>
+
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="form-group mb-3">
+                                    <label class="font-weight-bold small text-muted">Date</label>
+                                    <input asp-for="ReservationDate" class="form-control" readonly style="background: #f8fafc;" />
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-group mb-3">
+                                    <label class="font-weight-bold small text-muted">Time</label>
+                                    <input asp-for="ReservationTime" class="form-control" readonly style="background: #f8fafc;" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT COLUMN -->
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label class="font-weight-bold small text-muted">Notes / Special Instructions</label>
+                            <textarea asp-for="Description" class="form-control" rows="3" placeholder="Enter notes or table assignment details..."></textarea>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label class="font-weight-bold small text-muted">Update Status To *</label>
+                            <select asp-for="ReservationStatudId"
+                                    asp-items="ViewBag.ReservationStatusId"
+                                    class="form-control"
+                                    required>
+                                <option value="">-- Choose Reservation Status --</option>
+                            </select>
+                        </div>
+
+                        <div class="text-right mt-3">
+                            <button type="submit" class="btn ah-btn-primary" style="display: inline-flex; width: auto;">
+                                <i class="icofont icofont-check-circled"></i> Save &amp; Process Status
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    }
+
+    <!-- ================= RESERVATIONS LIST ================= -->
+    <div class="ah-cart-card">
+        <h5 class="font-weight-bold mb-3" style="color: #1e293b;">
+            <i class="icofont icofont-listine-dots text-primary"></i> Active Reservations
+        </h5>
+
+        @if (Model.ReservationList != null && Model.ReservationList.Any())
+        {
+            <!-- Desktop Table View -->
+            <div class="table-responsive d-none d-md-block">
+                <table class="table ah-cart-table">
+                    <thead>
+                        <tr>
+                            <th>Status</th>
+                            <th>Guest Name</th>
+                            <th>Mobile</th>
+                            <th>Date &amp; Time</th>
+                            <th>Guests</th>
+                            <th>Remarks</th>
+                            <th>Handled By</th>
+                            <th class="text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.ReservationList)
+                        {
+                            <tr>
+                                <td>
+                                    @if (item.ReservationStatus == "Confirmed" || item.ReservationStatus == "Approved")
+                                    {
+                                        <span class="badge badge-success px-2 py-1">@item.ReservationStatus</span>
+                                    }
+                                    else if (item.ReservationStatus == "Pending")
+                                    {
+                                        <span class="badge badge-warning px-2 py-1">@item.ReservationStatus</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-secondary px-2 py-1">@item.ReservationStatus</span>
+                                    }
+                                </td>
+                                <td>
+                                    <strong>@item.FullName</strong>
+                                    @if (!string.IsNullOrEmpty(item.BookingUserName))
+                                    {
+                                        <br /><small class="text-muted">(@item.BookingUserName)</small>
+                                    }
+                                </td>
+                                <td>@item.MobileNo</td>
+                                <td>@item.ReservationDateTime</td>
+                                <td><i class="icofont icofont-users text-muted"></i> @item.NoOfPerson</td>
+                                <td><small>@(string.IsNullOrEmpty(item.Description) ? "—" : item.Description)</small></td>
+                                <td><small>@(string.IsNullOrEmpty(item.ProcessByUser) ? "Unassigned" : item.ProcessByUser)</small></td>
+                                <td class="text-right">
+                                    @if (userTypeId == 1 || userTypeId == 5)
+                                    {
+                                        <a asp-action="BookingTables"
+                                           asp-controller="TableReservation"
+                                           asp-route-id="@item.TableReservationId"
+                                           class="btn btn-sm btn-outline-primary"
+                                           style="border-radius: var(--ah-radius-pill);">
+                                            Process
+                                        </a>
+                                    }
+                                    else if (userTypeId == 3 && item.ReservationStatus == "Pending")
+                                    {
+                                        <a asp-action="CancelBooking"
+                                           asp-controller="TableReservation"
+                                           asp-route-bookingtableid="@item.TableReservationId"
+                                           class="btn btn-sm btn-outline-danger"
+                                           style="border-radius: var(--ah-radius-pill);"
+                                           onclick="return confirm('Are you sure you want to cancel this booking?');">
+                                            Cancel
+                                        </a>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Mobile Cards View -->
+            <div class="d-md-none">
                 @foreach (var item in Model.ReservationList)
                 {
-                    <tr>
-                        <td>@item.ReservationStatus</td>
-                        <td>@item.FullName (@item.BookingUserName)</td>
-                        <td>@item.MobileNo</td>
-                        <td>@item.ReservationDateTime</td>
-                        <td>@item.NoOfPerson</td>
-                        <td>@item.Description</td>
-                        <td>@item.ProcessByUser</td>
-                        <td>
+                    <div class="border rounded p-3 mb-3" style="background: #ffffff; box-shadow: var(--ah-shadow-sm);">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <strong style="font-size: 15px;">@item.FullName</strong>
+                            <span class="badge @(item.ReservationStatus == "Pending" ? "badge-warning" : "badge-success")">
+                                @item.ReservationStatus
+                            </span>
+                        </div>
+                        <div class="text-muted small mb-2">
+                            <div><i class="icofont icofont-phone mr-1"></i> @item.MobileNo</div>
+                            <div><i class="icofont icofont-calendar mr-1"></i> @item.ReservationDateTime</div>
+                            <div><i class="icofont icofont-users mr-1"></i> @item.NoOfPerson Persons</div>
+                            @if (!string.IsNullOrEmpty(item.Description))
+                            {
+                                <div><i class="icofont icofont-info mr-1"></i> @item.Description</div>
+                            }
+                        </div>
+
+                        <div class="mt-3 pt-2 border-top text-right">
                             @if (userTypeId == 1 || userTypeId == 5)
                             {
                                 <a asp-action="BookingTables"
                                    asp-controller="TableReservation"
                                    asp-route-id="@item.TableReservationId"
-                                   class="btn btn-theme btn-sm">
-                                    Process
+                                   class="btn btn-sm ah-btn-primary"
+                                   style="display: inline-flex; width: auto; padding: 6px 14px;">
+                                    Process Booking
                                 </a>
                             }
                             else if (userTypeId == 3 && item.ReservationStatus == "Pending")
@@ -117,14 +214,26 @@
                                 <a asp-action="CancelBooking"
                                    asp-controller="TableReservation"
                                    asp-route-bookingtableid="@item.TableReservationId"
-                                   class="btn btn-danger btn-sm">
-                                    Cancel
+                                   class="btn btn-sm btn-danger"
+                                   style="border-radius: var(--ah-radius-pill);"
+                                   onclick="return confirm('Are you sure you want to cancel this booking?');">
+                                    Cancel Booking
                                 </a>
                             }
-                        </td>
-                    </tr>
+                        </div>
+                    </div>
                 }
-            </tbody>
-        </table>
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-5">
+                <i class="icofont icofont-table text-muted" style="font-size: 48px;"></i>
+                <p class="text-muted mt-2">No table reservations recorded yet.</p>
+                <a asp-controller="Home" asp-action="Index" class="btn ah-btn-primary" style="display: inline-flex; width: auto;">
+                    Make a Reservation
+                </a>
+            </div>
+        }
     </div>
 </div>

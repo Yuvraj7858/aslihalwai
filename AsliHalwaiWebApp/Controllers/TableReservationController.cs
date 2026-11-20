@@ -1,4 +1,4 @@
-﻿using AsliHalwaiWebApp.Data;
+using AsliHalwaiWebApp.Data;
 using AsliHalwaiWebApp.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -34,8 +34,8 @@ namespace AsliHalwaiWebApp.Controllers
                 .Include(x => x.ReservationStatud)
                 .AsQueryable();
 
-            // USER → only own bookings
-            if (userTypeId == 4)
+            // Regular users / customers → see only their own bookings
+            if (userTypeId != 1 && userTypeId != 2)
                 query = query.Where(x => x.ReservationUserId == userId);
 
             var list = query.OrderByDescending(x => x.TableReservationId).ToList();
@@ -49,7 +49,7 @@ namespace AsliHalwaiWebApp.Controllers
                     MobileNo = item.MobileNo,
                     ReservationDateTime = item.ReservationDateTime,
                     NoOfPerson = item.NoOfPerson,
-                    ReservationStatus = item.ReservationStatud.ReservationStatus,
+                    ReservationStatus = item.ReservationStatud != null ? item.ReservationStatud.ReservationStatus : "Pending",
                     Description = item.Description,
                     BookingUserName = item.ReservationUser != null ? item.ReservationUser.UserName : "Guest",
                     ProcessByUser = item.ProccessByUser != null ? item.ProccessByUser.UserName : ""
@@ -112,18 +112,22 @@ namespace AsliHalwaiWebApp.Controllers
             var userId = HttpContext.Session.GetInt32("UserId");
             var userTypeId = HttpContext.Session.GetInt32("UserTypeId");
 
-            if (!userId.HasValue || userTypeId != 4)
+            if (!userId.HasValue)
                 return RedirectToAction("Index", "Home");
 
             var reservation = _context.TableReservationTables
                 .FirstOrDefault(x => x.TableReservationId == bookingtableid);
 
-            if (reservation != null && reservation.ReservationStatudId == 1)
+            if (reservation != null && (userTypeId == 1 || reservation.ReservationUserId == userId.Value))
             {
-                reservation.ReservationStatudId = 4;
-                reservation.Description = "Canceled By User";
-                reservation.ProccessByUserId = userId;
-                _context.SaveChanges();
+                if (reservation.ReservationStatudId == 1)
+                {
+                    reservation.ReservationStatudId = 4;
+                    reservation.Description = "Canceled By User";
+                    reservation.ProccessByUserId = userId;
+                    _context.SaveChanges();
+                    TempData["ReservationSuccess"] = "Reservation cancelled successfully.";
+                }
             }
 
             return RedirectToAction("BookingTables");
@@ -135,15 +139,23 @@ namespace AsliHalwaiWebApp.Controllers
         {
             if (!ModelState.IsValid || model.ReservationDate == null)
             {
-                TempData["ReservationError"] = "Invalid reservation details";
+                TempData["ReservationError"] = "Invalid reservation details. Please check all fields.";
                 return RedirectToAction("Index", "Home");
             }
 
-            int? userId = HttpContext.Session.GetInt32("UserID"); // ✅ FIXED
+            int? userId = HttpContext.Session.GetInt32("UserId"); // Safe session key
 
-            var dateTime =
-                model.ReservationDate.Value.Date
-                .Add(DateTime.Parse(model.ReservationTime).TimeOfDay);
+            TimeSpan timeOfDay;
+            if (!string.IsNullOrWhiteSpace(model.ReservationTime) && DateTime.TryParse(model.ReservationTime, out var parsedTime))
+            {
+                timeOfDay = parsedTime.TimeOfDay;
+            }
+            else
+            {
+                timeOfDay = new TimeSpan(19, 0, 0); // Default 7:00 PM
+            }
+
+            var dateTime = model.ReservationDate.Value.Date.Add(timeOfDay);
 
             var reservation = new TableReservationTable
             {
@@ -153,7 +165,7 @@ namespace AsliHalwaiWebApp.Controllers
                 MobileNo = model.MobileNo,
                 ReservationRequestDate = DateOnly.FromDateTime(DateTime.Now),
                 ReservationDateTime = dateTime,
-                NoOfPerson = model.NoOfPerson.Value,
+                NoOfPerson = model.NoOfPerson ?? 2,
                 ReservationStatudId = 1, // Pending
                 Description = userId == null ? "Guest Booking" : "User Booking"
             };

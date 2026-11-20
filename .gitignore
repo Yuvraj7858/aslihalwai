@@ -5,3 +5,18 @@ obj/
 *.suo/
 appsetting.json
 appsetting.Production.json
+
+# SQLite runtime data must never be committed
+AsliHalwaiWebApp/Data/*.db
+AsliHalwaiWebApp/Data/*.db-wal
+AsliHalwaiWebApp/Data/*.db-shm
+AsliHalwaiWebApp/Data/backups/
+AsliHalwaiWebApp/Data/keys/
+
+# Local secrets and deployment output
+appsettings.Local.json
+appsettings.*.local.json
+appsettings.Production.json
+.env
+.env.*
+publish/

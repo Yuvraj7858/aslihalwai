@@ -1,6 +1,44 @@
-﻿@{
-    ViewData["Title"] = "Privacy Policy";
+@{
+    ViewData["Title"] = "Privacy Policy - AsliHalwai";
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<div class="container py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb bg-transparent p-0" style="font-size: 13px;">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+            <li class="breadcrumb-item active text-muted" aria-current="page">Privacy Policy</li>
+        </ol>
+    </nav>
+
+    <div class="ah-dish-card p-4 p-md-5">
+        <h2 class="font-weight-bold mb-3" style="color: #111827;">Privacy Policy</h2>
+        <p class="text-muted small mb-4">Last Updated: January 2026</p>
+
+        <h5 class="font-weight-bold text-dark mt-4">1. Information We Collect</h5>
+        <p class="text-muted" style="line-height: 1.7; font-size: 14px;">
+            At AsliHalwai, we respect your personal privacy. We only collect details essential to providing prompt, accurate food delivery and table reservations, such as your full name, contact number, delivery address, and email address.
+        </p>
+
+        <h5 class="font-weight-bold text-dark mt-4">2. How We Use Your Data</h5>
+        <p class="text-muted" style="line-height: 1.7; font-size: 14px;">
+            Your personal information is used exclusively to process orders, communicate real-time delivery status, confirm table reservations, and provide customer support. We never sell, rent, or trade your personal information to third parties.
+        </p>
+
+        <h5 class="font-weight-bold text-dark mt-4">3. Payment Security</h5>
+        <p class="text-muted" style="line-height: 1.7; font-size: 14px;">
+            All digital payments (including instant UPI transfers and Cash on Delivery) are handled securely. We do not store sensitive payment card details or banking credentials on our servers.
+        </p>
+
+        <h5 class="font-weight-bold text-dark mt-4">4. Contact Us</h5>
+        <p class="text-muted" style="line-height: 1.7; font-size: 14px;">
+            If you have questions regarding this Privacy Policy, please contact our support team at <a href="mailto:info@aslihalwai.com" class="text-primary font-weight-bold">info@aslihalwai.com</a> or call <a href="tel:+917557785890" class="text-primary font-weight-bold">+91 7557785890</a>.
+        </p>
+
+        <div class="mt-4 pt-3 border-top">
+            <a asp-controller="Home" asp-action="Index" class="btn ah-btn-pill-primary" style="display: inline-flex; width: auto;">
+                &larr; Back to Home
+            </a>
+        </div>
+    </div>
+</div>

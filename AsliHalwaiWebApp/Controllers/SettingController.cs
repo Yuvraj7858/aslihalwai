@@ -1,4 +1,4 @@
-﻿using AsliHalwaiWebApp.Data;
+using AsliHalwaiWebApp.Data;
 using AsliHalwaiWebApp.Models;
 using AsliHalwaiWebApp.ViewModel;
 using AsliHalwaiWebApp.ViewModels;
@@ -642,6 +642,16 @@ namespace AsliHalwaiWebApp.Controllers
             if (!ModelState.IsValid)
             {
                 LoadUserAddressDropdowns(vm);
+                vm.AddressList = _context.UserAddressTables
+                    .Where(x => x.UserId == userId.Value)
+                    .Select(x => new UserAddressListVM
+                    {
+                        UserAddressID = x.UserAddressId,
+                        AddressType = x.AddressType.AddressType,
+                        FullAddress = x.FullAddress,
+                        VisibleStatus = x.VisibleStatus.VisibleStatus,
+                        UserName = x.User.UserName
+                    }).ToList();
                 return View(vm);
             }
 
@@ -659,7 +669,7 @@ namespace AsliHalwaiWebApp.Controllers
             else
             {
                 var address = _context.UserAddressTables
-                    .FirstOrDefault(x => x.UserAddressId == vm.UserAddressID);
+                    .FirstOrDefault(x => x.UserAddressId == vm.UserAddressID && x.UserId == userId.Value);
 
                 if (address != null)
                 {

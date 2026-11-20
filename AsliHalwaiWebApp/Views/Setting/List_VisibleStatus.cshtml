@@ -1,101 +1,76 @@
-﻿@model AsliHalwaiWebApp.ViewModels.VisibleStatusVM
+@model AsliHalwaiWebApp.ViewModels.VisibleStatusVM
 
 @{
-    ViewData["Title"] = "Visible Status";
+    ViewData["Title"] = "Record Visible Status - AsliHalwai Admin";
 }
 
-<!-- Breadcrumb Start -->
-<div class="bread-crumb">
-    <div class="container">
-        <div class="matter">
-            <h2>Record Visible Status</h2>
-            <ul class="list-inline">
-                <li class="list-inline-item">
-                    <a asp-controller="Home" asp-action="Index">HOME</a>
-                </li>
-                <li class="list-inline-item">
-                    <a asp-controller="Setting" asp-action="List_VisibleStatus">
-                        Record Visible Status
-                    </a>
-                </li>
-            </ul>
+<div class="container py-4">
+    <!-- Header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 pb-3 border-bottom">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent p-0 mb-1" style="font-size: 13px;">
+                    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li class="breadcrumb-item"><a asp-controller="AdminOrder" asp-action="Index">Admin</a></li>
+                    <li class="breadcrumb-item active text-muted" aria-current="page">Visible Status</li>
+                </ol>
+            </nav>
+            <h3 class="font-weight-bold mb-1" style="color: #0f172a;">Record Visible Status</h3>
+            <p class="text-muted mb-0 small">
+                Configure global item visibility statuses (e.g. Published, Draft, Hidden).
+            </p>
         </div>
     </div>
-</div>
-<!-- Breadcrumb End -->
 
-<div class="contactus">
-    <div class="container">
-        <div class="row">
+    <div class="row">
+        <!-- FORM -->
+        <div class="col-md-5 mb-4">
+            <div class="ah-dish-card p-3 p-md-4">
+                <h5 class="font-weight-bold mb-3" style="color: #111827;">
+                    @(Model.VisibleStatusID == 0 ? "Add New Status" : "Edit Status")
+                </h5>
 
-            <!-- Title -->
-            <div class="col-sm-12 commontop text-center">
-                <h4>Record Visible Status</h4>
-                <div class="divider style-1 center">
-                    <span class="hr-simple left"></span>
-                    <i class="icofont icofont-ui-press hr-icon"></i>
-                    <span class="hr-simple right"></span>
-                </div>
-            </div>
-
-            <!-- FORM -->
-            <div class="col-md-5 col-12">
-                <form asp-action="List_VisibleStatus"
-                      asp-controller="Setting"
-                      method="post"
-                      class="form-horizontal">
-
+                <form asp-action="List_VisibleStatus" asp-controller="Setting" method="post">
                     @Html.AntiForgeryToken()
-
-                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-                    <!-- Hidden Id -->
+                    <div asp-validation-summary="ModelOnly" class="text-danger small mb-2"></div>
                     <input type="hidden" asp-for="VisibleStatusID" />
 
-                    <div class="form-group row">
-                        <div class="col-md-12 col-sm-12 col-12">
-                            <i class="icofont icofont-ui-user"></i>
-
-                            <input asp-for="VisibleStatus"
-                                   class="form-control"
-                                   placeholder="Enter Record Visible Status Title" />
-
-                            <span asp-validation-for="VisibleStatus"
-                                  class="text-danger"></span>
-                        </div>
+                    <div class="form-group mb-3">
+                        <label class="font-weight-bold small text-muted">Visible Status Title *</label>
+                        <input asp-for="VisibleStatus"
+                               class="form-control"
+                               placeholder="e.g. Published, Hidden"
+                               required
+                               style="height: 44px; border-radius: var(--ah-radius-md);" />
+                        <span asp-validation-for="VisibleStatus" class="text-danger small"></span>
                     </div>
 
-                    <div class="buttons">
-                        @if (Model.VisibleStatusID == 0)
+                    <div class="d-flex justify-content-between align-items-center mt-4">
+                        @if (Model.VisibleStatusID > 0)
                         {
-                            <button type="submit"
-                                    class="btn btn-theme btn-md btn-wide"
-                                    style="float:right;">
-                                Create
-                            </button>
+                            <a asp-action="List_VisibleStatus" class="btn btn-outline-secondary" style="border-radius: var(--ah-radius-pill);">
+                                Cancel
+                            </a>
                         }
-                        else
-                        {
-                            <button type="submit"
-                                    class="btn btn-theme btn-md btn-wide"
-                                    style="float:right;">
-                                Update
-                            </button>
-                        }
+                        <button type="submit" class="btn ah-btn-pill-primary">
+                            @(Model.VisibleStatusID == 0 ? "Save Status" : "Update")
+                        </button>
                     </div>
                 </form>
             </div>
+        </div>
 
-            <!-- LIST -->
-            <div class="col-md-7 col-12">
-                <div class="table-responsive-md">
-                    <table class="table table-bordered">
+        <!-- LIST -->
+        <div class="col-md-7">
+            <div class="ah-dish-card p-3 p-md-4">
+                <h5 class="font-weight-bold mb-3" style="color: #111827;">Existing Visible Statuses</h5>
+
+                <div class="table-responsive">
+                    <table class="table ah-cart-table">
                         <thead>
                             <tr>
-                                <th class="text-center">
-                                    @Html.DisplayNameFor(m => m.VisibleStatus)
-                                </th>
-                                <th style="width:200px;">Action</th>
+                                <th>Visible Status</th>
+                                <th style="width:160px" class="text-right">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -104,12 +79,13 @@
                                 foreach (var item in Model.VisibleStatuses)
                                 {
                                     <tr>
-                                        <td>@item.VisibleStatus</td>
-                                        <td>
+                                        <td><strong class="text-dark">@item.VisibleStatus</strong></td>
+                                        <td class="text-right">
                                             <a asp-controller="Setting"
                                                asp-action="List_VisibleStatus"
                                                asp-route-id="@item.VisibleStatusID"
-                                               class="btn btn-theme btn-md btn-wide">
+                                               class="btn btn-sm btn-outline-primary mr-1"
+                                               style="border-radius: var(--ah-radius-pill);">
                                                 Edit
                                             </a>
 
@@ -118,9 +94,11 @@
                                                   asp-route-id="@item.VisibleStatusID"
                                                   method="post"
                                                   style="display:inline;">
+                                                @Html.AntiForgeryToken()
                                                 <button type="submit"
-                                                        class="btn btn-danger btn-md"
-                                                        onclick="return confirm('Are you sure?');">
+                                                        class="btn btn-sm btn-outline-danger"
+                                                        style="border-radius: var(--ah-radius-pill);"
+                                                        onclick="return confirm('Delete this status?');">
                                                     Delete
                                                 </button>
                                             </form>
@@ -131,7 +109,7 @@
                             else
                             {
                                 <tr>
-                                    <td colspan="2" class="text-center">
+                                    <td colspan="2" class="text-center py-4 text-muted">
                                         No records found
                                     </td>
                                 </tr>
@@ -140,7 +118,6 @@
                     </table>
                 </div>
             </div>
-
         </div>
     </div>
 </div>

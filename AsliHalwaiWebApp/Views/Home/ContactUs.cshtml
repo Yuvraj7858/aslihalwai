@@ -1,48 +1,93 @@
-﻿@{
-    ViewData["Title"] = "Contact Us";
+@{
+    ViewData["Title"] = "Contact Us - AsliHalwai Sweets & Snacks";
 }
 
-<!-- Breadcrumb -->
-<div class="bread-crumb">
-    <div class="container">
-        <h2>Contact Us</h2>
+<div class="container py-5">
+    <!-- Header -->
+    <div class="ah-section-header">
+        <span class="ah-section-tag">We'd Love To Hear From You</span>
+        <h2 class="ah-section-title">Get in Touch With Us</h2>
+        <p class="ah-section-subtitle">
+            Have questions about catering, corporate orders, delivery tracking, or table bookings? Reach out to us anytime.
+        </p>
     </div>
-</div>
 
-<!-- Contact Section -->
-<div class="container mt-5 mb-5">
-    <div class="row justify-content-center">
+    <div class="row">
+        <!-- Contact Info Cards Column -->
+        <div class="col-lg-5 col-md-6 mb-4">
+            <div class="ah-cart-card h-100">
+                <h5 class="font-weight-bold mb-4" style="color: #0f172a;">Contact Information</h5>
 
-        <div class="col-md-8">
-
-            <h4 class="text-center mb-4">Get in Touch</h4>
-
-            <form asp-action="ContactUs" method="post">
-
-                <div class="form-group mb-3">
-                    <label>Your Name</label>
-                    <input type="text" class="form-control" placeholder="Enter your name" />
+                <div class="d-flex align-items-start mb-4">
+                    <div class="ah-trust-icon mr-3" style="width: 44px; height: 44px; font-size: 20px;">
+                        <i class="icofont icofont-location-pin"></i>
+                    </div>
+                    <div>
+                        <strong class="text-dark d-block">Restaurant &amp; Kitchen Location</strong>
+                        <span class="text-muted small">Office 08, 1st Floor, Bank More, Dhanbad, Jharkhand, IN - 826001</span>
+                    </div>
                 </div>
 
-                <div class="form-group mb-3">
-                    <label>Email Address</label>
-                    <input type="email" class="form-control" placeholder="Enter your email" />
+                <div class="d-flex align-items-start mb-4">
+                    <div class="ah-trust-icon mr-3" style="width: 44px; height: 44px; font-size: 20px;">
+                        <i class="icofont icofont-phone"></i>
+                    </div>
+                    <div>
+                        <strong class="text-dark d-block">Call &amp; WhatsApp Support</strong>
+                        <a href="tel:+917557785890" class="text-primary font-weight-bold d-block">+91 7557785890</a>
+                        <a href="tel:+917858908966" class="text-muted small">+91 7858908966</a>
+                    </div>
                 </div>
 
-                <div class="form-group mb-3">
-                    <label>Message</label>
-                    <textarea class="form-control" rows="4" placeholder="Enter your message"></textarea>
+                <div class="d-flex align-items-start mb-4">
+                    <div class="ah-trust-icon mr-3" style="width: 44px; height: 44px; font-size: 20px;">
+                        <i class="icofont icofont-ui-message"></i>
+                    </div>
+                    <div>
+                        <strong class="text-dark d-block">Email Inquiries</strong>
+                        <a href="mailto:info@aslihalwai.com" class="text-muted small">info@aslihalwai.com</a>
+                    </div>
                 </div>
 
-                <div class="text-center">
-                    <button type="submit" class="btn btn-theme btn-md">
-                        Send Message
-                    </button>
+                <div class="d-flex align-items-start">
+                    <div class="ah-trust-icon mr-3" style="width: 44px; height: 44px; font-size: 20px;">
+                        <i class="icofont icofont-clock-time"></i>
+                    </div>
+                    <div>
+                        <strong class="text-dark d-block">Operating Hours</strong>
+                        <span class="text-muted small">Monday – Sunday: 8:00 AM to 11:30 PM</span>
+                    </div>
                 </div>
-
-            </form>
-
+            </div>
         </div>
 
+        <!-- Contact Form Column -->
+        <div class="col-lg-7 col-md-6">
+            <div class="ah-cart-card">
+                <h5 class="font-weight-bold mb-3" style="color: #0f172a;">Send Us a Message</h5>
+                <p class="text-muted small mb-4">Fill out the details below and our team will get back to you promptly.</p>
+
+                <form asp-action="ContactUs" method="post">
+                    <div class="form-group mb-3">
+                        <label class="font-weight-bold small text-muted">Your Name *</label>
+                        <input type="text" class="form-control" placeholder="Enter your full name" required style="height: 48px; border-radius: var(--ah-radius-md);" />
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label class="font-weight-bold small text-muted">Email Address *</label>
+                        <input type="email" class="form-control" placeholder="Enter email address" required style="height: 48px; border-radius: var(--ah-radius-md);" />
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <label class="font-weight-bold small text-muted">Your Message *</label>
+                        <textarea class="form-control" rows="4" placeholder="How can we help you today?" required style="border-radius: var(--ah-radius-md);"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn ah-btn-primary" style="display: inline-flex; width: auto; padding: 12px 32px;">
+                        <i class="icofont icofont-paper-plane"></i> Send Message
+                    </button>
+                </form>
+            </div>
+        </div>
     </div>
 </div>

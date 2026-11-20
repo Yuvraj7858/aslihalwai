@@ -1,344 +1,390 @@
-﻿@model AsliHalwaiWebApp.ViewModel.ItemDetailVM
+@model AsliHalwaiWebApp.ViewModel.ItemDetailVM
 @inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
 @using Microsoft.AspNetCore.Http
 
 @{
-    ViewData["Title"] = "Product Details";
+    ViewData["Title"] = Model.Item.StockItemTitle + " - AsliHalwai";
     int userid = Context.Session.GetInt32("UserId") ?? 0;
 }
+
 <input type="hidden" id="__RequestVerificationToken"
        value="@Antiforgery.GetAndStoreTokens(Context).RequestToken" />
 
-<!-- FONT AWESOME -->
-<link rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
-
-<!-- Breadcrumb -->
-<div class="bread-crumb">
-    <div class="container">
-        <div class="matter">
-            <h2>Product Details</h2>
-            <ul class="list-inline">
-                <li class="list-inline-item">
-                    <a asp-controller="Home" asp-action="Index">HOME</a>
-                </li>
-                <li class="list-inline-item">
-                    <a asp-controller="Home"
-                       asp-action="ProductDetail"
-                       asp-route-itemid="@Model.Item.StockItemID">
-                        Product Details
-                    </a>
-                </li>
-            </ul>
-        </div>
+<div class="container py-3">
+    <!-- Mobile App Back Navigation & Breadcrumb -->
+    <div class="d-flex align-items-center mb-3">
+        <button type="button" class="ah-icon-btn mr-2" onclick="window.history.back()" title="Go Back">
+            <i class="icofont icofont-arrow-left"></i>
+        </button>
+        <nav aria-label="breadcrumb" class="d-none d-sm-inline-block">
+            <ol class="breadcrumb bg-transparent p-0 mb-0" style="font-size: 13px;">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="AllItems">Our Shops</a></li>
+                <li class="breadcrumb-item active text-muted" aria-current="page">@Model.Item.StockItemTitle</li>
+            </ol>
+        </nav>
     </div>
-</div>
 
-<!-- Product Detail -->
-<div class="shop">
-    <div class="container">
-        <div class="row shopdetail">
+    <!-- ================= PRODUCT MAIN CARD ================= -->
+    <div class="ah-dish-card p-3 p-md-4 mb-4">
+        <div class="row align-items-center">
+            <!-- Left: Large Food Image -->
+            <div class="col-lg-5 col-md-6 mb-3 mb-md-0 text-center">
+                <div class="position-relative d-inline-block w-100" style="max-width: 420px;">
+                    <img src="@Url.Content(Model.Item.ItemPhotoPath)"
+                         class="img-fluid rounded shadow-sm"
+                         style="border-radius: var(--ah-radius-lg); width: 100%; max-height: 380px; object-fit: cover;"
+                         alt="@Model.Item.StockItemTitle"
+                         onerror="this.src='/Template/assets/images/about/3.jpg'" />
 
-            <!-- IMAGE -->
-            <div class="col-sm-5 col-12">
-                <img src="@Model.Item.ItemPhotoPath"
-                     class="img-fluid"
-                     alt="@Model.Item.StockItemTitle" />
+                    <!-- Veg Indicator Badge -->
+                    <div class="position-absolute" style="top: 14px; left: 14px;">
+                        <div class="ah-veg-badge" title="100% Pure Vegetarian" style="width: 24px; height: 24px;"></div>
+                    </div>
+                </div>
             </div>
 
-            <!-- DETAILS -->
-            <div class="col-sm-7 col-12">
-                <h2>@Model.Item.StockItemTitle</h2>
-
-                <!-- PRODUCT RATING -->
-                <div class="rating">
-                    @for (int i = 1; i <= 5; i++)
+            <!-- Right: Food Details & Actions -->
+            <div class="col-lg-7 col-md-6">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <span class="badge badge-light text-primary font-weight-bold px-3 py-1 mr-2" style="border-radius: var(--ah-radius-pill); font-size: 12px; background: var(--ah-primary-subtle);">
+                        @Model.Item.StockItemCategory
+                    </span>
+                    @if (!string.IsNullOrEmpty(Model.Item.ItemSize))
                     {
-                        if (i <= Model.Item.Rating)
-                        {
-                            <span class="fa fa-star" style="color:orange;"></span>
-                        }
-                        else
-                        {
-                            <span class="fa fa-star"></span>
-                        }
+                        <span class="badge badge-light text-muted font-weight-bold px-3 py-1" style="border-radius: var(--ah-radius-pill); font-size: 12px;">
+                            Portion: @Model.Item.ItemSize
+                        </span>
                     }
                 </div>
 
-                <div class="price">₹ @Model.Item.UnitPrice</div>
+                <h1 class="font-weight-bold mb-2" style="font-size: clamp(22px, 3.2vw, 32px); color: #111827;">
+                    @Model.Item.StockItemTitle
+                </h1>
 
-                <p class="des">
-                    Size : @Model.Item.ItemSize /
-                    Category : @Model.Item.StockItemCategory
-                </p>
-
-                <a href="javascript:void(0);"
-                   class="btn btn-theme-alt btn-md"
-                   onclick="orderNow(@Model.Item.StockItemID)">
-                    Order Now
-                </a>
-
-
-                    <a href="javascript:void(0);"
-                       class="btn btn-theme-alt btn-md"
-                       onclick="addItem(@Model.Item.StockItemID)">
-                        Add To Cart
-                    </a>
-
+                <!-- Star Rating -->
+                <div class="d-flex align-items-center mb-3">
+                    <div class="mr-2" style="color: #f59e0b; font-size: 15px;">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            if (i <= Model.Item.Rating)
+                            {
+                                <i class="fa fa-star"></i>
+                            }
+                            else
+                            {
+                                <i class="fa fa-star-o" style="color: #cbd5e1;"></i>
+                            }
+                        }
+                    </div>
+                    <span class="text-muted small font-weight-bold">(@Model.Reviews.Count Reviews) &bull; <span class="text-success">Available for Instant Delivery</span></span>
                 </div>
 
+                <!-- Price -->
+                <div class="mb-3">
+                    <span class="font-weight-bold" style="font-size: 32px; color: var(--ah-primary); letter-spacing: -0.02em;">
+                        ₹ @Model.Item.UnitPrice
+                    </span>
+                    <small class="text-muted ml-2">(Inclusive of all taxes)</small>
+                </div>
+
+                <!-- Trust Chips -->
+                <div class="p-3 mb-4 rounded" style="background: #f8fafc; border: 1px solid #edf2f7; font-size: 13px;">
+                    <div class="row">
+                        <div class="col-6 mb-2">
+                            <i class="icofont icofont-check-circled text-success mr-1"></i> 100% Pure Desi Ghee
+                        </div>
+                        <div class="col-6 mb-2">
+                            <i class="icofont icofont-fast-delivery text-danger mr-1"></i> 30-40 Mins Delivery
+                        </div>
+                        <div class="col-6">
+                            <i class="icofont icofont-shield-alt text-success mr-1"></i> FSSAI Certified
+                        </div>
+                        <div class="col-6">
+                            <i class="icofont icofont-restaurant text-warning mr-1"></i> Traditional Recipe
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quantity & Add to Cart -->
+                <div class="d-flex flex-wrap align-items-center gap-3">
+                    <div class="ah-qty-stepper mr-3 mb-2">
+                        <button type="button" class="ah-qty-btn" onclick="changeQty(-1)">&minus;</button>
+                        <span class="ah-qty-val" id="detailQty">1</span>
+                        <button type="button" class="ah-qty-btn" onclick="changeQty(1)">&#43;</button>
+                    </div>
+
+                    <button type="button"
+                            class="btn ah-btn-pill-primary mr-2 mb-2"
+                            style="padding: 11px 28px; font-size: 14px;"
+                            onclick="orderNow(@Model.Item.StockItemID)">
+                        <i class="icofont icofont-flash"></i> Order Now
+                    </button>
+
+                    <button type="button"
+                            class="btn btn-outline-secondary mb-2"
+                            style="border-radius: var(--ah-radius-pill); font-weight: 700; padding: 10px 24px;"
+                            onclick="addItemWithQty(@Model.Item.StockItemID)">
+                        <i class="fa fa-shopping-cart"></i> Add To Cart
+                    </button>
+                </div>
             </div>
+        </div>
+    </div>
 
-            <!-- TABS -->
-            <div class="col-sm-12 col-12 mt-4">
+    <!-- ================= REVIEWS & TABS ================= -->
+    <div class="ah-dish-card p-3 p-md-4 mb-4">
+        <ul class="nav nav-pills ah-category-tabs justify-content-start mb-4" role="tablist">
+            <li class="nav-item mr-2">
+                <a class="nav-link active" data-toggle="pill" href="#tab-review" style="border-radius: var(--ah-radius-pill); font-weight: 700;">
+                    Customer Reviews (@Model.Reviews.Count)
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="pill" href="#tab-add" style="border-radius: var(--ah-radius-pill); font-weight: 700;">
+                    Write a Review
+                </a>
+            </li>
+        </ul>
 
-                <ul class="nav nav-tabs">
-                    <li class="nav-item">
-                        <a class="nav-link active"
-                           data-toggle="tab"
-                           href="#tab-review">
-                            Reviews (@Model.Reviews.Count)
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link"
-                           data-toggle="tab"
-                           href="#tab-add">
-                            Add Review
-                        </a>
-                    </li>
-                </ul>
-
-
-                <div class="tab-content">
-
-                    <!-- REVIEWS -->
-                    <div class="tab-pane fade show active" id="tab-review" role="tabpanel">
+        <div class="tab-content">
+            <!-- Reviews List -->
+            <div class="tab-pane fade show active" id="tab-review">
+                @if (Model.Reviews != null && Model.Reviews.Any())
+                {
+                    <div class="row">
                         @foreach (var review in Model.Reviews)
                         {
-                            <div class="box mt-3">
-                                <img src="@review.UserPhotoPath"
-                                     class="img-fluid"
-                                     style="width:60px;" />
-
-                                <div class="detail">
-                                    <h2>@review.ReviewByUser</h2>
-                                    <span>@review.ReviewDays days ago</span>
-
-                                    <div class="rating">
+                            <div class="col-md-6 mb-3">
+                                <div class="p-3 rounded border h-100" style="background: #f8fafc; border-color: #f1f5f9;">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <div class="ah-user-avatar" style="width: 38px; height: 38px; font-size: 14px;">
+                                            @(string.IsNullOrEmpty(review.ReviewByUser) ? "U" : review.ReviewByUser.Substring(0, 1).ToUpper())
+                                        </div>
+                                        <div>
+                                            <h6 class="font-weight-bold mb-0" style="font-size: 14px;">@review.ReviewByUser</h6>
+                                            <small class="text-muted">@review.ReviewDays days ago</small>
+                                        </div>
+                                    </div>
+                                    <div class="mb-2" style="color: #f59e0b; font-size: 12px;">
                                         @for (int i = 1; i <= 5; i++)
                                         {
                                             if (i <= review.Rating)
                                             {
-                                                <span class="fa fa-star" style="color:orange;"></span>
+                                                <i class="fa fa-star"></i>
                                             }
                                             else
                                             {
-                                                <span class="fa fa-star"></span>
+                                                <i class="fa fa-star-o" style="color: #cbd5e1;"></i>
                                             }
                                         }
                                     </div>
-
-                                    <p>@review.ReviewDetails</p>
+                                    <p class="mb-0 text-muted" style="font-size: 13.5px; line-height: 1.5;">
+                                        @review.ReviewDetails
+                                    </p>
                                 </div>
                             </div>
                         }
                     </div>
-
-                    <!-- ADD REVIEW -->
-                    <div class="tab-pane fade" id="tab-add" role="tabpanel">
-
-                        @if (userid > 0)
-                        {
-                            <form asp-action="ProductDetail"
-                                  asp-controller="Home"
-                                  method="post"
-                                  class="form-horizontal mt-4">
-
-                                @Html.AntiForgeryToken()
-                                @Html.HiddenFor(m => m.StockItemID)
-
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        @Html.TextBoxFor(m => m.Name,
-                                        new { @class = "form-control", placeholder = "Name*" })
-                                </div>
-
-                                <div class="col-md-6">
-                                    @Html.TextBoxFor(m => m.Email,
-                                                                        new { @class = "form-control", placeholder = "Email*" })
-                                </div>
-                            </div>
-
-                            <div class="form-group mt-3">
-                                @Html.TextAreaFor(m => m.ReviewDetails,
-                                                                new { @class = "form-control", rows = 5, placeholder = "Your Review*" })
-                            </div>
-
-                            <div class="form-group mt-3">
-                                <p>Your Rating*</p>
-                                <ul class="list-inline">
-                                    @foreach (var rate in Model.RatingList)
-                                        {
-                                            <li class="list-inline-item">
-                                                <input type="radio"
-                                                       name="Rating"
-                                                       value="@rate.Id"
-                                                       @(Model.Rating == rate.Id ? "checked" : "") />
-                                                @rate.Type
-                                            </li>
-                                        }
-                                    </ul>
-                                </div>
-
-
-                                <button type="submit"
-                                        class="btn btn-theme btn-wide mt-2">
-                                    Submit Review
-                                </button>
-                            </form>
-                        }
-                        else
-                        {
-                            <a asp-controller="User" asp-action="Login">
-                                First Login here
-                            </a>
-                        }
-                    </div>
-
-                </div>
-            </div>
-
-            <!-- RELATED ITEMS -->
-            <div class="col-sm-12 text-center mt-5">
-                <h4>Related Food</h4>
-            </div>
-
-            <div class="dish owl-carousel">
-                @foreach (var r in Model.RelatedItems)
+                }
+                else
                 {
-                    <div class="item">
-                        <div class="box">
-                            <a asp-controller="Home"
-                               asp-action="ProductDetail"
-                               asp-route-itemid="@r.StockItemID">
-                                <img src="@r.ItemPhotoPath" class="img-fluid" />
-                            </a>
-
-                            <div class="caption">
-                                <h4>@r.StockItemTitle</h4>
-                                <p>₹ @r.UnitPrice</p>
-                            </div>
-                        </div>
+                    <div class="text-center py-4">
+                        <i class="icofont icofont-comment text-muted" style="font-size: 40px;"></i>
+                        <p class="text-muted mt-2 small">No customer reviews yet. Be the first to share your experience!</p>
                     </div>
                 }
             </div>
 
+            <!-- Write Review Form -->
+            <div class="tab-pane fade" id="tab-add">
+                @if (userid > 0)
+                {
+                    <form asp-action="ProductDetail" asp-controller="Home" method="post" style="max-width: 600px;">
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(m => m.StockItemID)
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="font-weight-bold small text-muted">Your Name *</label>
+                                @Html.TextBoxFor(m => m.Name, new { @class = "form-control", placeholder = "Enter name", required = "required", style = "border-radius: var(--ah-radius-md); height: 44px;" })
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="font-weight-bold small text-muted">Your Email *</label>
+                                @Html.TextBoxFor(m => m.Email, new { @class = "form-control", placeholder = "Enter email", required = "required", style = "border-radius: var(--ah-radius-md); height: 44px;" })
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label class="font-weight-bold small text-muted">Your Review *</label>
+                            @Html.TextAreaFor(m => m.ReviewDetails, new { @class = "form-control", rows = 3, placeholder = "How was the taste and fresh quality?", required = "required", style = "border-radius: var(--ah-radius-md);" })
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label class="font-weight-bold small text-muted d-block">Rating *</label>
+                            <div class="d-flex flex-wrap gap-3">
+                                @foreach (var rate in Model.RatingList)
+                                {
+                                    <div class="custom-control custom-radio custom-control-inline mr-4">
+                                        <input type="radio" id="rate_@rate.Id" name="Rating" value="@rate.Id" class="custom-control-input" @(Model.Rating == rate.Id ? "checked" : "") />
+                                        <label class="custom-control-label" for="rate_@rate.Id" style="cursor: pointer;">@rate.Type</label>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn ah-btn-pill-primary">
+                            Submit Review
+                        </button>
+                    </form>
+                }
+                else
+                {
+                    <div class="alert alert-light text-center py-4 border" style="border-radius: var(--ah-radius-md);">
+                        <p class="mb-2 font-weight-bold">Please sign in to write a review.</p>
+                        <a asp-controller="User" asp-action="Login" class="btn ah-btn-pill-primary">
+                            Login to Account
+                        </a>
+                    </div>
+                }
+            </div>
         </div>
     </div>
 
+    <!-- ================= RELATED DISHES ================= -->
+    @if (Model.RelatedItems != null && Model.RelatedItems.Any())
+    {
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="font-weight-bold mb-0" style="font-size: 20px; color: #111827;">You May Also Like</h4>
+        </div>
+
+        <div class="dish owl-carousel">
+            @foreach (var r in Model.RelatedItems)
+            {
+                <div class="item p-2">
+                    <div class="ah-dish-card">
+                        <div class="ah-dish-img-wrap">
+                            <span class="ah-tag-bestseller">Recommended</span>
+                            <a asp-controller="Home" asp-action="ProductDetail" asp-route-itemid="@r.StockItemID">
+                                <img src="@Url.Content(r.ItemPhotoPath)"
+                                     class="ah-dish-img"
+                                     alt="@r.StockItemTitle"
+                                     onerror="this.src='/Template/assets/images/about/3.jpg'" />
+                            </a>
+                        </div>
+
+                        <a asp-controller="Home" asp-action="ProductDetail" asp-route-itemid="@r.StockItemID" class="text-dark">
+                            <h5 class="ah-dish-title">@r.StockItemTitle</h5>
+                        </a>
+
+                        <div class="ah-dish-footer mt-2 pt-2 border-top">
+                            <span class="ah-dish-price">₹ @r.UnitPrice</span>
+                            <a asp-controller="Home" asp-action="ProductDetail" asp-route-itemid="@r.StockItemID" class="ah-btn-add-pill">
+                                View <i class="icofont icofont-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<!-- ================= MOBILE STICKY BOTTOM BAR (Under 576px) ================= -->
+<div class="d-block d-sm-none" style="position: fixed; bottom: 58px; left: 0; right: 0; background: #ffffff; padding: 10px 16px; box-shadow: 0 -4px 14px rgba(0,0,0,0.08); z-index: 1030; border-top: 1px solid #edf2f7;">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <small class="text-muted d-block" style="font-size: 11px;">Total Price</small>
+            <strong style="font-size: 20px; color: var(--ah-primary);">₹ @Model.Item.UnitPrice</strong>
+        </div>
+        <button type="button" class="btn ah-btn-pill-primary" style="padding: 10px 24px;" onclick="addItemWithQty(@Model.Item.StockItemID)">
+            Add To Cart <i class="fa fa-shopping-cart ml-1"></i>
+        </button>
+    </div>
+</div>
+
+<!-- ================= TOAST CONTAINER ================= -->
 <div id="toastMessage"
      style="display:none;
             position:fixed;
             bottom:90px;
             left:50%;
             transform:translateX(-50%);
-            background:#323232;
+            background:#1e293b;
             color:#fff;
-            padding:12px 18px;
-            border-radius:6px;
+            padding:12px 22px;
+            border-radius:30px;
             font-size:14px;
-            z-index:99999;">
+            font-weight:600;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+            z-index:999999;">
 </div>
 
-
 @section Scripts {
-  
+    <script>
+        let currentQuantity = 1;
 
+        function changeQty(diff) {
+            currentQuantity += diff;
+            if (currentQuantity < 1) currentQuantity = 1;
+            document.getElementById('detailQty').innerText = currentQuantity;
+        }
 
-<script>
+        function orderNow(itemId) {
+            addItemWithQty(itemId, true);
+        }
 
-    function orderNow(itemId) {
-        // pehle item cart me add
-        addItem(itemId, true);
-    }
-
-    function addItem(id, redirectToCart = false) {
-
-        $.ajax({
-            url: '/Order/Cart_AddItem',
-            type: 'POST',
-            data: {
-                itemid: id,
-                qty: 1,
-                itemtype: 'item'
-            },
-            success: function (result) {
-
-                console.log("Server Result:", result);
-
-                if (result === true || result === "success" || result === 1) {
-
-                    showToast("Added to cart", "success");
-                    if (typeof refreshCartCount === "function") {
-                        refreshCartCount();
-                    }
-
-                    // Order Now ke liye redirect
-                    if (redirectToCart) {
+        function addItemWithQty(id, redirectToCart = false) {
+            $.ajax({
+                url: '/Order/Cart_AddItem',
+                type: 'POST',
+                data: {
+                    itemid: id,
+                    qty: currentQuantity,
+                    itemtype: 'item'
+                },
+                success: function (result) {
+                    if (result === true || result === "success" || result === 1) {
+                        showToast("✨ Added " + currentQuantity + " item(s) to cart!", "success");
+                        if (typeof refreshCartCount === "function") {
+                            refreshCartCount();
+                        }
+                        if (redirectToCart) {
+                            setTimeout(function () {
+                                window.location.href = '@Url.Action("ViewCart", "Order")';
+                            }, 500);
+                        }
+                    } else {
+                        showToast("Please login to order", "error");
                         setTimeout(function () {
-                            window.location.href = '@Url.Action("ViewCart","Order")';
-                        }, 600);
+                            window.location.href = '@Url.Action("Login", "User")';
+                        }, 1200);
                     }
+                },
+                error: function (err) {
+                    console.log(err);
+                    showToast("Unable to add item right now", "error");
                 }
-                else {
-                    showToast("Please login to continue", "error");
+            });
+        }
 
-                    setTimeout(function () {
-                        window.location.href = '@Url.Action("Login","User")';
-                    }, 1200);
-                }
-            },
-            error: function (err) {
-                console.log(err);
-                showToast("Something went wrong", "error");
+        function showToast(message, type = "info") {
+            const toast = document.getElementById("toastMessage");
+            if (!toast) return;
+
+            toast.innerHTML = message;
+            if (type === "error") {
+                toast.style.background = "#dc2626";
+            } else if (type === "success") {
+                toast.style.background = "#16a34a";
+            } else {
+                toast.style.background = "#1e293b";
             }
-        });
-    }
 
-    function showToast(message, type = "info") {
-
-        const toast = document.getElementById("toastMessage");
-
-        toast.innerText = message;
-
-        if (type === "error") {
-            toast.style.background = "#d32f2f";
+            toast.style.display = "block";
+            setTimeout(function () {
+                toast.style.display = "none";
+            }, 2500);
         }
-        else if (type === "success") {
-            toast.style.background = "#388e3c";
-        }
-        else {
-            toast.style.background = "#323232";
-        }
-
-        toast.style.display = "block";
-
-        setTimeout(function () {
-            toast.style.display = "none";
-        }, 2500);
-    }
-
-</script>
-
+    </script>
 }
-
-
-
-
-
-
-
-
-

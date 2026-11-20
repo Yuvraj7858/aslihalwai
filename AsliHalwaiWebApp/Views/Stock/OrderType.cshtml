@@ -1,67 +1,74 @@
-﻿@model AsliHalwaiWebApp.ViewModel.OrderTypeVM
+@model AsliHalwaiWebApp.ViewModel.OrderTypeVM
 @{
-    ViewData["Title"] = "Order Type";
+    ViewData["Title"] = "Order Types - AsliHalwai Admin";
 }
 
-<!-- Breadcrumb -->
-<div class="bread-crumb">
-    <div class="container">
-        <div class="matter">
-            <h2>Order Type</h2>
-            <ul class="list-inline">
-                <li class="list-inline-item">
-                    <a asp-controller="Home" asp-action="Index">HOME</a>
-                </li>
-                <li class="list-inline-item">
-                    <a href="#">Order Type</a>
-                </li>
-            </ul>
+<div class="container py-4">
+    <!-- Header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 pb-3 border-bottom">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent p-0 mb-1" style="font-size: 13px;">
+                    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li class="breadcrumb-item"><a asp-controller="AdminOrder" asp-action="Index">Admin</a></li>
+                    <li class="breadcrumb-item active text-muted" aria-current="page">Order Types</li>
+                </ol>
+            </nav>
+            <h3 class="font-weight-bold mb-1" style="color: #0f172a;">Delivery / Order Types</h3>
+            <p class="text-muted mb-0 small">
+                Configure delivery fulfillment modes (e.g. Delivery, Takeaway, Dine-In).
+            </p>
         </div>
     </div>
-</div>
 
-<div class="login">
-    <div class="container">
-        <div class="row">
+    <div class="row">
+        <!-- LEFT FORM -->
+        <div class="col-md-4 mb-4">
+            <div class="ah-dish-card p-3 p-md-4">
+                <h5 class="font-weight-bold mb-3" style="color: #111827;">
+                    @(Model.OrderTypeId == 0 ? "Add Order Type" : "Edit Order Type")
+                </h5>
 
-            <!-- LEFT FORM -->
-            <div class="col-md-4">
-                <div class="loginnow">
-                    <h5>@(Model.OrderTypeId == 0 ? "Add Order Type" : "Edit Order Type")</h5>
+                <form asp-action="OrderType" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="OrderTypeId" />
 
-                    <form asp-action="OrderType" method="post">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" asp-for="OrderTypeId" />
+                    <div class="form-group mb-3">
+                        <label class="font-weight-bold small text-muted">Order Type Name *</label>
+                        <input asp-for="OrderTypeName"
+                               class="form-control"
+                               placeholder="e.g. Home Delivery"
+                               required
+                               style="height: 44px; border-radius: var(--ah-radius-md);" />
+                        <span asp-validation-for="OrderTypeName" class="text-danger small"></span>
+                    </div>
 
-                        <div class="form-group">
-                            <label>Order Type</label>
-                            <input asp-for="OrderTypeName"
-                                   class="form-control"
-                                   placeholder="Enter order type" />
-                            <span asp-validation-for="OrderTypeName"
-                                  class="text-danger"></span>
-                        </div>
-
-                        <div class="form-group mt-3">
-                            <button type="submit"
-                                    class="btn btn-theme btn-md btn-wide">
-                                @(Model.OrderTypeId == 0 ? "Save" : "Update")
-                            </button>
-                        </div>
-                    </form>
-                </div>
+                    <div class="d-flex justify-content-between align-items-center mt-4">
+                        @if (Model.OrderTypeId > 0)
+                        {
+                            <a asp-action="OrderType" class="btn btn-outline-secondary" style="border-radius: var(--ah-radius-pill);">
+                                Cancel
+                            </a>
+                        }
+                        <button type="submit" class="btn ah-btn-pill-primary">
+                            @(Model.OrderTypeId == 0 ? "Save Order Type" : "Update")
+                        </button>
+                    </div>
+                </form>
             </div>
+        </div>
 
-            <!-- RIGHT LIST -->
-            <div class="col-md-8">
-                <div class="loginnow">
-                    <h5>Order Type List</h5>
+        <!-- RIGHT LIST -->
+        <div class="col-md-8">
+            <div class="ah-dish-card p-3 p-md-4">
+                <h5 class="font-weight-bold mb-3" style="color: #111827;">Existing Order Types</h5>
 
-                    <table class="table table-bordered">
+                <div class="table-responsive">
+                    <table class="table ah-cart-table">
                         <thead>
                             <tr>
                                 <th>Order Type</th>
-                                <th style="width:180px">Action</th>
+                                <th style="width:160px" class="text-right">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -70,23 +77,26 @@
                                 foreach (var item in Model.OrderTypeList)
                                 {
                                     <tr>
-                                        <td>@item.OrderTypeName</td>
-                                        <td>
+                                        <td><strong class="text-dark">@item.OrderTypeName</strong></td>
+                                        <td class="text-right">
                                             <a asp-action="OrderType"
                                                asp-route-id="@item.OrderTypeId"
-                                               class="btn btn-sm btn-warning">
+                                               class="btn btn-sm btn-outline-primary mr-1"
+                                               style="border-radius: var(--ah-radius-pill);">
                                                 Edit
                                             </a>
 
                                             <form asp-action="DeleteOrderType"
                                                   method="post"
                                                   style="display:inline">
+                                                @Html.AntiForgeryToken()
                                                 <input type="hidden"
                                                        name="id"
                                                        value="@item.OrderTypeId" />
 
                                                 <button type="submit"
-                                                        class="btn btn-sm btn-danger"
+                                                        class="btn btn-sm btn-outline-danger"
+                                                        style="border-radius: var(--ah-radius-pill);"
                                                         onclick="return confirm('Delete this order type?')">
                                                     Delete
                                                 </button>
@@ -98,9 +108,8 @@
                             else
                             {
                                 <tr>
-                                    <td colspan="2"
-                                        class="text-center text-danger">
-                                        No Order Type Found
+                                    <td colspan="2" class="text-center py-4 text-muted">
+                                        No Order Types Found
                                     </td>
                                 </tr>
                             }
@@ -108,7 +117,6 @@
                     </table>
                 </div>
             </div>
-
         </div>
     </div>
 </div>

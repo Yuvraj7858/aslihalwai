@@ -1,126 +1,125 @@
-﻿@model AsliHalwaiWebApp.ViewModel.StockMenuCategoryVM
+@model AsliHalwaiWebApp.ViewModel.StockMenuCategoryVM
 
 @{
-    ViewData["Title"] = "Stock Menu Category";
+    ViewData["Title"] = "Stock Menu Category - AsliHalwai Admin";
 }
 
-<!-- ================= Breadcrumb ================= -->
-<div class="bread-crumb">
-    <div class="container">
-        <div class="matter">
-            <h2>Stock Menu Category</h2>
-            <ul class="list-inline">
-                <li class="list-inline-item">
-                    <a asp-controller="Home" asp-action="Index">HOME</a>
-                </li>
-                <li class="list-inline-item">
-                    <a href="#">Stock Category</a>
-                </li>
-            </ul>
+<div class="container py-4">
+    <!-- Header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 pb-3 border-bottom">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent p-0 mb-1" style="font-size: 13px;">
+                    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li class="breadcrumb-item"><a asp-controller="AdminOrder" asp-action="Index">Admin</a></li>
+                    <li class="breadcrumb-item active text-muted" aria-current="page">Menu Categories</li>
+                </ol>
+            </nav>
+            <h3 class="font-weight-bold mb-1" style="color: #0f172a;">Menu Categories</h3>
+            <p class="text-muted mb-0 small">
+                Manage overarching menu categories (e.g. Sweets, Namkeen, Chaat).
+            </p>
         </div>
     </div>
-</div>
 
-<!-- ================= Content ================= -->
-<div class="login">
-    <div class="container">
-        <div class="row">
+    <div class="row">
+        <!-- ===== LEFT : ADD / EDIT FORM ===== -->
+        <div class="col-md-4 mb-4">
+            <div class="ah-dish-card p-3 p-md-4">
+                <h5 class="font-weight-bold mb-3" style="color: #111827;">
+                    @(Model.StockMenuCategoryId == 0 ? "Add Menu Category" : "Edit Menu Category")
+                </h5>
 
-            <!-- ===== LEFT : ADD / EDIT FORM ===== -->
-            <div class="col-md-4">
-                <div class="loginnow">
-                    <h5>
-                        @(Model.StockMenuCategoryId == 0
-                                                ? "Add Stock Category"
-                                                : "Edit Stock Category")
-                    </h5>
+                <form asp-action="StockMenuCategory" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="StockMenuCategoryId" />
 
-                    <form asp-action="StockMenuCategory" method="post">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" asp-for="StockMenuCategoryId" />
+                    <div class="form-group mb-3">
+                        <label class="font-weight-bold small text-muted">Category Name *</label>
+                        <input asp-for="StockMenuCategory"
+                               class="form-control"
+                               placeholder="e.g. Sweets"
+                               required
+                               style="height: 44px; border-radius: var(--ah-radius-md);" />
+                        <span asp-validation-for="StockMenuCategory" class="text-danger small"></span>
+                    </div>
 
-                        <div class="form-group">
-                            <label>Menu Category Name</label>
-                            <input asp-for="StockMenuCategory"
-                                   class="form-control"
-                                   placeholder="Enter Menu name" />
-                            <span asp-validation-for="StockMenuCategory"
-                                  class="text-danger"></span>
-                        </div>
-
-                        <div class="form-group mt-3">
-                            <input type="submit"
-                                   value="@(Model.StockMenuCategoryId == 0 ? "Save" : "Update")"
-                                   class="btn btn-theme btn-md btn-wide" />
-                        </div>
-                    </form>
-                </div>
+                    <div class="d-flex justify-content-between align-items-center mt-4">
+                        @if (Model.StockMenuCategoryId > 0)
+                        {
+                            <a asp-action="StockMenuCategory" class="btn btn-outline-secondary" style="border-radius: var(--ah-radius-pill);">
+                                Cancel
+                            </a>
+                        }
+                        <button type="submit" class="btn ah-btn-pill-primary">
+                            @(Model.StockMenuCategoryId == 0 ? "Save Category" : "Update")
+                        </button>
+                    </div>
+                </form>
             </div>
+        </div>
 
-            <!-- ===== RIGHT : CATEGORY LIST ===== -->
-            <div class="col-md-8">
-                <div class="loginnow">
-                    <h5>Stock Menu List</h5>
+        <!-- ===== RIGHT : CATEGORY LIST ===== -->
+        <div class="col-md-8">
+            <div class="ah-dish-card p-3 p-md-4">
+                <h5 class="font-weight-bold mb-3" style="color: #111827;">Menu Category List</h5>
 
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Menu Name</th>
-                                    <th>Created By</th>  <!-- 🔥 NEW -->
-                                    <th style="width:180px">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @if (Model.CategoryList != null && Model.CategoryList.Any())
-                                {
-                                    foreach (var item in Model.CategoryList)
-                                    {
-                                        <tr>
-                                            <td>@item.StockMenuCategory</td>
-                                            <td>@item.CreatedBy</td> <!-- 🔥 NEW -->
-
-                                            <td>
-                                                <a asp-action="StockMenuCategory"
-                                                   asp-route-id="@item.StockMenuCategoryId"
-                                                   class="btn btn-sm btn-warning">
-                                                    Edit
-                                                </a>
-
-                                                <form asp-action="DeleteStockMenuCategory"
-                                                      method="post"
-                                                      style="display:inline">
-                                                    @Html.AntiForgeryToken()
-                                                    <input type="hidden"
-                                                           name="id"
-                                                           value="@item.StockMenuCategoryId" />
-
-                                                    <button type="submit"
-                                                            class="btn btn-sm btn-danger"
-                                                            onclick="return confirm('Are you sure?')">
-                                                        Delete
-                                                    </button>
-                                                </form>
-                                            </td>
-                                        </tr>
-                                    }
-                                }
-                                else
+                <div class="table-responsive">
+                    <table class="table ah-cart-table">
+                        <thead>
+                            <tr>
+                                <th>Category Name</th>
+                                <th>Created By</th>
+                                <th style="width:160px" class="text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.CategoryList != null && Model.CategoryList.Any())
+                            {
+                                foreach (var item in Model.CategoryList)
                                 {
                                     <tr>
-                                        <td colspan="3"
-                                            class="text-center text-danger">
-                                            No Category Found
+                                        <td><strong class="text-dark">@item.StockMenuCategory</strong></td>
+                                        <td><small class="text-muted">@item.CreatedBy</small></td>
+                                        <td class="text-right">
+                                            <a asp-action="StockMenuCategory"
+                                               asp-route-id="@item.StockMenuCategoryId"
+                                               class="btn btn-sm btn-outline-primary mr-1"
+                                               style="border-radius: var(--ah-radius-pill);">
+                                                Edit
+                                            </a>
+
+                                            <form asp-action="DeleteStockMenuCategory"
+                                                  method="post"
+                                                  style="display:inline">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden"
+                                                       name="id"
+                                                       value="@item.StockMenuCategoryId" />
+
+                                                <button type="submit"
+                                                        class="btn btn-sm btn-outline-danger"
+                                                        style="border-radius: var(--ah-radius-pill);"
+                                                        onclick="return confirm('Delete this category?')">
+                                                    Delete
+                                                </button>
+                                            </form>
                                         </td>
                                     </tr>
                                 }
-                            </tbody>
-                        </table>
-                    </div>
-
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="3" class="text-center py-4 text-muted">
+                                        No Categories Found
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
                 </div>
             </div>
-
         </div>
     </div>
 </div>

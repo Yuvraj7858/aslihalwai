@@ -141,30 +141,10 @@ body {
             z-index: 1;
         }*/
 
-/* ===== MOBILE HEADER SWEETS BACKGROUND (FINAL FIX) ===== */
+/* Mobile header background handled by modern design system */
 @media (max-width: 768px) {
-
-    header {
-        position: relative;
-        background-image: url('/images/sw4.png') !important;
-        background-size: cover !important;
-        background-position: center !important;
-        background-repeat: no-repeat !important;
-        background-color: transparent !important;
+    .ah-mobile-header {
+        background: #ffffff !important;
     }
-
-        /* remove theme black overlays */
-        header::before,
-        header::after {
-            display: none !important;
-            background: none !important;
-        }
-
-        /* inner elements transparent so image dikhe */
-        header .container,
-        header .row,
-        header [class^="col-"] {
-            background: transparent !important;
-        }
 }
 

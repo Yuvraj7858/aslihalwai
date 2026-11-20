@@ -1,43 +1,64 @@
-﻿@model AsliHalwaiWebApp.ViewModel.UpiPaymentVM
+@model AsliHalwaiWebApp.ViewModel.UpiPaymentVM
+
 @{
-    ViewData["Title"] = "Pay via UPI";
+    ViewData["Title"] = "Complete UPI Payment";
 }
 
-<h3>Pay ₹@Model.Amount via UPI</h3>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="ah-auth-card text-center" style="max-width: 520px;">
+                <div style="width: 60px; height: 60px; background: #e0f2fe; color: #0284c7; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 16px;">
+                    <i class="icofont icofont-money"></i>
+                </div>
 
-<!-- 🔹 UPI BUTTON -->
-<a class="btn btn-success btn-lg mb-3"
-   href="upi://pay?
-pa=@Model.UpiId
-&pn=@Model.MerchantName
-&am=@Model.Amount
-&cu=INR
-&tn=Order_@Model.OrderId">
-    📲 Pay Now using UPI
-</a>
+                <h3 class="font-weight-bold mb-1" style="color: #0f172a;">Pay ₹@Model.Amount via UPI</h3>
+                <p class="text-muted mb-4" style="font-size: 14px;">Order Reference: #@Model.OrderId</p>
 
-<hr />
+                <!-- Mobile Direct UPI Pay Button -->
+                <div class="mb-4">
+                    <a class="btn ah-btn-primary"
+                       style="background: #16a34a; box-shadow: 0 4px 14px rgba(22, 163, 74, 0.3);"
+                       href="upi://pay?pa=@Model.UpiId&pn=@Model.MerchantName&am=@Model.Amount&cu=INR&tn=Order_@Model.OrderId">
+                        <i class="icofont icofont-mobile-phone"></i> Tap to Pay with Any UPI App
+                    </a>
+                </div>
 
-<!-- 🔹 UTR SUBMIT -->
-<form asp-action="SubmitUpiPayment" method="post">
-    @Html.AntiForgeryToken()
+                <div class="p-3 border rounded mb-4" style="background: #f8fafc; font-size: 13.5px;">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="text-muted">Payee UPI ID:</span>
+                        <strong class="text-dark">@Model.UpiId</strong>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span class="text-muted">Payee Name:</span>
+                        <strong class="text-dark">@Model.MerchantName</strong>
+                    </div>
+                </div>
 
-    <input type="hidden" asp-for="OrderId" />
-    <input type="hidden" asp-for="Amount" />
+                <!-- UTR Verification Form -->
+                <form asp-action="SubmitUpiPayment" method="post" class="text-left">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="OrderId" />
+                    <input type="hidden" asp-for="Amount" />
 
-    <div class="form-group">
-        <label>Enter UPI Transaction ID (UTR)</label>
-        <input asp-for="PaymentUTR"
-               class="form-control"
-               required
-               placeholder="Example: 324567890123" />
+                    <div class="form-group mb-3">
+                        <label class="font-weight-bold small text-muted">UPI Transaction ID / UTR *</label>
+                        <input asp-for="PaymentUTR"
+                               class="form-control"
+                               required
+                               placeholder="12-digit transaction ID (e.g. 324567890123)"
+                               style="height: 48px; border-radius: var(--ah-radius-md);" />
+                    </div>
+
+                    <button type="submit" class="btn ah-btn-primary">
+                        <i class="icofont icofont-check-circled"></i> Submit Payment Verification
+                    </button>
+                </form>
+
+                <p class="text-muted small mt-3 mb-0">
+                    <i class="icofont icofont-shield-alt text-success"></i> Payment will be verified and marked as Paid automatically.
+                </p>
+            </div>
+        </div>
     </div>
-
-    <button class="btn btn-primary mt-2">
-        Submit Payment
-    </button>
-</form>
-
-<p class="text-muted mt-3">
-    ⚠️ Payment verification may take some time.
-</p>
+</div>

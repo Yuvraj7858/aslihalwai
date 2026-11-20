@@ -1,61 +1,47 @@
-﻿@model AsliHalwaiWebApp.ViewModel.AccountRecoveryVM
+@model AsliHalwaiWebApp.ViewModel.AccountRecoveryVM
+
 @{
-    ViewData["Title"] = "Account Recovery";
+    ViewData["Title"] = "Account Recovery - AsliHalwai";
 }
 
-<div class="bread-crumb">
-    <div class="container">
-        <h2>Account Recovery</h2>
-        <ul class="list-inline">
-            <li class="list-inline-item">
-                <a asp-controller="Home" asp-action="Index">Home</a>
-            </li>
-        </ul>
-    </div>
-</div>
-
-<div class="login">
-    <div class="container">
-        <div class="row justify-content-center">
-
-            <div class="col-md-6">
-                <div class="loginnow">
-                    <h5 class="text-center mb-4">Forgot Password</h5>
-
-                    <form asp-action="AccountRecovery"
-                          asp-controller="AccountRecovery"
-                          method="post">
-
-                        @Html.AntiForgeryToken()
-
-                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-                        <div class="form-group mb-3">
-                            <label>User Name / Email</label>
-                            <input asp-for="UserName"
-                                   class="form-control"
-                                   placeholder="Enter username or email" />
-                            <span asp-validation-for="UserName"
-                                  class="text-danger"></span>
-                        </div>
-
-                        <div class="d-flex justify-content-between">
-                            <a asp-controller="User"
-                               asp-action="Login">
-                                Back to Login
-                            </a>
-
-                            <button type="submit"
-                                    class="btn btn-theme">
-                                Send Recovery Link
-                            </button>
-                        </div>
-
-                    </form>
-
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-5 col-md-7 col-12">
+            <div class="ah-auth-card">
+                <div class="ah-auth-header">
+                    <img src="~/Template/assets/images/logo/logo.png" alt="AsliHalwai" />
+                    <h3 class="ah-auth-title">Reset Password</h3>
+                    <p class="ah-auth-desc">Enter your registered email or username to receive a password reset link</p>
                 </div>
-            </div>
 
+                <form asp-action="AccountRecovery" asp-controller="AccountRecovery" method="post" novalidate>
+                    @Html.AntiForgeryToken()
+
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small" style="border-radius: var(--ah-radius-md);"></div>
+
+                    <!-- Username / Email -->
+                    <div class="ah-input-group">
+                        <i class="icofont icofont-ui-message"></i>
+                        <input asp-for="UserName"
+                               class="form-control"
+                               placeholder="Enter username or email address"
+                               required />
+                        <span asp-validation-for="UserName" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn ah-btn-primary mb-3">
+                        <i class="icofont icofont-paper-plane"></i> Send Recovery Link
+                    </button>
+
+                    <!-- Back to Login -->
+                    <div class="text-center mt-3 pt-3 border-top" style="font-size: 14px;">
+                        <a asp-controller="User" asp-action="Login" class="font-weight-bold" style="color: var(--ah-primary);">
+                            <i class="icofont icofont-arrow-left"></i> Back to Sign In
+                        </a>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>

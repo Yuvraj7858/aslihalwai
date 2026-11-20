@@ -1,91 +1,106 @@
-﻿@model AsliHalwaiWebApp.Models.TableReservationVM
+@model AsliHalwaiWebApp.Models.TableReservationVM
 
-
-<!-- Reservation Start -->
-<div class="reservation" id="reservationtable">
+<!-- Reservation Section Start -->
+<section class="ah-reservation-section" id="reservationtable">
     <div class="container">
-        <div class="row">
-            <!-- Title -->
-            <div class="col-sm-12 commontop white text-center">
-                <h4>Book Your Table</h4>
-                <div class="divider style-1 center">
-                    <span class="hr-simple left"></span>
-                    <i class="icofont icofont-ui-press hr-icon"></i>
-                    <span class="hr-simple right"></span>
+        <!-- Section Heading -->
+        <div class="text-center mb-5">
+            <span class="ah-section-tag" style="color: #ff7849;">Dine-In Hospitality</span>
+            <h2 class="text-white font-weight-bold" style="font-size: clamp(26px, 3.5vw, 38px); letter-spacing: -0.02em;">
+                Book Your Table
+            </h2>
+            <p class="text-muted mx-auto" style="max-width: 540px; font-size: 15px; color: #94a3b8 !important;">
+                Reserve your dining experience in advance for family feasts, celebrations, or private gatherings at AsliHalwai.
+            </p>
+        </div>
+
+        <!-- Reservation Form Card -->
+        <div class="row justify-content-center">
+            <div class="col-lg-10 col-12">
+                <div class="ah-reservation-card">
+                    <form asp-action="BookTable"
+                          asp-controller="TableReservation"
+                          method="post"
+                          class="reservation-form"
+                          novalidate>
+
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="TableReservationId" />
+
+                        <div class="row">
+                            <!-- Full Name -->
+                            <div class="form-group col-md-4 col-sm-6 col-12">
+                                <label>Your Name *</label>
+                                <div class="position-relative">
+                                    <i class="icofont icofont-ui-user"></i>
+                                    <input asp-for="FullName" class="form-control" placeholder="Enter full name" />
+                                </div>
+                                <span asp-validation-for="FullName" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Email -->
+                            <div class="form-group col-md-4 col-sm-6 col-12">
+                                <label>Email Address *</label>
+                                <div class="position-relative">
+                                    <i class="icofont icofont-ui-message"></i>
+                                    <input asp-for="EmailAddress" class="form-control" placeholder="name@domain.com" />
+                                </div>
+                                <span asp-validation-for="EmailAddress" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Mobile No -->
+                            <div class="form-group col-md-4 col-sm-6 col-12">
+                                <label>Phone Number *</label>
+                                <div class="position-relative">
+                                    <i class="icofont icofont-phone"></i>
+                                    <input asp-for="MobileNo" class="form-control" placeholder="e.g. 9876543210" />
+                                </div>
+                                <span asp-validation-for="MobileNo" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Reservation Date -->
+                            <div class="form-group col-md-4 col-sm-6 col-12">
+                                <label>Date of Visit *</label>
+                                <div class="position-relative">
+                                    <i class="icofont icofont-ui-calendar"></i>
+                                    <input asp-for="ReservationDate" type="date" class="form-control" />
+                                </div>
+                                <span asp-validation-for="ReservationDate" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Reservation Time -->
+                            <div class="form-group col-md-4 col-sm-6 col-12">
+                                <label>Preferred Time *</label>
+                                <div class="position-relative">
+                                    <i class="icofont icofont-clock-time"></i>
+                                    <input asp-for="ReservationTime" class="form-control" placeholder="e.g. 07:30 PM" />
+                                </div>
+                                <span asp-validation-for="ReservationTime" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Number of Persons -->
+                            <div class="form-group col-md-4 col-sm-6 col-12">
+                                <label>Guests / Persons *</label>
+                                <div class="position-relative">
+                                    <i class="icofont icofont-users"></i>
+                                    <input asp-for="NoOfPerson" class="form-control" placeholder="e.g. 4 Persons" />
+                                </div>
+                                <span asp-validation-for="NoOfPerson" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <!-- Action Submit -->
+                        <div class="text-center mt-3">
+                            <button type="submit"
+                                    class="btn ah-btn-primary"
+                                    style="max-width: 280px; margin: 0 auto; display: inline-flex;"
+                                    onclick="this.form.submit(); return true;">
+                                <i class="icofont icofont-check-circled"></i> CONFIRM TABLE BOOKING
+                            </button>
+                        </div>
+                    </form>
                 </div>
-                <p>
-                    Decide on a date and time: Choose the date and time you want
-                    to visit the restaurant.
-                </p>
-            </div>
-
-            <div class="col-md-12 col-12">
-                <!-- Reservation Form -->
-                <form asp-action="BookTable"
-                      asp-controller="TableReservation"
-                      method="post"
-                      class="row reservation-form"
-                      novalidate>
-
-                    @Html.AntiForgeryToken()
-
-                    <!-- Hidden ID (future use) -->
-                    <input type="hidden" asp-for="TableReservationId" />
-
-                    <!-- Full Name -->
-                    <div class="form-group col-md-4 col-sm-6">
-                        <i class="icofont icofont-ui-user"></i>
-                        <input asp-for="FullName" class="form-control" placeholder="name" />
-                        <span asp-validation-for="FullName" class="text-danger"></span>
-                    </div>
-
-                    <!-- Email -->
-                    <div class="form-group col-md-4 col-sm-6">
-                        <i class="icofont icofont-ui-message"></i>
-                        <input asp-for="EmailAddress" class="form-control" placeholder="email" />
-                        <span asp-validation-for="EmailAddress" class="text-danger"></span>
-                    </div>
-
-                    <!-- Mobile -->
-                    <div class="form-group col-md-4 col-sm-6">
-                        <i class="icofont icofont-phone"></i>
-                        <input asp-for="MobileNo" class="form-control" placeholder="mobile number" />
-                        <span asp-validation-for="MobileNo" class="text-danger"></span>
-                    </div>
-
-                    <!-- Reservation Date -->
-                    <div class="form-group col-md-4 col-sm-6">
-                        <i class="icofont icofont-ui-calendar"></i>
-                        <input asp-for="ReservationDate" type="date" class="form-control" />
-                        <span asp-validation-for="ReservationDate" class="text-danger"></span>
-                    </div>
-
-                    <!-- Reservation Time -->
-                    <div class="form-group col-md-4 col-sm-6">
-                        <i class="icofont icofont-clock-time"></i>
-                        <input asp-for="ReservationTime" class="form-control" placeholder="hh:mm AM/PM" />
-                        <span asp-validation-for="ReservationTime" class="text-danger"></span>
-                    </div>
-
-                    <!-- No Of Person -->
-                    <div class="form-group col-md-4 col-sm-6">
-                        <i class="icofont icofont-users"></i>
-                        <input asp-for="NoOfPerson" class="form-control" placeholder="number of persons" />
-                        <span asp-validation-for="NoOfPerson" class="text-danger"></span>
-                    </div>
-
-                    <!-- Submit -->
-                    <button type="submit"
-                            class="btn btn-theme btn-wide"
-                            onclick="this.form.submit(); return true;">
-                        BOOK NOW
-                    </button>
-
-
-                </form>
-                <!-- Reservation Form End -->
             </div>
         </div>
     </div>
-</div>
-<!-- Reservation End -->
+</section>

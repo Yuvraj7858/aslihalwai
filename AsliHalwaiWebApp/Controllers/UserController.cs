@@ -1,4 +1,4 @@
-﻿using AsliHalwaiWebApp.Data;
+using AsliHalwaiWebApp.Data;
 using AsliHalwaiWebApp.Helpers;
 using AsliHalwaiWebApp.Models;
 using AsliHalwaiWebApp.ViewModel;
@@ -65,7 +65,8 @@ namespace AsliHalwaiWebApp.Controllers
             {
                 cartCount = _context.CartItemDetailTables
                     .Where(x => x.CartId == cart.CartId)
-                    .Sum(x => x.Qty);
+                    .Select(x => (int?)x.Qty)
+                    .Sum() ?? 0;
             }
 
             HttpContext.Session.SetInt32("CartCount", cartCount);
@@ -128,7 +129,8 @@ namespace AsliHalwaiWebApp.Controllers
                     ? model.UserName
                     : "",
                 RegistrationDate = DateOnly.FromDateTime(DateTime.Now),
-                UserStatusId =2 // Active
+                UserStatusId = 2, // Active
+                UserStatusChangeDate = DateOnly.FromDateTime(DateTime.Now)
             };
 
             _context.UserTables.Add(user);
@@ -145,32 +147,34 @@ namespace AsliHalwaiWebApp.Controllers
             int? userId = HttpContext.Session.GetInt32("UserId");
 
             if (userTypeId == null || userId == null)
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Login", "User");
 
             var dashboard = new DashboardVM();
 
-            // 🔥 RECENT ORDERS
+            // =======================
+            // RECENT ORDERS
+            // =======================
             var recentOrders = _context.OrderTables
-       .Where(o => o.OrderByUserId == userId.Value)
-       .OrderByDescending(o => o.OrderId)
-       .Take(5)
-       .Select(o => new RecentOrderVM
-       {
-           OrderId = o.OrderId,
-           OrderDate = o.OrderDateTime,
-           Status = o.OrderStatus != null
-               ? o.OrderStatus.OrderStatus
-               : "N/A",
-
-           Items = o.OrderItemDetailTables
-               .Select(i => new RecentOrderItemVM
-               {
-                   ProductId = i.StockItemId,
-                   ProductName = i.StockItem.StockItemTitle
-               })
-               .ToList()
-       })
-       .ToList();
+                .Where(o => o.OrderByUserId == userId.Value)
+                .OrderByDescending(o => o.OrderDateTime)
+                .Take(5)
+                .Select(o => new RecentOrderVM
+                {
+                    OrderId = o.OrderId,
+                    OrderDate = o.OrderDateTime,
+                    Status = o.OrderStatus != null ? o.OrderStatus.OrderStatus : "Pending",
+                    OrderType = o.OrderType != null ? o.OrderType.OrderTypeName : "Delivery",
+                    PaymentStatus = o.PaymentStatus ?? "Pending",
+                    Items = _context.OrderItemDetailTables
+                        .Where(i => i.OrderId == o.OrderId)
+                        .Select(i => new RecentOrderItemVM
+                        {
+                            ProductId = i.StockItemId,
+                            ProductName = i.StockItem.StockItemTitle
+                        })
+                        .ToList()
+                })
+                .ToList();
 
             dashboard.RecentOrders = recentOrders;
 
@@ -216,7 +220,7 @@ namespace AsliHalwaiWebApp.Controllers
                         ? u.UserDetailTable.LastExperienceScanPhoto
                         : null
                 })
-                .FirstOrDefault();
+                .FirstOrDefault() ?? new User_ProfileVM();
 
             // =======================
             // USER ADDRESSES
@@ -249,6 +253,10 @@ namespace AsliHalwaiWebApp.Controllers
             var user = _context.UserTables.FirstOrDefault(x => x.UserId == userId.Value);
             if (user == null)
                 return RedirectToAction("Login", "User");
+
+            if (dashboardVM.ProfileVM == null)
+                return RedirectToAction("Dashboard");
+            
             // =====================
             // BASIC USER UPDATE
             // =====================

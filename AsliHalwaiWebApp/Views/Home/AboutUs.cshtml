@@ -1,44 +1,75 @@
-﻿@{
-    ViewData["Title"] = "About Us";
+@{
+    ViewData["Title"] = "About Us - AsliHalwai Sweets & Snacks";
 }
 
-<!-- Breadcrumb -->
-<div class="bread-crumb">
-    <div class="container">
-        <h2>About Us</h2>
+<div class="container py-5">
+    <!-- Header -->
+    <div class="ah-section-header">
+        <span class="ah-section-tag">Our Heritage &amp; Passion</span>
+        <h2 class="ah-section-title">The Story of AsliHalwai</h2>
+        <p class="ah-section-subtitle">
+            Preserving centuries of authentic Indian confectionery traditions with 100% pure desi ghee, natural ingredients, and authentic recipes.
+        </p>
     </div>
-</div>
 
-<!-- About Us Content -->
-<div class="container mt-5 mb-5">
-    <div class="row justify-content-center">
-        <div class="col-md-10 text-center">
+    <!-- Story Card -->
+    <div class="row align-items-center mb-5">
+        <div class="col-lg-6 mb-4 mb-lg-0">
+            <img src="~/Template/assets/images/background/banner-2.jpg"
+                 class="img-fluid rounded-lg shadow"
+                 style="border-radius: var(--ah-radius-xl); max-height: 380px; width: 100%; object-fit: cover;"
+                 alt="AsliHalwai Tradition"
+                 onerror="this.src='/Template/assets/images/about/3.jpg'" />
+        </div>
+        <div class="col-lg-6">
+            <div class="ah-cart-card">
+                <h4 class="font-weight-bold mb-3" style="color: #0f172a;">Pure Taste, No Compromise</h4>
+                <p class="text-muted" style="line-height: 1.7; font-size: 14.5px;">
+                    Founded with a passion to bring unadulterated, pure-ingredient sweets and savoury treats to food lovers, AsliHalwai stands for authenticity. From slow-roasted Motichur Laddoos and soft spongy Rasgullas to sizzling hot Samosas and crispy Namkeen, every dish is crafted with meticulous care.
+                </p>
+                <p class="text-muted" style="line-height: 1.7; font-size: 14.5px;">
+                    We believe good food starts with honest ingredients. That is why our sweets are made with 100% pure desi ghee, premium milk solids, and aromatic spices with zero artificial preservatives.
+                </p>
+            </div>
+        </div>
+    </div>
 
-            <h3>Welcome to Stonecode Technology</h3>
-            <p class="mt-3 text-muted">
-                Stonecode Technology is a professional IT solutions company
-                specializing in website development, software solutions,
-                and mobile applications.
-            </p>
+    <!-- Pillars / Values -->
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="ah-cart-card text-center h-100 p-4">
+                <div class="ah-trust-icon mx-auto mb-3" style="width: 54px; height: 54px; font-size: 24px;">
+                    <i class="icofont icofont-fire-burn"></i>
+                </div>
+                <h5 class="font-weight-bold mb-2">100% Pure Desi Ghee</h5>
+                <p class="text-muted small mb-0">
+                    Never compromising on richness. We use authentic desi ghee for rich flavour and authentic aroma.
+                </p>
+            </div>
+        </div>
 
-            <p class="text-muted">
-                We focus on building secure, scalable, and user-friendly
-                digital products that help businesses grow and succeed.
-            </p>
+        <div class="col-md-4 mb-4">
+            <div class="ah-cart-card text-center h-100 p-4">
+                <div class="ah-trust-icon mx-auto mb-3" style="width: 54px; height: 54px; font-size: 24px;">
+                    <i class="icofont icofont-shield-alt"></i>
+                </div>
+                <h5 class="font-weight-bold mb-2">Hygienic Modern Kitchen</h5>
+                <p class="text-muted small mb-0">
+                    FSSAI compliant, high sanitation standards, and temperature-controlled food handling from prep to delivery.
+                </p>
+            </div>
+        </div>
 
-            <hr />
-
-            <h4 class="mt-4">Our Mission</h4>
-            <p class="text-muted">
-                To deliver high-quality technology solutions with innovation,
-                integrity, and customer satisfaction.
-            </p>
-
-            <h4 class="mt-4">Our Vision</h4>
-            <p class="text-muted">
-                To become a trusted technology partner for businesses worldwide.
-            </p>
-
+        <div class="col-md-4 mb-4">
+            <div class="ah-cart-card text-center h-100 p-4">
+                <div class="ah-trust-icon mx-auto mb-3" style="width: 54px; height: 54px; font-size: 24px;">
+                    <i class="icofont icofont-heart-alt"></i>
+                </div>
+                <h5 class="font-weight-bold mb-2">Customer Delight</h5>
+                <p class="text-muted small mb-0">
+                    Thousands of loyal patrons trust us for their family celebrations, festivals, and daily snack cravings.
+                </p>
+            </div>
         </div>
     </div>
 </div>

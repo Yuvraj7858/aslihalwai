@@ -13,7 +13,6 @@ public partial class OrderTable
     [Column("OrderBy_UserID")]
     public int OrderByUserId { get; set; }
 
-    [Column(TypeName = "datetime")]
     public DateTime OrderDateTime { get; set; }
 
     [Column("OrderTypeID")]

@@ -28,7 +28,6 @@ public partial class TableReservationTable
 
     public DateOnly ReservationRequestDate { get; set; }
 
-    [Column(TypeName = "datetime")]
     public DateTime ReservationDateTime { get; set; }
 
     public int NoOfPerson { get; set; }

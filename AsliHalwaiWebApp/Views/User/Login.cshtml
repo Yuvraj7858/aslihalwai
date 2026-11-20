@@ -1,136 +1,75 @@
-﻿@model AsliHalwaiWebApp.ViewModels.LoginVM
+@model AsliHalwaiWebApp.ViewModels.LoginVM
 
 @{
-    ViewData["Title"] = "Login";
+    ViewData["Title"] = "Login to AsliHalwai";
 }
 
-<!-- Breadcrumb Start -->
-<div class="bread-crumb">
-    <div class="container">
-        <div class="matter">
-            <h2>Login</h2>
-            <ul class="list-inline">
-                <li class="list-inline-item">
-                    <a asp-controller="Home" asp-action="Index">HOME</a>
-                </li>
-                <li class="list-inline-item">
-                    <a asp-controller="User" asp-action="Login">Login</a>
-                </li>
-            </ul>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-5 col-md-7 col-12">
+            <div class="ah-auth-card">
+                <div class="ah-auth-header">
+                    <img src="~/Template/assets/images/logo/logo.png" alt="AsliHalwai" />
+                    <h3 class="ah-auth-title">Welcome Back</h3>
+                    <p class="ah-auth-desc">Sign in to order your favourite sweets &amp; track deliveries</p>
+                </div>
+
+                <form asp-action="Login" asp-controller="User" method="post" novalidate>
+                    @Html.AntiForgeryToken()
+
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small" style="border-radius: var(--ah-radius-md);"></div>
+
+                    <!-- Username / Email -->
+                    <div class="ah-input-group">
+                        <i class="icofont icofont-ui-user"></i>
+                        <input asp-for="UserName"
+                               class="form-control"
+                               placeholder="Email Address or Mobile Number"
+                               required />
+                        <span asp-validation-for="UserName" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="ah-input-group">
+                        <i class="icofont icofont-lock"></i>
+                        <input asp-for="Password"
+                               type="password"
+                               class="form-control"
+                               placeholder="Enter Password"
+                               required />
+                        <span asp-validation-for="Password" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Remember & Forgot Password -->
+                    <div class="d-flex justify-content-between align-items-center mb-4" style="font-size: 13.5px;">
+                        <label class="d-flex align-items-center mb-0 text-muted" style="cursor: pointer;">
+                            <input type="checkbox" class="mr-2" /> Remember Me
+                        </label>
+                        <a asp-controller="AccountRecovery"
+                           asp-action="AccountRecovery"
+                           class="font-weight-bold" style="color: var(--ah-primary);">
+                            Forgot Password?
+                        </a>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn ah-btn-primary mb-3">
+                        <i class="icofont icofont-sign-in"></i> Sign In to Account
+                    </button>
+
+                    <!-- Switch to Register -->
+                    <div class="text-center mt-3 pt-3 border-top" style="font-size: 14px;">
+                        <span class="text-muted">Don't have an account?</span>
+                        <a asp-controller="User" asp-action="Register" class="font-weight-bold ml-1" style="color: var(--ah-primary);">
+                            Create Free Account
+                        </a>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>
-<!-- Breadcrumb End -->
-<!-- Login Start -->
-<div class="login">
-    <div class="container">
-        <div class="row justify-content-center">
 
-            <div class="col-sm-12 commontop text-center">
-                <h4>Login to Your Account</h4>
-                <div class="divider style-1 center">
-                    <span class="hr-simple left"></span>
-                    <i class="icofont icofont-ui-press hr-icon"></i>
-                    <span class="hr-simple right"></span>
-                </div>
-            </div>
-
-            <div class="col-lg-10 col-md-12">
-                <div class="row">
-
-                    <!-- LOGIN FORM -->
-                    <div class="col-sm-12 col-md-6">
-                        <div class="loginnow">
-                            <h5>Login</h5>
-                            <p>
-                                Don't have an account?
-                                <a asp-controller="User" asp-action="Register">Register</a>
-                                And starts less than a minute
-                            </p>
-
-                            <form asp-action="Login"
-                                  asp-controller="User"
-                                  method="post">
-
-                                @Html.AntiForgeryToken()
-
-                                <div asp-validation-summary="ModelOnly"
-                                     class="text-danger"></div>
-
-                                <div class="form-group">
-                                    <i class="icofont icofont-ui-user"></i>
-
-                                    <input asp-for="UserName"
-                                           class="form-control"
-                                           placeholder="Enter Email or Number" />
-
-                                    <span asp-validation-for="UserName"
-                                          class="text-danger"></span>
-                                </div>
-
-                                <div class="form-group">
-                                    <i class="icofont icofont-lock"></i>
-
-                                    <input asp-for="Password"
-                                           type="password"
-                                           class="form-control"
-                                           placeholder="Enter Password" />
-
-                                    <span asp-validation-for="Password"
-                                          class="text-danger"></span>
-                                </div>
-
-                                <div class="form-group">
-                                    <div class="links">
-                                        <label>
-                                            <input type="checkbox" /> Remember Me
-                                        </label>
-                                        <a class="float-right sign"
-                                           asp-controller="AccountRecovery"
-                                           asp-action="AccountRecovery">
-                                            Forgot Password?
-                                        </a>
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <button type="submit"
-                                            class="btn btn-theme btn-md btn-wide">
-                                        SIGN IN
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-
-                    <!-- SOCIAL LOGIN (UI ONLY) -->
-                    <div class="col-sm-12 col-md-6">
-                        <div class="loginto loginnow">
-                            <h5>Login via social accounts</h5>
-                            <ul class="list-unstyled text-center">
-                                <li>
-                                    <a href="#">
-                                        <i class="icofont icofont-social-facebook"></i>
-                                        Login with Facebook
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <i class="icofont icofont-social-google-plus"></i>
-                                        Login with Google+
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-        </div>
-    </div>
-</div>
-<!-- Login End -->
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }

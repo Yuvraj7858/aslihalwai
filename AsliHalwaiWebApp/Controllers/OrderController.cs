@@ -1,4 +1,4 @@
-﻿using AsliHalwaiWebApp.Data;
+using AsliHalwaiWebApp.Data;
 using AsliHalwaiWebApp.Models;
 using AsliHalwaiWebApp.ViewModel;
 using Microsoft.AspNetCore.Mvc;
@@ -140,6 +140,57 @@ namespace AsliHalwaiWebApp.Controllers
             if (userId == null)
                 return RedirectToAction("Login", "User");
 
+            // =====================
+            // 0️⃣ VERIFY CART EXISTS
+            // =====================
+            var cart = _context.CartTables
+                .FirstOrDefault(c => c.UserId == userId.Value);
+
+            if (cart == null)
+            {
+                TempData["Error"] = "Your cart is empty. Please add items to proceed.";
+                return RedirectToAction("AllItems", "Home");
+            }
+
+            var cartItems = _context.CartItemDetailTables
+                .Where(ci => ci.CartId == cart.CartId)
+                .ToList();
+
+            var cartDeals = _context.CartDealTables
+                .Where(cd => cd.CartId == cart.CartId)
+                .ToList();
+
+            if (!cartItems.Any() && !cartDeals.Any())
+            {
+                TempData["Error"] = "Your cart is empty. Please add items to proceed.";
+                return RedirectToAction("AllItems", "Home");
+            }
+
+            // =====================
+            // 0️⃣ VERIFY DELIVERY ADDRESS
+            // =====================
+            if (model.UserAddressId <= 0)
+            {
+                var defaultAddress = _context.UserAddressTables
+                    .FirstOrDefault(a => a.UserId == userId.Value && a.VisibleStatusId == 1);
+
+                if (defaultAddress != null)
+                {
+                    model.UserAddressId = defaultAddress.UserAddressId;
+                }
+                else
+                {
+                    TempData["Error"] = "Please add a delivery address to complete your order.";
+                    return RedirectToAction("List_UserAddress", "Setting");
+                }
+            }
+
+            if (model.OrderTypeId <= 0)
+            {
+                model.OrderTypeId = _context.OrderTypeTables.Select(o => o.OrderTypeId).FirstOrDefault();
+                if (model.OrderTypeId <= 0) model.OrderTypeId = 1;
+            }
+
             using var tx = _context.Database.BeginTransaction();
 
             try
@@ -156,93 +207,75 @@ namespace AsliHalwaiWebApp.Controllers
                     OrderStatusId = 1,
 
                     OrderReceivedByContactNo = model.ContactNo,
-                    OrderReceivedByFullName = model.FirstName + " " + model.LastName,
+                    OrderReceivedByFullName = (model.FirstName + " " + model.LastName).Trim(),
 
-                    // 🔥 ADD THESE
                     PaymentMode = model.PaymentMode,
                     PaymentUTR = model.PaymentMode == "UPI" ? model.PaymentUTR : null,
                     PaymentStatus = model.PaymentMode == "UPI" ? "Pending" : "COD",
 
-                    Description = "Please wait..."
+                    Description = "Order placed successfully."
                 };
 
-
                 _context.OrderTables.Add(order);
-                _context.SaveChanges(); // 🔥 OrderId mil gaya
+                _context.SaveChanges();
 
                 // =====================
-                // 2️⃣ GET CART
+                // 2️⃣ SAVE CART ITEMS → ORDER ITEMS
                 // =====================
-                var cart = _context.CartTables
-                    .FirstOrDefault(c => c.UserId == userId.Value);
-
-                if (cart != null)
+                foreach (var ci in cartItems)
                 {
-                    // =====================
-                    // 3️⃣ SAVE CART ITEMS → ORDER ITEMS
-                    // =====================
-                    var cartItems = _context.CartItemDetailTables
-                        .Where(ci => ci.CartId == cart.CartId)
-                        .ToList();
+                    var stock = _context.StockItemTables
+                        .FirstOrDefault(s => s.StockItemId == ci.StockItemId);
 
-                    foreach (var ci in cartItems)
+                    if (stock == null) continue;
+
+                    _context.OrderItemDetailTables.Add(new OrderItemDetailTable
                     {
-                        var stock = _context.StockItemTables
-                            .FirstOrDefault(s => s.StockItemId == ci.StockItemId);
-
-                        if (stock == null) continue;
-
-                        _context.OrderItemDetailTables.Add(new OrderItemDetailTable
-                        {
-                            OrderId = order.OrderId,
-                            StockItemId = ci.StockItemId,
-                            Qty = ci.Qty,
-                            UnitPrice = stock.UnitPrice
-                        });
-                    }
-
-                    // =====================
-                    // 4️⃣ SAVE DEAL ITEMS (IF ANY)
-                    // =====================
-                    var cartDeals = _context.CartDealTables
-                        .Where(cd => cd.CartId == cart.CartId)
-                        .ToList();
-
-                    foreach (var cd in cartDeals)
-                    {
-                        var deal = _context.StockDealTables
-                            .FirstOrDefault(d => d.StockDealId == cd.StockDealId);
-
-                        if (deal == null) continue;
-
-                        _context.OrderDealDetailTables.Add(new OrderDealDetailTable
-                        {
-                            OrderId = order.OrderId,
-                            StockDealId = cd.StockDealId,
-                            Qty = cd.Qty,
-                            DealPrice = deal.DealPrice
-                        });
-                    }
-
-                    _context.SaveChanges();
-
-                    // =====================
-                    // 5️⃣ CLEAR CART
-                    // =====================
-                    _context.CartItemDetailTables.RemoveRange(cartItems);
-                    _context.CartDealTables.RemoveRange(cartDeals);
-                    _context.CartTables.Remove(cart);
-
-                    _context.SaveChanges();
+                        OrderId = order.OrderId,
+                        StockItemId = ci.StockItemId,
+                        Qty = ci.Qty,
+                        UnitPrice = stock.UnitPrice
+                    });
                 }
+
+                // =====================
+                // 3️⃣ SAVE DEAL ITEMS (IF ANY)
+                // =====================
+                foreach (var cd in cartDeals)
+                {
+                    var deal = _context.StockDealTables
+                        .FirstOrDefault(d => d.StockDealId == cd.StockDealId);
+
+                    if (deal == null) continue;
+
+                    _context.OrderDealDetailTables.Add(new OrderDealDetailTable
+                    {
+                        OrderId = order.OrderId,
+                        StockDealId = cd.StockDealId,
+                        Qty = cd.Qty,
+                        DealPrice = deal.DealPrice
+                    });
+                }
+
+                _context.SaveChanges();
+
+                // =====================
+                // 4️⃣ CLEAR CART
+                // =====================
+                _context.CartItemDetailTables.RemoveRange(cartItems);
+                _context.CartDealTables.RemoveRange(cartDeals);
+                _context.CartTables.Remove(cart);
+
+                _context.SaveChanges();
 
                 tx.Commit();
                 return RedirectToAction("OrderSuccess");
             }
-            catch (Exception ex)
+            catch
             {
                 tx.Rollback();
-                return Content(ex.InnerException?.Message ?? ex.Message);
+                TempData["Error"] = "Unable to process your order at this time. Please check your information and try again.";
+                return RedirectToAction("ViewCart");
             }
         }
 
@@ -486,8 +519,8 @@ namespace AsliHalwaiWebApp.Controllers
                     OrderDate = o.OrderDateTime,
                     CustomerName = o.OrderReceivedByFullName,
                     ContactNo = o.OrderReceivedByContactNo,
-                    Address = o.DeliveryAddressUserAddress.FullAddress,
-                    OrderStatus = o.OrderStatus.OrderStatus,
+                    Address = o.DeliveryAddressUserAddress != null ? o.DeliveryAddressUserAddress.FullAddress : "Takeaway / Store Pickup",
+                    OrderStatus = o.OrderStatus != null ? o.OrderStatus.OrderStatus : "Pending",
 
                     Items = _context.OrderItemDetailTables
                         .Where(i => i.OrderId == o.OrderId)
@@ -538,13 +571,18 @@ namespace AsliHalwaiWebApp.Controllers
             var order = _context.OrderTables.FirstOrDefault(o => o.OrderId == orderId);
             if (order == null) return RedirectToAction("Index", "Home");
 
+            decimal itemsTotal = _context.OrderItemDetailTables
+                .Where(i => i.OrderId == orderId)
+                .Sum(i => (decimal?)i.UnitPrice * i.Qty) ?? 0m;
+
+            decimal dealsTotal = _context.OrderDealDetailTables
+                .Where(d => d.OrderId == orderId)
+                .Sum(d => (decimal?)d.DealPrice * d.Qty) ?? 0m;
+
             var vm = new UpiPaymentVM
             {
                 OrderId = order.OrderId,
-                Amount = _context.OrderItemDetailTables
-                            .Where(i => i.OrderId == orderId)
-                            .Sum(i => (decimal)i.UnitPrice * i.Qty)
-
+                Amount = itemsTotal + dealsTotal
             };
 
             return View(vm);
@@ -564,7 +602,7 @@ namespace AsliHalwaiWebApp.Controllers
             _context.SaveChanges();
 
             TempData["Success"] = "Payment submitted. Verification pending.";
-            return RedirectToAction("OrderDetails", new { id = vm.OrderId });
+            return RedirectToAction("Details", new { id = vm.OrderId });
         }
 
 
@@ -573,12 +611,12 @@ namespace AsliHalwaiWebApp.Controllers
         public IActionResult MarkPaid(int orderId)
         {
             var order = _context.OrderTables.FirstOrDefault(o => o.OrderId == orderId);
-            if (order == null) return RedirectToAction("InvoiceDashboard");
+            if (order == null) return RedirectToAction("InvoiceDashboard", "AdminOrder");
 
             order.PaymentStatus = "Paid";
             _context.SaveChanges();
 
-            return RedirectToAction("InvoiceDashboard");
+            return RedirectToAction("InvoiceDashboard", "AdminOrder");
         }
 
     }

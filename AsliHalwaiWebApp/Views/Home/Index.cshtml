@@ -1,318 +1,560 @@
-﻿@model AsliHalwaiWebApp.ViewModel.HomeVM
+@model AsliHalwaiWebApp.ViewModel.HomeVM
 @{
-    ViewData["Title"] = "Home";
+    ViewData["Title"] = "Real Taste, Right at Your Doorstep";
 }
 
-<style>
-    /* ================= GLOBAL IMAGE FIX ================= */
-    .menu .box,
-    .dishes .box {
-        display: flex;
-        background: #fff;
-        border-radius: 8px;
-        overflow: hidden;
-        margin-bottom: 25px;
-        box-shadow: 0 5px 15px rgba(0,0,0,.08);
-    }
+<div class="container py-2">
+    <!-- ================= 1. HERO SECTION (Warm Banner with Bowl & Search) ================= -->
+    <section class="ah-hero-card">
+        <div class="row align-items-center">
+            <!-- Left Column: Copy & Search -->
+            <div class="col-lg-7 col-md-12 mb-4 mb-lg-0">
+                <span class="ah-hero-subtag">Good Food &bull; Good Mood</span>
+                <h1 class="ah-hero-headline">
+                    Real Taste,<br />
+                    <span>Right at Your Doorstep</span>
+                </h1>
+                <p class="ah-hero-description">
+                    Fresh Sweets, Snacks &amp; More &mdash; From AsliHalwai to Your Home.
+                </p>
 
-    .menu .image,
-    .dishes .image {
-        flex: 0 0 130px;
-    }
+                <!-- Search Bar Pill -->
+                <form class="ah-hero-search" asp-controller="Home" asp-action="AllItems" method="post">
+                    @Html.AntiForgeryToken()
+                    <i class="icofont icofont-location-pin"></i>
+                    <input type="text" name="SearchKey" placeholder="Enter your delivery location or sweets name..." />
+                    <button type="submit">
+                        <span>Find Food</span> <i class="icofont icofont-arrow-right"></i>
+                    </button>
+                </form>
 
-        .menu .image img,
-        .dishes img {
-            width: 130px;
-            height: 130px;
-            object-fit: cover;
-            background: #f8f8f8;
-        }
+                <!-- 4 Trust Badges -->
+                <div class="ah-hero-features">
+                    <div class="ah-feature-chip">
+                        <i class="icofont icofont-leaf text-success"></i>
+                        <span>Freshly Prepared</span>
+                    </div>
+                    <div class="ah-feature-chip">
+                        <i class="icofont icofont-shield-alt text-success"></i>
+                        <span>Hygienic &amp; Safe</span>
+                    </div>
+                    <div class="ah-feature-chip">
+                        <i class="icofont icofont-fast-delivery text-danger"></i>
+                        <span>Fast Delivery</span>
+                    </div>
+                    <div class="ah-feature-chip">
+                        <i class="icofont icofont-heart text-danger"></i>
+                        <span>Authentic Taste</span>
+                    </div>
+                </div>
+            </div>
 
-    /* ================= MENU TAB FIX ================= */
-    .menu .nav-tabs {
-        border: none;
-        justify-content: center;
-        margin-bottom: 30px;
-    }
+            <!-- Right Column: Visual Showcase -->
+            <div class="col-lg-5 col-md-12 text-center">
+                <div class="ah-hero-visual">
+                    <!-- Main Bowl Photo -->
+                    <img src="~/uploads/stock/13fd404c-f653-4587-931f-1c22fab8bdee.jpg"
+                         alt="Fresh Gulab Jamun"
+                         class="ah-hero-bowl-img"
+                         onerror="this.src='/Template/assets/images/background/banner-1.jpg'" />
 
-        .menu .nav-tabs .nav-link {
-            color: #333 !important;
-            font-weight: 600;
-            background: #fff;
-            border-radius: 30px;
-            padding: 10px 22px;
-            margin: 5px;
-            border: 1px solid #eee;
-            transition: .3s;
-        }
+                    <!-- Floating Cursive Note -->
+                    <div class="ah-floating-cursive d-none d-sm-block">
+                        Sweets That<br />Bring Smiles &hearts;
+                    </div>
 
-            .menu .nav-tabs .nav-link:hover,
-            .menu .nav-tabs .nav-link.active {
-                background: #e54c2a;
-                color: #e54c2a !important;
-                border-color: #e54c2a;
-            }
+                    <!-- Floating 100% Pure Circle Badge -->
+                    <div class="ah-floating-fresh-badge">
+                        <span>100%</span>
+                        PURE &amp; FRESH
+                    </div>
+                </div>
 
-    /* ================= CAPTION FIX ================= */
-    .menu .caption,
-    .dishes .caption {
-        padding: 15px;
-        flex: 1;
-    }
+                <!-- Slider Dots Indicator -->
+                <div class="text-center mt-3" style="color: var(--ah-primary); font-size: 20px; letter-spacing: 4px;">
+                    &bull; <span style="opacity: 0.3;">&bull;</span> <span style="opacity: 0.3;">&bull;</span>
+                </div>
+            </div>
+        </div>
+    </section>
 
-        .menu .caption h4,
-        .dishes .caption h4 {
-            font-size: 16px;
-            font-weight: 600;
-            color: #e54c2a;
-        }
+    <!-- ================= 2. "WHAT WOULD YOU LIKE TO HAVE?" (Circular Rail) ================= -->
+    <section class="py-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="font-weight-bold mb-0" style="font-size: 22px; color: #111827;">What would you like to have?</h3>
+            <a asp-controller="Home" asp-action="AllItems" class="font-weight-bold" style="font-size: 13.5px; color: var(--ah-primary);">
+                View all <i class="icofont icofont-arrow-right"></i>
+            </a>
+        </div>
 
-        .menu .caption p,
-        .dishes .caption span {
-            color: #444;
-            font-size: 14px;
-        }
+        <div class="ah-cat-rail">
+            <a asp-controller="Home" asp-action="AllItems" class="ah-cat-item">
+                <div class="ah-cat-circle" style="background: #fef2f2;">
+                    <img src="~/uploads/stock/13fd404c-f653-4587-931f-1c22fab8bdee.jpg" alt="Sweets" onerror="this.src='/Template/assets/images/about/1.png'" />
+                </div>
+                <span class="ah-cat-label">Sweets</span>
+            </a>
 
-    .menu .price {
-        font-weight: 700;
-        color: #e54c2a;
-    }
+            <a asp-controller="Home" asp-action="AllItems" class="ah-cat-item">
+                <div class="ah-cat-circle" style="background: #fffbeb;">
+                    <img src="~/uploads/stock/0dab22b1-e824-4920-b6a0-9ba5447f5fbf.jpg" alt="Namkeen" onerror="this.src='/Template/assets/images/about/2.png'" />
+                </div>
+                <span class="ah-cat-label">Namkeen</span>
+            </a>
 
-    /* ================= ORDER SECTION ================= */
-    .order {
-        text-align: center;
-        padding: 70px 0;
-    }
+            <a asp-controller="Home" asp-action="AllItems" class="ah-cat-item">
+                <div class="ah-cat-circle" style="background: #fff7ed;">
+                    <img src="~/uploads/stock/f8ea7a2a-ce23-4476-9111-42bde789e025.jpg" alt="Snacks" onerror="this.src='/Template/assets/images/about/3.jpg'" />
+                </div>
+                <span class="ah-cat-label">Snacks</span>
+            </a>
 
-    /* ================= BOOK TABLE ================= */
-    .reservation {
-        background: #111;
-        color: #fff;
-        padding: 70px 0;
-    }
+            <a asp-controller="Home" asp-action="AllItems" class="ah-cat-item">
+                <div class="ah-cat-circle" style="background: #f0fdf4;">
+                    <img src="~/uploads/stock/2db0089f-d48f-41fe-a7eb-279a0b0f707d.jpg" alt="North Indian" onerror="this.src='/Template/assets/images/about/1.png'" />
+                </div>
+                <span class="ah-cat-label">North Indian</span>
+            </a>
 
-        .reservation h4 {
-            color: #e54c2a;
-        }
+            <a asp-controller="Home" asp-action="AllItems" class="ah-cat-item">
+                <div class="ah-cat-circle" style="background: #fef3c7;">
+                    <img src="~/uploads/stock/56b29ece-8cf2-46e3-b258-e72043f0cf6d.png" alt="Chaat" onerror="this.src='/Template/assets/images/about/2.png'" />
+                </div>
+                <span class="ah-cat-label">Chaat</span>
+            </a>
 
-        .reservation input {
-            background: transparent;
-            border: 1px solid #555;
-            color: #fff;
-        }
+            <a asp-controller="Home" asp-action="AllItems" class="ah-cat-item">
+                <div class="ah-cat-circle" style="background: #fdf2f8;">
+                    <img src="~/uploads/stock/f7074921-bd2a-4a41-927e-a67e48b360e4.png" alt="Bakery" onerror="this.src='/Template/assets/images/about/3.jpg'" />
+                </div>
+                <span class="ah-cat-label">Bakery</span>
+            </a>
 
-    /* ================= POPULAR DISHES FIX ================= */
+            <a asp-controller="Home" asp-action="AllItems" class="ah-cat-item">
+                <div class="ah-cat-circle" style="background: #eff6ff;">
+                    <img src="~/uploads/stock/6a7426e0-7463-4377-ba67-9dab5796ce94.png" alt="Beverages" onerror="this.src='/Template/assets/images/about/1.png'" />
+                </div>
+                <span class="ah-cat-label">Beverages</span>
+            </a>
 
-    .dishes .owl-carousel .item {
-        padding: 10px;
-    }
+            <a asp-controller="Home" asp-action="AllItems" class="ah-cat-item">
+                <div class="ah-cat-circle" style="background: #faf5ff;">
+                    <img src="~/uploads/stock/d86f2cb0-d98a-4b2b-a950-70cfbfae8196.png" alt="Festive Special" onerror="this.src='/Template/assets/images/about/2.png'" />
+                </div>
+                <span class="ah-cat-label">Festive Special</span>
+            </a>
+        </div>
+    </section>
 
-    /* CARD */
-    .dish-card {
-        background: #fff;
-        border-radius: 10px;
-        overflow: hidden;
-        width: 100%;
-        max-width: 260px; /* 🔥 equal card width */
-        margin: auto;
-        box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-        text-align: center;
-    }
+    <!-- ================= 3. OUR POPULAR DISHES (Exact Reference Cards) ================= -->
+    <section class="py-4">
+        <div class="d-flex justify-content-between align-items-end mb-3">
+            <div>
+                <span class="text-uppercase font-weight-bold" style="font-size: 11.5px; color: #ea580c; letter-spacing: 0.08em;">Customer Favorites</span>
+                <h3 class="font-weight-bold mb-1" style="font-size: 24px; color: #111827;">Our Popular Dishes</h3>
+                <p class="text-muted mb-0 small">Loved by thousands, always fresh, always delicious.</p>
+            </div>
 
-    /* IMAGE WRAPPER */
-    .dish-img {
-        width: 100%;
-        height: 180px; /* 🔥 FIXED HEIGHT */
-        overflow: hidden;
-    }
+            <div class="ah-carousel-nav d-none d-sm-flex">
+                <button type="button" class="ah-arrow-btn prev-dish" onclick="$('.dish').trigger('prev.owl.carousel')"><i class="icofont icofont-arrow-left"></i></button>
+                <button type="button" class="ah-arrow-btn next-dish" onclick="$('.dish').trigger('next.owl.carousel')"><i class="icofont icofont-arrow-right"></i></button>
+            </div>
+        </div>
 
-        .dish-img img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover; /* 🔥 NO STRETCH */
-        }
-
-    /* CONTENT */
-    .dish-content {
-        padding: 12px;
-    }
-
-        .dish-content h5 {
-            font-size: 16px;
-            font-weight: 600;
-            color: #e54c2a;
-            margin-bottom: 5px;
-        }
-
-        .dish-content span {
-            font-size: 13px;
-            color: #777;
-        }
-
-        .dish-content p {
-            font-size: 16px;
-            font-weight: 700;
-            color: #e54c2a;
-            margin-top: 6px;
-        }
-
-</style>
-
-
-
-
-
-<!-- ================= SLIDER ================= -->
-<div class="slide">
-    <div class="slideshow owl-carousel">
-        <img src="/Template/assets/images/background/banner-1.jpg" />
-        <img src="/Template/assets/images/background/banner-2.jpg" />
-        <img src="/Template/assets/images/background/banner-3.jpg" />
-        <img src="/Template/assets/images/background/banner-4.jpg" />
-    </div>
-
-    <div class="slide-detail text-center">
-        <img src="/Template/assets/images/logo/logo-icon.png" />
-        <h4>LOVES HEALTHY FOOD</h4>
-        <p>Fresh sweets & snacks directly from Asli Halwai</p>
-        <a href="#menu" class="btn btn-theme btn-wide">Today's Menu</a>
-    </div>
-</div>
-
-<!-- ================= ORDER DELIVERY ================= -->
-<div class="order">
-    <div class="container">
-        <h4>Order Delivery And Take Out</h4>
-        <p>Choose food, place order & get it delivered</p>
-
-        <form class="mt-4">
-            <input class="form-control d-inline w-50" placeholder="Search keyword" />
-            <button class="btn btn-theme ms-2">SEARCH</button>
-        </form>
-
-        <ul class="list-inline mt-4">
-            <li class="list-inline-item"><p>Select Food</p></li>
-            <li class="list-inline-item"><p>Order Food</p></li>
-            <li class="list-inline-item"><p>Delivery / Take Out</p></li>
-        </ul>
-    </div>
-</div>
-
-<!-- ================= POPULAR DISHES ================= -->
-@if (Model.PopularDishes.Any())
-{
-    <div class="dishes">
-        <div class="container">
-            <h4 class="text-center mb-4">Our Popular Dishes</h4>
-
+        @if (Model.PopularDishes != null && Model.PopularDishes.Any())
+        {
             <div class="dish owl-carousel">
+                @{
+                    int cardIndex = 0;
+                    string[] tags = { "Bestseller", "Most Loved", "Premium", "Trending" };
+                    string[] tagClasses = { "ah-tag-bestseller", "ah-tag-loved", "ah-tag-premium", "ah-tag-trending" };
+                    string[] times = { "20-30 min", "15-25 min", "15-20 min", "25-35 min" };
+                    string[] ratings = { "4.8 (1.3k)", "4.7 (1.1k)", "4.9 (886)", "4.8 (1.9k)" };
+                }
                 @foreach (var item in Model.PopularDishes)
                 {
-                    <div class="item">
-                       <a asp-controller="Home"
-                         accesskey=""  asp-action="ProductDetail"
-                                  asp-route-itemid="@item.StockItemId"
-                                      class="dish-link">
+                    var tag = tags[cardIndex % tags.Length];
+                    var tagClass = tagClasses[cardIndex % tagClasses.Length];
+                    var time = times[cardIndex % times.Length];
+                    var rate = ratings[cardIndex % ratings.Length];
+                    cardIndex++;
 
-                                  <div class="dish-card">
-
-                            <div class="dish-img">
-                                <img src="@item.ItemPhotoPath"
-                                     alt="@item.StockItemTitle" />
+                    <div class="item p-2">
+                        <div class="ah-dish-card">
+                            <div class="ah-dish-img-wrap">
+                                <span class="@tagClass">@tag</span>
+                                <span class="ah-fav-heart"><i class="icofont icofont-heart-alt"></i></span>
+                                <a asp-controller="Home" asp-action="ProductDetail" asp-route-itemid="@item.StockItemId">
+                                    <img src="@Url.Content(item.ItemPhotoPath)"
+                                         alt="@item.StockItemTitle"
+                                         class="ah-dish-img"
+                                         onerror="this.src='/Template/assets/images/about/3.jpg'" />
+                                </a>
                             </div>
 
-                            <div class="dish-content">
-                                <h5>@item.StockItemTitle</h5>
-                                <span>@item.OrderType</span>
-                                <p>₹ @item.UnitPrice</p>
+                            <a asp-controller="Home" asp-action="ProductDetail" asp-route-itemid="@item.StockItemId" class="text-dark">
+                                <h5 class="ah-dish-title" title="@item.StockItemTitle">@item.StockItemTitle</h5>
+                            </a>
+                            <p class="ah-dish-desc">
+                                Handcrafted with 100% pure desi ghee and fresh traditional ingredients.
+                            </p>
+
+                            <div class="ah-dish-price-row">
+                                <span class="ah-dish-price">₹ @item.UnitPrice</span>
+                                <span class="ah-dish-time">@time</span>
+                            </div>
+
+                            <div class="ah-dish-footer">
+                                <span class="ah-dish-rating">
+                                    <i class="fa fa-star"></i> @rate
+                                </span>
+                                <button type="button" class="ah-btn-add-pill" onclick="addItem(@item.StockItemId)">
+                                    Add <i class="icofont icofont-plus"></i>
+                                </button>
                             </div>
                         </div>
-                        </a>
                     </div>
                 }
             </div>
+        }
+    </section>
 
+    <!-- ================= 4. MIDDLE FEATURE CTA BANNER ================= -->
+    <section class="ah-cta-banner">
+        <div>
+            <h3 class="ah-cta-title">Authentic Taste Delivered Fresh</h3>
+            <div class="ah-cta-badges">
+                <span><i class="icofont icofont-badge text-warning"></i> Best Quality</span>
+                <span><i class="icofont icofont-leaf text-success"></i> Fresh Ingredients</span>
+                <span><i class="icofont icofont-clock-time text-primary"></i> On Time Delivery</span>
+            </div>
         </div>
-    </div>
-}
 
-<!-- ================= MENU ================= -->
-<div class="menu" id="menu">
-    <div class="container">
-        <h4 class="text-center">Our Menu</h4>
+        <div class="mt-3 mt-md-0">
+            <a asp-controller="Home" asp-action="AllItems" class="btn ah-btn-pill-primary" style="padding: 12px 32px; font-size: 14.5px;">
+                Order Now <i class="icofont icofont-arrow-right"></i>
+            </a>
+        </div>
+    </section>
 
-        <ul class="nav nav-tabs">
-            @{
-                bool first = true;
-                foreach (var cat in Model.Menu)
-                {
-                    var id = cat.MenuCategory.Replace(" ", "_").ToLower();
-                    <li class="nav-item">
-                        <a class="nav-link @(first ? "active" : "")"
-                           data-toggle="tab"
-                           href="#@id">
-                            @cat.MenuCategory
-                        </a>
+    <!-- ================= 5. "OUR DELICIOUS MENU" (Tabs + 2-Col Grid + Promo Box) ================= -->
+    <section class="py-4" id="menu">
+        <div class="d-flex justify-content-between align-items-end mb-3">
+            <div>
+                <span class="text-uppercase font-weight-bold" style="font-size: 11.5px; color: #ea580c; letter-spacing: 0.08em;">Explore</span>
+                <h3 class="font-weight-bold mb-1" style="font-size: 24px; color: #111827;">Our Delicious Menu</h3>
+            </div>
+            <a asp-controller="Home" asp-action="AllItems" class="font-weight-bold" style="font-size: 13.5px; color: var(--ah-primary);">
+                View all Items <i class="icofont icofont-arrow-right"></i>
+            </a>
+        </div>
 
-                    </li>
-                    ;
-                    first = false;
+        @if (Model.Menu != null && Model.Menu.Any())
+        {
+            <!-- Category Filter Tabs -->
+            <ul class="nav nav-pills mb-4 ah-category-tabs justify-content-start" role="tablist">
+                @{
+                    bool firstTab = true;
+                    foreach (var cat in Model.Menu)
+                    {
+                        var tabId = "menu_" + cat.MenuCategory.Replace(" ", "_").ToLower();
+                        <li class="nav-item mr-2 mb-2">
+                            <a class="nav-link @(firstTab ? "active" : "")"
+                               data-toggle="pill"
+                               href="#@tabId"
+                               style="border-radius: var(--ah-radius-pill); font-weight: 700; font-size: 13.5px; padding: 8px 20px;">
+                                <i class="icofont icofont-restaurant mr-1"></i> @cat.MenuCategory
+                            </a>
+                        </li>
+                        firstTab = false;
+                    }
                 }
-            }
-        </ul>
+            </ul>
 
-        <div class="tab-content">
-            @{
-                bool pane = true;
-                foreach (var cat in Model.Menu)
-                {
-                    var id = cat.MenuCategory.Replace(" ", "_").ToLower();
-                    <div class="tab-pane fade @(pane ? "show active" : "")" id="@id">
-                        <div class="row">
-                            @foreach (var item in cat.Lists)
+            <!-- Content Area: Left 8 cols (2-column menu items) + Right 4 cols (Tall Promo Card) -->
+            <div class="row">
+                <div class="col-lg-8 mb-4 mb-lg-0">
+                    <div class="tab-content">
+                        @{
+                            bool firstPane = true;
+                            foreach (var cat in Model.Menu)
                             {
-                                <div class="col-md-6">
-                                    <a asp-controller="Home"
-   asp-action="ProductDetail"
-   asp-route-itemid="@item.StockItemId"
-   class="menu-link">
+                                var tabId = "menu_" + cat.MenuCategory.Replace(" ", "_").ToLower();
+                                <div class="tab-pane fade @(firstPane ? "show active" : "")" id="@tabId">
+                                    <div class="row">
+                                        @foreach (var item in cat.Lists)
+                                        {
+                                            <div class="col-sm-6 mb-3">
+                                                <div class="ah-menu-mini-card">
+                                                    <a asp-controller="Home" asp-action="ProductDetail" asp-route-itemid="@item.StockItemId">
+                                                        <img src="@Url.Content(item.ItemPhotoPath)"
+                                                             alt="@item.StockItemTitle"
+                                                             class="ah-mini-thumb"
+                                                             onerror="this.src='/Template/assets/images/about/3.jpg'" />
+                                                    </a>
 
-    <div class="box">
+                                                    <div class="ah-mini-info">
+                                                        <a asp-controller="Home" asp-action="ProductDetail" asp-route-itemid="@item.StockItemId" class="text-dark">
+                                                            <h6 class="ah-mini-title">@item.StockItemTitle</h6>
+                                                        </a>
+                                                        <div class="ah-mini-meta">
+                                                            <span>@(!string.IsNullOrEmpty(item.ItemSize) ? item.ItemSize : item.OrderType)</span>
+                                                            <span>&bull;</span>
+                                                            <span>15-20 min</span>
+                                                        </div>
+                                                    </div>
 
-                                        <div class="image">
-                                            <img src="@item.ItemPhotoPath" />
-                                        </div>
-                                        <div class="caption">
-                                            <h4>@item.StockItemTitle - @item.ItemSize</h4>
-                                            <p>@item.OrderType</p>
-                                            <div class="price">₹ @item.UnitPrice</div>
-                                        </div>
+                                                    <div class="d-flex align-items-center">
+                                                        <span class="ah-mini-price">₹ @item.UnitPrice</span>
+                                                        <button type="button" class="ah-btn-circle-add" onclick="addItem(@item.StockItemId)" title="Add to cart">
+                                                            +
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
                                     </div>
-                                    </a>
                                 </div>
+                                firstPane = false;
                             }
+                        }
+                    </div>
+                </div>
+
+                <!-- Right Tall Promo Box (Matching Reference Design) -->
+                <div class="col-lg-4">
+                    <div class="ah-promo-box">
+                        <div>
+                            <h4>Life is Sweeter with Good Food</h4>
+                            <p>Order your favourite sweets and snacks now!</p>
+                            <div class="ah-promo-brand">AsliHalwai</div>
+                        </div>
+
+                        <img src="~/uploads/stock/08bcc829-e446-462d-9746-0ee3a506b5e7.png"
+                             alt="Luxury Sweets Box"
+                             class="ah-promo-img"
+                             onerror="this.src='/Template/assets/images/about/1.png'" />
+
+                        <div class="mt-3">
+                            <a asp-controller="Home" asp-action="AllItems" class="btn ah-btn-pill-primary" style="padding: 9px 24px;">
+                                Explore Delights &rarr;
+                            </a>
                         </div>
                     </div>
-                    pane = false;
-                }
-            }
+                </div>
+            </div>
+        }
+    </section>
+
+    <!-- ================= 6. BOOK YOUR TABLE BANNER & FORM ================= -->
+    <section class="ah-table-banner" id="reservation">
+        <div class="row align-items-center">
+            <div class="col-lg-7 mb-4 mb-lg-0">
+                <h3>Book Your Table</h3>
+                <p class="text-white-50 mb-4" style="max-width: 480px; font-size: 14.5px;">
+                    Planning a family dinner or a get-together? Reserve your table in just a few clicks.
+                </p>
+                <button class="btn ah-btn-pill-primary" type="button" data-toggle="collapse" data-target="#tableBookingCollapse">
+                    Reserve Now <i class="icofont icofont-arrow-right"></i>
+                </button>
+            </div>
+
+            <div class="col-lg-5">
+                <div class="ah-table-features">
+                    <div class="ah-table-feat-item">
+                        <div class="ah-table-feat-icon"><i class="icofont icofont-clock-time"></i></div>
+                        <span class="ah-table-feat-text">Great Ambience</span>
+                    </div>
+                    <div class="ah-table-feat-item">
+                        <div class="ah-table-feat-icon"><i class="icofont icofont-restaurant"></i></div>
+                        <span class="ah-table-feat-text">Delicious Food</span>
+                    </div>
+                    <div class="ah-table-feat-item">
+                        <div class="ah-table-feat-icon"><i class="icofont icofont-heart-alt"></i></div>
+                        <span class="ah-table-feat-text">Memorable Moments</span>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="text-center mt-4">
-            <a class="btn btn-theme-alt btn-wide">View More</a>
+        <!-- Embedded Table Reservation Form (Collapsible) -->
+        <div class="collapse mt-4 pt-4 border-top border-secondary" id="tableBookingCollapse">
+            @await Html.PartialAsync("_Partial_TableReservation", new AsliHalwaiWebApp.Models.TableReservationVM())
         </div>
-    </div>
+    </section>
+
+    @if (TempData["ReservationSuccess"] != null)
+    {
+        <div class="alert alert-success text-center font-weight-bold mb-4" style="border-radius: var(--ah-radius-md);">
+            <i class="icofont icofont-check-circled"></i> @TempData["ReservationSuccess"]
+        </div>
+    }
+
+    <!-- ================= 7. WHAT OUR CUSTOMERS SAY (Testimonials) ================= -->
+    <section class="py-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="font-weight-bold mb-0" style="font-size: 22px; color: #111827;">What Our Customers Say</h3>
+            <div class="ah-carousel-nav d-none d-sm-flex">
+                <button type="button" class="ah-arrow-btn"><i class="icofont icofont-arrow-left"></i></button>
+                <button type="button" class="ah-arrow-btn"><i class="icofont icofont-arrow-right"></i></button>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Review 1: Rohit Sharma -->
+            <div class="col-md-4 mb-3">
+                <div class="ah-testimonial-card">
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="ah-user-avatar">R</div>
+                        <div>
+                            <h6 class="ah-testi-name">Rohit Sharma</h6>
+                            <div class="ah-testi-stars">
+                                <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="ah-testi-text">
+                        "Amazing taste and super fast delivery. The gulab jamun was just perfect!"
+                    </p>
+                </div>
+            </div>
+
+            <!-- Review 2: Priya Verma -->
+            <div class="col-md-4 mb-3">
+                <div class="ah-testimonial-card">
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="ah-user-avatar">P</div>
+                        <div>
+                            <h6 class="ah-testi-name">Priya Verma</h6>
+                            <div class="ah-testi-stars">
+                                <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="ah-testi-text">
+                        "Best sweets in Dhanbad! Fresh, hygienic and the packaging is also great."
+                    </p>
+                </div>
+            </div>
+
+            <!-- Review 3: Amit Kumar -->
+            <div class="col-md-4 mb-3">
+                <div class="ah-testimonial-card">
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="ah-user-avatar">A</div>
+                        <div>
+                            <h6 class="ah-testi-name">Amit Kumar</h6>
+                            <div class="ah-testi-stars">
+                                <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="ah-testi-text">
+                        "I order regularly. AsliHalwai never disappoints. Highly recommended!"
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= 8. GET THE ASLIHALWAI APP ================= -->
+    <section class="ah-app-banner">
+        <div class="d-flex align-items-center">
+            <img src="~/Template/assets/images/logo/logo.png"
+                 alt="App Mockup"
+                 style="height: 68px; margin-right: 24px;"
+                 class="d-none d-sm-block" />
+            <div>
+                <h3 class="ah-app-title">Get the <span>AsliHalwai App</span></h3>
+                <p class="ah-app-desc">Faster ordering &bull; Exclusive offers &bull; Track your order</p>
+            </div>
+        </div>
+
+        <div class="ah-app-badges mt-3 mt-md-0">
+            <a href="#" class="ah-store-badge">
+                <i class="icofont icofont-brand-android-robot"></i>
+                <div class="text-left" style="line-height: 1.1;">
+                    <small style="font-size: 9px; text-transform: uppercase;">Get it on</small><br />
+                    <strong>Google Play</strong>
+                </div>
+            </a>
+
+            <a href="#" class="ah-store-badge">
+                <i class="icofont icofont-brand-apple"></i>
+                <div class="text-left" style="line-height: 1.1;">
+                    <small style="font-size: 9px; text-transform: uppercase;">Download on</small><br />
+                    <strong>App Store</strong>
+                </div>
+            </a>
+        </div>
+    </section>
 </div>
 
-<!-- ================= BOOK YOUR TABLE ================= -->
-        @await Html.PartialAsync(
-        "_Partial_TableReservation",
-                new AsliHalwaiWebApp.Models.TableReservationVM()
-                )
+<!-- ================= TOAST NOTIFICATION CONTAINER ================= -->
+<div id="toastMessage"
+     style="display:none;
+            position:fixed;
+            bottom:90px;
+            left:50%;
+            transform:translateX(-50%);
+            background:#1e293b;
+            color:#fff;
+            padding:12px 22px;
+            border-radius:30px;
+            font-size:14px;
+            font-weight:600;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+            z-index:999999;">
+</div>
 
-@if (TempData["ReservationSuccess"] != null)
-{
-    <div class="alert alert-success text-center">
-        @TempData["ReservationSuccess"]
-    </div>
+@section Scripts {
+    <script>
+        function addItem(itemId) {
+            $.ajax({
+                url: '/Order/Cart_AddItem',
+                type: 'POST',
+                data: {
+                    itemid: itemId,
+                    qty: 1,
+                    itemtype: 'item'
+                },
+                success: function (result) {
+                    if (result === true || result === "success" || result === 1) {
+                        showToast("✨ Added to cart successfully!", "success");
+                        if (typeof refreshCartCount === "function") {
+                            refreshCartCount();
+                        }
+                    } else {
+                        showToast("Please login to add items to cart", "error");
+                        setTimeout(function () {
+                            window.location.href = '@Url.Action("Login", "User")';
+                        }, 1200);
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                    showToast("Unable to add item right now", "error");
+                }
+            });
+        }
+
+        function showToast(message, type = "info") {
+            const toast = document.getElementById("toastMessage");
+            if (!toast) return;
+
+            toast.innerHTML = message;
+            if (type === "error") {
+                toast.style.background = "#dc2626";
+            } else if (type === "success") {
+                toast.style.background = "#16a34a";
+            } else {
+                toast.style.background = "#1e293b";
+            }
+
+            toast.style.display = "block";
+            setTimeout(function () {
+                toast.style.display = "none";
+            }, 2500);
+        }
+    </script>
 }

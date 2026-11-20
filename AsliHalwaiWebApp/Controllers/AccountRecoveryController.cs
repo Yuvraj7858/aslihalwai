@@ -1,4 +1,4 @@
-﻿using AsliHalwaiWebApp.CommonCode;
+using AsliHalwaiWebApp.CommonCode;
 using AsliHalwaiWebApp.Data;
 using AsliHalwaiWebApp.Models;
 using AsliHalwaiWebApp.ViewModel;
@@ -69,9 +69,22 @@ namespace AsliHalwaiWebApp.Controllers
                 Click below link to reset password:<br/>
                 <a href='{link}'>Reset Password</a>";
 
-            _email.SendEmail(user.EmailAddress, "Reset Password", body);
+            if (string.IsNullOrWhiteSpace(user.EmailAddress))
+            {
+                ViewBag.Error = "No registered email address found on file for this account.";
+                return View(model);
+            }
 
-            ViewBag.Message = "Recovery link sent to your email";
+            bool sent = _email.SendEmail(user.EmailAddress, "Reset Password - AsliHalwai", body);
+            if (sent)
+            {
+                ViewBag.Message = "Recovery link sent to your registered email address.";
+            }
+            else
+            {
+                ViewBag.Error = "Failed to dispatch email. Please check your connection or contact support.";
+            }
+
             return View(model);
         }
 
@@ -91,6 +104,8 @@ namespace AsliHalwaiWebApp.Controllers
                 return RedirectToAction("Login", "User");
 
             var user = _context.UserTables.Find(recovery.UserID);
+            if (user == null)
+                return RedirectToAction("Login", "User");
 
             return View(new ForgotPasswordVM
             {

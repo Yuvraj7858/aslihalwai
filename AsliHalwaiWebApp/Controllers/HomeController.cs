@@ -86,9 +86,10 @@ namespace AsliHalwaiWebApp.Controllers
 
 
         [HttpGet]
-        public IActionResult AllItems()
+        public IActionResult AllItems(string? searchKey, int? categoryId)
         {
             var model = new StockMenuVM();
+            model.SearchKey = searchKey;
 
             // ================= CATEGORIES =================
             model.CategoryList = _context.StockItemCategoryTables
@@ -97,7 +98,7 @@ namespace AsliHalwaiWebApp.Controllers
                 {
                     StockMenuCategoryID = c.StockItemCategoryId,
                     StockMenuCategory = c.StockItemCategory,
-                    CategoryStatus = false
+                    CategoryStatus = categoryId.HasValue && c.StockItemCategoryId == categoryId.Value
                 }).ToList();
 
             // ================= ORDER TYPES =================
@@ -110,17 +111,32 @@ namespace AsliHalwaiWebApp.Controllers
                 }).ToList();
 
             // ================= ITEMS =================
-            model.AllItems = _context.StockItemTables
+            var query = _context.StockItemTables
                 .Where(i => i.VisibleStatusId == 1)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchKey))
+            {
+                query = query.Where(x => x.StockItemTitle.ToLower().Contains(searchKey.ToLower()));
+            }
+
+            if (categoryId.HasValue && categoryId.Value > 0)
+            {
+                query = query.Where(x => x.StockItemCategoryId == categoryId.Value);
+            }
+
+            model.AllItems = query
                 .Select(item => new ItemVM
                 {
                     StockItemID = item.StockItemId,
-                    ItemPhotoPath = item.ItemPhotoPath,
+                    ItemPhotoPath = string.IsNullOrEmpty(item.ItemPhotoPath)
+                        ? "/images/no-image.png"
+                        : item.ItemPhotoPath,
                     StockItemTitle = item.StockItemTitle,
                     ItemSize = item.ItemSize,
                     UnitPrice = item.UnitPrice,
                     OrderTypeName = item.OrderTypeName.OrderTypeName,
-                    Rating = item.StockItemId
+                    Rating = 5
                 }).ToList();
 
             return View(model);
@@ -143,40 +159,71 @@ namespace AsliHalwaiWebApp.Controllers
             }
 
             // ================= CATEGORY FILTER =================
-            var selectedCategories = model.CategoryList
-                .Where(c => c.CategoryStatus)
-                .Select(c => c.StockMenuCategoryID)
-                .ToList();
-
-            if (selectedCategories.Any())
+            List<int> selectedCategories = new();
+            if (model.CategoryList != null && model.CategoryList.Any())
             {
-                query = query.Where(x =>
-                    selectedCategories.Contains(x.StockItemCategoryId));
+                selectedCategories = model.CategoryList
+                    .Where(c => c.CategoryStatus)
+                    .Select(c => c.StockMenuCategoryID)
+                    .ToList();
+
+                if (selectedCategories.Any())
+                {
+                    query = query.Where(x =>
+                        selectedCategories.Contains(x.StockItemCategoryId));
+                }
             }
+
+            // Ensure categories are loaded for sidebar display
+            var allCategories = _context.StockItemCategoryTables
+                .Where(c => c.VisibleStatusId == 1)
+                .Select(c => new FilterCategoryVM
+                {
+                    StockMenuCategoryID = c.StockItemCategoryId,
+                    StockMenuCategory = c.StockItemCategory,
+                    CategoryStatus = selectedCategories.Contains(c.StockItemCategoryId)
+                }).ToList();
+            model.CategoryList = allCategories;
 
             // ================= ORDER TYPE FILTER =================
-            var selectedOrderTypes = model.OrderTypeList
-                .Where(o => o.OrderTypeStatus)
-                .Select(o => o.OrderTypeID)
-                .ToList();
-
-            if (selectedOrderTypes.Any())
+            List<int> selectedOrderTypes = new();
+            if (model.OrderTypeList != null && model.OrderTypeList.Any())
             {
-                query = query.Where(x =>
-                    selectedOrderTypes.Contains(x.OrderTypeId));
+                selectedOrderTypes = model.OrderTypeList
+                    .Where(o => o.OrderTypeStatus)
+                    .Select(o => o.OrderTypeID)
+                    .ToList();
+
+                if (selectedOrderTypes.Any())
+                {
+                    query = query.Where(x =>
+                        selectedOrderTypes.Contains(x.OrderTypeId));
+                }
             }
+
+            // Ensure order types are loaded for sidebar display
+            var allOrderTypes = _context.OrderTypeTables
+                .Select(o => new FilterOrderTypeVM
+                {
+                    OrderTypeID = o.OrderTypeId,
+                    OrderTypeName = o.OrderTypeName,
+                    OrderTypeStatus = selectedOrderTypes.Contains(o.OrderTypeId)
+                }).ToList();
+            model.OrderTypeList = allOrderTypes;
 
             // ================= ITEMS RESULT =================
             model.AllItems = query
                 .Select(item => new ItemVM
                 {
                     StockItemID = item.StockItemId,
-                    ItemPhotoPath = item.ItemPhotoPath,
+                    ItemPhotoPath = string.IsNullOrEmpty(item.ItemPhotoPath)
+                        ? "/images/no-image.png"
+                        : item.ItemPhotoPath,
                     StockItemTitle = item.StockItemTitle,
                     ItemSize = item.ItemSize,
                     UnitPrice = item.UnitPrice,
                     OrderTypeName = item.OrderTypeName.OrderTypeName,
-                    Rating = item.StockItemId
+                    Rating = 5
                 }).ToList();
 
             return View(model);
@@ -370,7 +417,11 @@ namespace AsliHalwaiWebApp.Controllers
                 return RedirectToAction("ProductDetail", new { itemid = model.StockItemID });
             }
 
-            int ratingValue = int.Parse(model.Rating);
+            int ratingValue = 5;
+            if (!string.IsNullOrEmpty(model.Rating) && int.TryParse(model.Rating, out int parsedRating))
+            {
+                ratingValue = parsedRating;
+            }
 
             var existingReview = _context.StockItemReviewTables
                 .FirstOrDefault(x =>
@@ -380,7 +431,7 @@ namespace AsliHalwaiWebApp.Controllers
             if (existingReview != null)
             {
                 existingReview.Rating = ratingValue;
-                existingReview.ReviewDetails = model.ReviewDetails;
+                existingReview.ReviewDetails = model.ReviewDetails ?? "";
                 existingReview.ReviewDateTime = DateTime.Now;
             }
             else
@@ -390,7 +441,7 @@ namespace AsliHalwaiWebApp.Controllers
                     StockItemID = model.StockItemID,
                     ReviewBy_UserID = userid,
                     Rating = ratingValue,
-                    ReviewDetails = model.ReviewDetails,
+                    ReviewDetails = model.ReviewDetails ?? "",
                     ReviewDateTime = DateTime.Now
                 };
 
@@ -419,7 +470,16 @@ namespace AsliHalwaiWebApp.Controllers
             return View();
         }
 
+        public IActionResult Privacy()
+        {
+            return View();
+        }
 
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
 
     }
 }

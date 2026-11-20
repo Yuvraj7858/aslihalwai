@@ -1,328 +1,224 @@
-﻿@model AsliHalwaiWebApp.ViewModel.StockMenuVM
+@model AsliHalwaiWebApp.ViewModel.StockMenuVM
 @inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
 
-
 @{
-    ViewData["Title"] = "Our Shop";
+    ViewData["Title"] = "Our Sweets & Savouries Shop";
 }
 
 <input type="hidden" id="__RequestVerificationToken"
        value="@Antiforgery.GetAndStoreTokens(Context).RequestToken" />
-<style>
-    /* ================= ADD TO CART HOVER FIX ================= */
 
-    /* ================= ADD TO CART HOVER FIX ================= */
+<div class="container py-3">
+    <!-- Breadcrumb & Title Bar -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3 pb-3 border-bottom">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent p-0 mb-1" style="font-size: 13px;">
+                    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li class="breadcrumb-item active text-muted" aria-current="page">Our Shops</li>
+                </ol>
+            </nav>
+            <h2 class="font-weight-bold mb-0" style="color: #111827; font-size: clamp(22px, 3vw, 28px);">
+                Sweets, Snacks &amp; Food Shop
+            </h2>
+            <p class="text-muted mb-0 small">
+                Explore our full catalog of authentic handmade delicacies delivered hot and fresh.
+            </p>
+        </div>
 
-    .product-thumb {
-        padding: 8px; /* pehle zyada tha */
-    }
-
-    .product-thumb .image {
-        position: relative;
-        overflow: hidden;
-    }
-
-        .product-thumb .image img {
-            transition: all 0.3s ease;
-        }
-
-    .product-thumb .add-cart-btn {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        opacity: 0;
-        visibility: hidden;
-        z-index: 5;
-        transition: all 0.3s ease;
-        pointer-events: auto;
-    }
-
-    /* DARK OVERLAY */
-    .product-thumb .image::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.4);
-        opacity: 0;
-        transition: all 0.3s ease;
-        pointer-events: none; /* 🔥 CLICK FIX */
-    }
-
-    /* HOVER EFFECT */
-    .product-thumb:hover .add-cart-btn {
-        opacity: 1;
-        visibility: visible;
-    }
-
-    .product-thumb:hover .image::after {
-        opacity: 1;
-    }
-
-    .product-thumb:hover img {
-        transform: scale(1.05);
-    }
-
-
-    /* 📱 MOBILE FIX */
-    media (max-width: 768px) {
-        .product-thumb .add-cart-btn
-
-    {
-        opacity: 1;
-        visibility: visible;
-        position: static;
-        transform: none;
-        margin-top: 10px;
-    }
-
-    .product-thumb .image::after {
-        display: none;
-    }
-
-    }
-
-
-    /* ================= EQUAL PRODUCT CARD HEIGHT ================= */
-
-    .equal-card {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-    }
-
-        .equal-card .image {
-            height: 160px; /* 🔥 FIXED IMAGE HEIGHT */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-            .equal-card .image img {
-                max-height: 100%;
-                width: auto;
-                object-fit: contain;
-            }
-
-        .equal-card .caption {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-            .equal-card .caption h4 {
-                font-size: 14px;
-                min-height: 38px;
-            }
-
-        .equal-card .price,
-        .equal-card .des,
-        .equal-card .rating {
-            margin-top: auto;
-        }
-
-</style>
-
-
-<!-- Breadcrumb Start -->
-<div class="bread-crumb">
-    <div class="container">
-        <div class="matter">
-            <h2>Our Shop</h2>
-            <ul class="list-inline">
-                <li class="list-inline-item">
-                    <a asp-controller="Home" asp-action="Index">HOME</a>
-                </li>
-                <li class="list-inline-item">
-                    <a asp-controller="Home" asp-action="AllItems">Our Shop</a>
-                </li>
-            </ul>
+        <!-- Mobile Filter Toggle Button -->
+        <div class="d-md-none mt-3">
+            <button class="btn btn-outline-secondary btn-block font-weight-bold" type="button" data-toggle="collapse" data-target="#filterCollapse" aria-expanded="false" style="border-radius: var(--ah-radius-pill); font-size: 13.5px;">
+                <i class="icofont icofont-filter"></i> Filters &amp; Categories
+            </button>
         </div>
     </div>
-</div>
-<!-- Breadcrumb End -->
-<!-- Shop Start -->
-<div class="shop">
-    <div class="container">
-        <div class="row">
 
-            <!-- ================= LEFT FILTER ================= -->
-            <div class="col-md-3">
-                <div class="left-side">
-                    <h4>SEARCH FILTERS</h4>
+    <div class="row">
+        <!-- ================= LEFT FILTER SIDEBAR ================= -->
+        <div class="col-lg-3 col-md-4 mb-4">
+            <div class="collapse d-md-block" id="filterCollapse">
+                <div class="ah-dish-card" style="position: sticky; top: 85px; padding: 20px;">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="font-weight-bold mb-0" style="font-size: 16px; color: #111827;">
+                            <i class="icofont icofont-filter text-primary"></i> Search &amp; Filter
+                        </h5>
+                    </div>
 
                     @using (Html.BeginForm("AllItems", "Home", FormMethod.Post))
                     {
                         @Html.AntiForgeryToken()
 
-                        <!-- Search -->
-                        <div class="search">
-                            <div class="form-group">
+                        <!-- Search Field -->
+                        <div class="form-group mb-4">
+                            <label class="font-weight-bold small text-muted">Search Food Items</label>
+                            <div class="position-relative">
                                 @Html.TextBoxFor(m => m.SearchKey,
-                                new { @class = "form-control", placeholder = "Search Food" })
-
-                            <button type="submit" class="btn">
-                                <i class="icofont icofont-search"></i>
-                            </button>
+                                    new { @class = "form-control", placeholder = "e.g. Rasgulla, Kaju Katli...", style = "border-radius: var(--ah-radius-pill); padding-right: 38px; font-size: 13.5px; height: 42px;" })
+                                <button type="submit" class="btn position-absolute text-muted" style="right: 4px; top: 50%; transform: translateY(-50%); background: none; border: none; padding: 4px 8px;">
+                                    <i class="icofont icofont-search text-primary"></i>
+                                </button>
+                            </div>
                         </div>
 
-                        <!-- Categories -->
-                        <ul class="list-unstyled">
-                            @for (int i = 0; i < Model.CategoryList.Count; i++)
+                        <!-- Categories Filter -->
+                        <div class="mb-4">
+                            <label class="font-weight-bold small text-muted text-uppercase" style="letter-spacing: 0.06em; font-size: 11px;">
+                                Food Categories
+                            </label>
+                            <div class="d-flex flex-column" style="max-height: 220px; overflow-y: auto; padding-right: 4px;">
+                                @for (int i = 0; i < Model.CategoryList.Count; i++)
                                 {
-                                    <li>
-                                        <label class="check">
-                                            @Html.CheckBoxFor(m => Model.CategoryList[i].CategoryStatus,
-                                            new { @class = "checkclass" })
-                                    @Model.CategoryList[i].StockMenuCategory
+                                    <div class="custom-control custom-checkbox my-1">
+                                        @Html.CheckBoxFor(m => Model.CategoryList[i].CategoryStatus,
+                                            new { @class = "custom-control-input", id = $"cat_chk_{i}" })
+                                        <label class="custom-control-label" for="cat_chk_@i" style="font-size: 13.5px; font-weight: 500; cursor: pointer;">
+                                            @Model.CategoryList[i].StockMenuCategory
+                                        </label>
+                                        @Html.HiddenFor(m => Model.CategoryList[i].StockMenuCategoryID)
+                                        @Html.HiddenFor(m => Model.CategoryList[i].StockMenuCategory)
+                                    </div>
+                                }
+                            </div>
+                        </div>
 
-                                    @Html.HiddenFor(m => Model.CategoryList[i].StockMenuCategoryID)
-                                    @Html.HiddenFor(m => Model.CategoryList[i].StockMenuCategory)
-                                </label>
-                            </li>
-                                                        }
-                        </ul>
-                    </div>
-
-                    <!-- Order Type -->
-                    <div class="food">
-                        <h3>Food For</h3>
-                        <ul class="list-inline">
-                            @for (int i = 0; i < Model.OrderTypeList.Count; i++)
-                            {
-                                <li class="list-inline-item">
-                                    <label class="check">
+                        <!-- Order Type Filter -->
+                        <div class="mb-4">
+                            <label class="font-weight-bold small text-muted text-uppercase" style="letter-spacing: 0.06em; font-size: 11px;">
+                                Order Delivery Type
+                            </label>
+                            <div>
+                                @for (int i = 0; i < Model.OrderTypeList.Count; i++)
+                                {
+                                    <div class="custom-control custom-checkbox my-1">
                                         @Html.CheckBoxFor(m => Model.OrderTypeList[i].OrderTypeStatus,
-                                        new { @class = "checkclass" })
-                                    @Model.OrderTypeList[i].OrderTypeName
+                                            new { @class = "custom-control-input", id = $"ord_chk_{i}" })
+                                        <label class="custom-control-label" for="ord_chk_@i" style="font-size: 13.5px; font-weight: 500; cursor: pointer;">
+                                            @Model.OrderTypeList[i].OrderTypeName
+                                        </label>
+                                        @Html.HiddenFor(m => Model.OrderTypeList[i].OrderTypeID)
+                                        @Html.HiddenFor(m => Model.OrderTypeList[i].OrderTypeName)
+                                    </div>
+                                }
+                            </div>
+                        </div>
 
-                                    @Html.HiddenFor(m => Model.OrderTypeList[i].OrderTypeID)
-                                    @Html.HiddenFor(m => Model.OrderTypeList[i].OrderTypeName)
-                                </label>
-                            </li>
-                                                        }
-                        </ul>
-                    </div>
-                                        }
+                        <button type="submit" class="btn ah-btn-pill-primary btn-block" style="padding: 10px;">
+                            Apply Filters
+                        </button>
+                    }
                 </div>
             </div>
+        </div>
 
-            <!-- ================= PRODUCT LIST ================= -->
-            <div class="col-md-9 mainpage">
-                <div class="form-row">
+        <!-- ================= PRODUCT GRID ================= -->
+        <div class="col-lg-9 col-md-8">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-muted small">
+                    Showing <strong>@(Model.AllItems?.Count ?? 0)</strong> items
+                </span>
+            </div>
+
+            <div class="row">
+                @if (Model.AllItems != null && Model.AllItems.Any())
+                {
+                    int idx = 0;
+                    string[] tags = { "Bestseller", "Most Loved", "Premium", "Trending" };
+                    string[] tagClasses = { "ah-tag-bestseller", "ah-tag-loved", "ah-tag-premium", "ah-tag-trending" };
+                    string[] times = { "20-30 min", "15-25 min", "15-20 min", "25-35 min" };
 
                     @foreach (var item in Model.AllItems)
                     {
-                        <div class="product-layout product-grid col-lg-4 col-md-4 col-sm-6 col-12">
-                            <div class="product-thumb equal-card">
+                        var tag = tags[idx % tags.Length];
+                        var tagClass = tagClasses[idx % tagClasses.Length];
+                        var time = times[idx % times.Length];
+                        idx++;
 
-                                <div class="image">
+                        <!-- Mobile: 2-column (col-6), Tablet: 2-column (col-sm-6), Desktop: 3-column (col-lg-4) -->
+                        <div class="col-6 col-sm-6 col-lg-4 mb-3 mb-sm-4 px-2">
+                            <div class="ah-dish-card">
+                                <div class="ah-dish-img-wrap">
+                                    <span class="@tagClass">@tag</span>
+                                    <span class="ah-fav-heart"><i class="icofont icofont-heart-alt"></i></span>
                                     <a asp-controller="Home"
                                        asp-action="ProductDetail"
-                                       asp-route-itemid="@item.StockItemID"
-                                       class="product-link">
-
-                                        <img src="@item.ItemPhotoPath"
-                                             class="img-fluid"
-                                             alt="@item.StockItemTitle" />
+                                       asp-route-itemid="@item.StockItemID">
+                                        <img src="@Url.Content(item.ItemPhotoPath)"
+                                             class="ah-dish-img"
+                                             alt="@item.StockItemTitle"
+                                             onerror="this.src='/Template/assets/images/about/3.jpg'" />
                                     </a>
+                                </div>
 
-                                    <!-- ADD TO CART -->
+                                <a asp-controller="Home"
+                                   asp-action="ProductDetail"
+                                   asp-route-itemid="@item.StockItemID"
+                                   class="text-dark">
+                                    <h5 class="ah-dish-title" title="@item.StockItemTitle">
+                                        @item.StockItemTitle
+                                    </h5>
+                                </a>
+
+                                <p class="ah-dish-desc">
+                                    @(!string.IsNullOrEmpty(item.ItemSize) ? $"Portion: {item.ItemSize} • " : "")@item.OrderTypeName
+                                </p>
+
+                                <div class="ah-dish-price-row">
+                                    <span class="ah-dish-price">₹ @item.UnitPrice</span>
+                                    <span class="ah-dish-time">@time</span>
+                                </div>
+
+                                <div class="ah-dish-footer">
+                                    <span class="ah-dish-rating">
+                                        <i class="fa fa-star"></i> 4.8
+                                    </span>
                                     <button type="button"
-                                            class="btn btn-primary btn-sm"
+                                            class="ah-btn-add-pill"
                                             onclick="addItem(@item.StockItemID)">
-                                        <i class="fa fa-shopping-cart"></i> Add To Cart
+                                        Add <i class="icofont icofont-plus"></i>
                                     </button>
-
                                 </div>
-
-
-                                <div class="caption">
-                                    <h4>@item.StockItemTitle (@item.ItemSize)</h4>
-
-                                    <div class="rating">
-                                        <i class="icofont icofont-star"></i>
-                                        <i class="icofont icofont-star"></i>
-                                        <i class="icofont icofont-star"></i>
-                                        <i class="icofont icofont-star"></i>
-                                        <i class="icofont icofont-star"></i>
-                                    </div>
-
-                                    <div class="price">
-                                        Price : ₹ @item.UnitPrice
-                                    </div>
-
-                                    <p class="des">
-                                        Order Type : @item.OrderTypeName
-                                    </p>
-
-                                    <!-- OPTIONAL SECOND BUTTON -->
-                                    <p class="d-md-none">
-                                        <a href="javascript:void(0);"
-                                           class="btn btn-theme btn-md"
-                                           onclick="additem(@item.StockItemID)">
-                                            Add To Cart
-                                        </a>
-                                    </p>
-                                </div>
-
                             </div>
                         </div>
                     }
-
-
-                </div>
+                }
+                else
+                {
+                    <div class="col-12 py-5 text-center">
+                        <div class="ah-dish-card py-5">
+                            <i class="icofont icofont-fast-food text-muted" style="font-size: 56px;"></i>
+                            <h4 class="font-weight-bold mt-3">No dishes found</h4>
+                            <p class="text-muted small">Try searching for different keywords or reset your filters.</p>
+                            <a asp-controller="Home" asp-action="AllItems" class="btn ah-btn-pill-primary mt-2" style="display: inline-flex; width: auto;">
+                                Reset All Filters
+                            </a>
+                        </div>
+                    </div>
+                }
             </div>
-
         </div>
     </div>
 </div>
 
-<!-- Shop End -->
+<!-- ================= TOAST NOTIFICATION CONTAINER ================= -->
+<div id="toastMessage"
+     style="display:none;
+            position:fixed;
+            bottom:90px;
+            left:50%;
+            transform:translateX(-50%);
+            background:#1e293b;
+            color:#fff;
+            padding:12px 22px;
+            border-radius:30px;
+            font-size:14px;
+            font-weight:600;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+            z-index:999999;">
+</div>
+
 @section Scripts {
     <script>
-
-
-                $.ajax({
-            url: '/Order/Cart_AddItem',
-            type: 'POST',
-            data: { itemid, qty, itemtype },
-            success: function (res) {
-                if (res === true) {
-                    // 🔥 YAHI STEP-3
-                    refreshCartCount();
-                }
-            }
-        });
-
-                function updateQty(cartItemId, itemType, change) {
-            $.ajax({
-                url: '/Order/UpdateQty',
-                type: 'POST',
-                data: { cartItemId, itemType, change },
-                success: function (res) {
-                    if (res === true) {
-                        // 🔥 STEP-3
-                        refreshCartCount();
-                    }
-                }
-            });
-        }
-
-                function removeItem(cartItemId, itemType) {
-            $.ajax({
-                url: '/Order/RemoveItem',
-                type: 'POST',
-                data: { cartItemId, itemType },
-                success: function (res) {
-                    if (res === true) {
-                        // 🔥 STEP-3
-                        refreshCartCount();
-                    }
-                }
-            });
-        }
-
         function addItem(itemId) {
             $.ajax({
                 url: '/Order/Cart_AddItem',
@@ -333,29 +229,43 @@
                     itemtype: 'item'
                 },
                 success: function (result) {
-                    if (result === true) {
-                        showToast("Item added to cart", "success");
+                    if (result === true || result === "success" || result === 1) {
+                        showToast("✨ Added to cart!", "success");
+                        if (typeof refreshCartCount === "function") {
+                            refreshCartCount();
+                        }
                     } else {
-                        showToast("Please login first", "danger");
+                        showToast("Please login to add items to cart", "error");
+                        setTimeout(function () {
+                            window.location.href = '@Url.Action("Login", "User")';
+                        }, 1200);
                     }
                 },
-                error: function () {
-                    showToast("Something went wrong", "warning");
+                error: function (err) {
+                    console.log(err);
+                    showToast("Unable to add item right now", "error");
                 }
             });
         }
 
-        function showToast(message, type) {
-            var toastHtml = `
-            <div class="alert alert-${type} alert-dismissible fade show" role="alert">
-                ${message}
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
-            </div>`;
+        function showToast(message, type = "info") {
+            const toast = document.getElementById("toastMessage");
+            if (!toast) return;
 
-            $("#toastContainer").html(toastHtml);
+            toast.innerHTML = message;
+
+            if (type === "error") {
+                toast.style.background = "#dc2626";
+            } else if (type === "success") {
+                toast.style.background = "#16a34a";
+            } else {
+                toast.style.background = "#1e293b";
+            }
+
+            toast.style.display = "block";
+            setTimeout(function () {
+                toast.style.display = "none";
+            }, 2500);
         }
     </script>
-
-
-    }
-
+}
