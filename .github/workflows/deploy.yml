@@ -1,0 +1,38 @@
+?:::
+```yaml
+name: AsliHalwai Build
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Publish Linux ARM64
+        run: |
+          dotnet publish AsliHalwaiWebApp/AsliHalwaiWebApp.csproj \
+            -c Release \
+            -r linux-arm64 \
+            --self-contained true \
+            -o publish/linux-arm64
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: aslihalwai-linux-arm64
+          path: publish/linux-arm64/
+          retention-days: 7
+```
