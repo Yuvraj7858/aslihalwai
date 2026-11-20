@@ -1,8 +1,6 @@
-?:::
-```yaml
 name: AsliHalwai Build
 
-on:
+'on':
   push:
     branches:
       - main
@@ -22,12 +20,7 @@ jobs:
           dotnet-version: '10.0.x'
 
       - name: Publish Linux ARM64
-        run: |
-          dotnet publish AsliHalwaiWebApp/AsliHalwaiWebApp.csproj \
-            -c Release \
-            -r linux-arm64 \
-            --self-contained true \
-            -o publish/linux-arm64
+        run: dotnet publish AsliHalwaiWebApp/AsliHalwaiWebApp.csproj -c Release -r linux-arm64 --self-contained true -o publish/linux-arm64
 
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
@@ -35,4 +28,3 @@ jobs:
           name: aslihalwai-linux-arm64
           path: publish/linux-arm64/
           retention-days: 7
-```
